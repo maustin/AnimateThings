@@ -17,18 +17,6 @@ namespace LinkedMovement {
         public static LinkedMovement Instance;
         public static Harmony Harmony;
         public static LinkedMovementController Controller;
-        //public static LinkedMovementController Controller {
-        //    get {
-        //        if (Controller == null) {
-        //            //Controller = new LinkedMovementController();
-        //            GameObject go = new GameObject();
-        //            go.name = "LinkedMovementController";
-        //            Controller = go.AddComponent<LinkedMovementController>();
-        //        }
-        //        return Controller;
-        //    }
-        //    internal set;
-        //}
 
         public static LinkedMovementController GetController() {
             if (Controller == null) {
@@ -40,7 +28,6 @@ namespace LinkedMovement {
         }
 
         private KeybindManager _keybindManager;
-        //private LinkedMovementController _controller;
 
         public static void Log(string msg) {
             Debug.Log("LinkedMovement: " + msg);
@@ -57,23 +44,28 @@ namespace LinkedMovement {
 
             Harmony = new Harmony(getIdentifier());
 
-            //GameObject go = new GameObject();
-            //go.name = "LinkedMovementController";
-            //_controller = go.AddComponent<LinkedMovementController>();
-
             Log("Patching...");
             Harmony.PatchAll();
             Log("Startup complete");
         }
 
         public override void onDisabled() {
+            Log("onDisabled");
             unregisterHotkeys();
-            //GameObject.Destroy(_controller.gameObject);
+            destroyController();
 
             if (Harmony == null)
                 return;
             Harmony.UnpatchAll(getIdentifier());
             Harmony = null;
+        }
+
+        public void destroyController() {
+            Log("destroyController");
+            if (Controller != null) {
+                GameObject.Destroy(Controller.gameObject);
+                Controller = null;
+            }
         }
 
         private void registerHotkeys() {

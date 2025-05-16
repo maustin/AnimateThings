@@ -53,17 +53,15 @@ namespace LinkedMovement {
 
         private void Awake() {
             LinkedMovement.Log("LinkedMovementController Awake");
-            //LinkedMovement.Controller = this;
-            //LinkedMovement.Log("LinkedMovementController Awake");
             mainWindow = new MainWindow(this);
             selectionHandler = gameObject.AddComponent<SelectionHandler>();
             selectionHandler.controller = this;
             selectionHandler.enabled = false;
         }
 
-        private void Start() {
-            // TODO: Setup pairings
-        }
+        //private void Start() {
+        //    //
+        //}
 
         private void OnDisable() {
             disableSelectionHandler();
@@ -82,10 +80,6 @@ namespace LinkedMovement {
             if (UIUtility.isInputFieldFocused() || GameController.Instance.isGameInputLocked()) {
                 return;
             }
-
-            //foreach (Pairing pairing in pairings) {
-            //    pairing.Update();
-            //}
 
             if (InputManager.getKeyDown("LM_toggleGUI")) {
                 LinkedMovement.Log("Toggle GUI");
@@ -168,7 +162,6 @@ namespace LinkedMovement {
 
             LinkedMovement.Log("Selected BO position:");
             LinkedMovement.Log(bo.gameObject.transform.position.ToString());
-            //LinkedMovement.Log(bo.gameObject.transform.parent.name);
 
             var options = selectionHandler.Options;
             options.Mode = Selection.Mode.None;
@@ -197,21 +190,11 @@ namespace LinkedMovement {
                 targetMeshRenderer.enabled = true;
             }
 
-            //targetObject.transform.position = baseObject.transform.position;
-            //AttachTargetToBase(baseObject.transform, targetObject.transform);
-
             var pairing = new Pairing(baseObject.gameObject, targetObject.gameObject);
             pairings.Add(pairing);
 
             baseObject.addCustomData(pairing.getPairBase());
             targetObject.addCustomData(pairing.getPairTarget());
-
-            //baseObject.addCustomData(pairing);
-
-            //var pairBase = baseObject.gameObject.AddComponent<PairBase>();
-            //pairBases.Add(pairBase);
-            //var pairTarget = baseObject.gameObject.AddComponent<PairTarget>();
-            //pairTargets.Add(pairTarget);
 
             baseObject = null;
             targetObject = null;

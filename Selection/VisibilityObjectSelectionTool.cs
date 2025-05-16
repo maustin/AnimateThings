@@ -35,7 +35,6 @@ namespace LinkedMovement.Selection {
         event OnRemovedSelectedObjectHandler OnRemovedSelectedObject;
     }
     internal sealed class CustomSelectionTool : AbstractMouseTool, IMouseToolTicked, IMouseTool {
-        //static CustomSelectionTool Instance;
         static ICustomSelectionTool ToolInstance;
         public override bool canEscapeMouseTool() => true;
         public override GameController.GameFeature getDisallowedFeatures()

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LinkedMovement
+﻿namespace LinkedMovement
 {
     public class PairTarget : SerializedRawObject {
         [Serialized]
@@ -22,14 +16,5 @@ namespace LinkedMovement
         public PairTarget(string pId) {
             pairId = pId;
         }
-
-        //override protected void Awake() {
-        //    base.Awake();
-        //    LinkedMovement.Log("PairTarget Awake");
-        //}
-
-        //public void Start() {
-        //    LinkedMovement.Log("PairTarget Start");
-        //}
     }
 }

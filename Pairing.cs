@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace LinkedMovement
@@ -18,7 +14,6 @@ namespace LinkedMovement
 
         public Pairing() {
             LinkedMovement.Log("Pairing DEFAULT CONTSTRUCTOR");
-            //LinkedMovement.Log("bId: " + baseID + ", tId: " + targetID);
         }
 
         public Pairing(GameObject baseGO, GameObject targetGO, string pId = null) {
@@ -29,12 +24,6 @@ namespace LinkedMovement
             targetGO.transform.position = baseGO.transform.position;
             LinkedMovementController.AttachTargetToBase(baseGO.transform, targetGO.transform);
 
-            //targetObject.transform.position = baseObject.transform.position;
-            //AttachTargetToBase(baseObject.transform, targetObject.transform);
-
-            //baseID = Guid.NewGuid().ToString();
-
-            //LinkedMovement.Log($"base Id: {baseID}, target Id: {targetID}");
             if (pId != null) {
                 pairingId = pId;
             } else {
