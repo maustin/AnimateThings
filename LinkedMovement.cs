@@ -16,9 +16,31 @@ namespace LinkedMovement {
 
         public static LinkedMovement Instance;
         public static Harmony Harmony;
+        public static LinkedMovementController Controller;
+        //public static LinkedMovementController Controller {
+        //    get {
+        //        if (Controller == null) {
+        //            //Controller = new LinkedMovementController();
+        //            GameObject go = new GameObject();
+        //            go.name = "LinkedMovementController";
+        //            Controller = go.AddComponent<LinkedMovementController>();
+        //        }
+        //        return Controller;
+        //    }
+        //    internal set;
+        //}
+
+        public static LinkedMovementController GetController() {
+            if (Controller == null) {
+                GameObject go = new GameObject();
+                go.name = "LinkedMovementController";
+                Controller = go.AddComponent<LinkedMovementController>();
+            }
+            return Controller;
+        }
 
         private KeybindManager _keybindManager;
-        private LinkedMovementController _controller;
+        //private LinkedMovementController _controller;
 
         public static void Log(string msg) {
             Debug.Log("LinkedMovement: " + msg);
@@ -26,6 +48,7 @@ namespace LinkedMovement {
 
         public LinkedMovement() {
             registerHotkeys();
+            Log("Done register hotkeys");
         }
 
         public override void onEnabled() {
@@ -34,9 +57,9 @@ namespace LinkedMovement {
 
             Harmony = new Harmony(getIdentifier());
 
-            GameObject go = new GameObject();
-            go.name = "LinkedMovementController";
-            _controller = go.AddComponent<LinkedMovementController>();
+            //GameObject go = new GameObject();
+            //go.name = "LinkedMovementController";
+            //_controller = go.AddComponent<LinkedMovementController>();
 
             Log("Patching...");
             Harmony.PatchAll();
@@ -45,7 +68,7 @@ namespace LinkedMovement {
 
         public override void onDisabled() {
             unregisterHotkeys();
-            GameObject.Destroy(_controller.gameObject);
+            //GameObject.Destroy(_controller.gameObject);
 
             if (Harmony == null)
                 return;
@@ -61,6 +84,7 @@ namespace LinkedMovement {
         }
 
         private void unregisterHotkeys() {
+            Log("unregister hotkeys");
             _keybindManager.UnregisterAll();
         }
     }

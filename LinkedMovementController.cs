@@ -1,12 +1,13 @@
 ﻿// ATTRIB: HideScenery (very partial)
 using LinkedMovement.AltUI;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace LinkedMovement {
-    class LinkedMovementController : MonoBehaviour {
+    public class LinkedMovementController : MonoBehaviour {
         // TODO: Move this
-        static private void AttachTargetToBase(Transform baseObject, Transform targetObject) {
+        static public void AttachTargetToBase(Transform baseObject, Transform targetObject) {
             LinkedMovement.Log("Find attach parent between " + baseObject.name + " and " + targetObject.name);
             var baseTransform = baseObject;
             bool foundPlatform = false;
@@ -38,7 +39,7 @@ namespace LinkedMovement {
             get => selectionHandler.enabled;
             set => selectionHandler.enabled = value;
         }
-        
+
         // TODO: Make better
         private bool isSettingBase = false;
         private bool isSettingTarget = false;
@@ -46,10 +47,14 @@ namespace LinkedMovement {
         public BuildableObject baseObject;
         public BuildableObject targetObject;
 
+        public List<PairBase> pairBases = new List<PairBase>();
+        public List<PairTarget> pairTargets = new List<PairTarget>();
         private List<Pairing> pairings = new List<Pairing>();
 
         private void Awake() {
             LinkedMovement.Log("LinkedMovementController Awake");
+            //LinkedMovement.Controller = this;
+            //LinkedMovement.Log("LinkedMovementController Awake");
             mainWindow = new MainWindow(this);
             selectionHandler = gameObject.AddComponent<SelectionHandler>();
             selectionHandler.controller = this;
@@ -65,10 +70,12 @@ namespace LinkedMovement {
         }
 
         private void OnDestroy() {
+            LinkedMovement.Controller = null;
             if (selectionHandler != null) {
                 GameObject.Destroy(selectionHandler);
                 selectionHandler = null;
             }
+            // TODO: Clear lists
         }
 
         private void Update() {
@@ -90,6 +97,18 @@ namespace LinkedMovement {
             if (mainWindow.isOpen) {
                 mainWindow.drawWindow();
             }
+        }
+
+        public void addPairing(Pairing pairing) {
+            pairings.Add(pairing);
+        }
+
+        public void addPairBase(PairBase pairBase) {
+            pairBases.Add(pairBase);
+        }
+
+        public void addPairTarget(PairTarget pairTarget) {
+            pairTargets.Add(pairTarget);
         }
 
         public void pickBaseObject() {
@@ -178,11 +197,21 @@ namespace LinkedMovement {
                 targetMeshRenderer.enabled = true;
             }
 
-            targetObject.transform.position = baseObject.transform.position;
+            //targetObject.transform.position = baseObject.transform.position;
+            //AttachTargetToBase(baseObject.transform, targetObject.transform);
 
-            AttachTargetToBase(baseObject.transform, targetObject.transform);
+            var pairing = new Pairing(baseObject.gameObject, targetObject.gameObject);
+            pairings.Add(pairing);
 
-            pairings.Add(new Pairing(baseObject.gameObject, targetObject.gameObject));
+            baseObject.addCustomData(pairing.getPairBase());
+            targetObject.addCustomData(pairing.getPairTarget());
+
+            //baseObject.addCustomData(pairing);
+
+            //var pairBase = baseObject.gameObject.AddComponent<PairBase>();
+            //pairBases.Add(pairBase);
+            //var pairTarget = baseObject.gameObject.AddComponent<PairTarget>();
+            //pairTargets.Add(pairTarget);
 
             baseObject = null;
             targetObject = null;
@@ -203,61 +232,5 @@ namespace LinkedMovement {
         private void clearSelection() {
             selectionHandler.DeselectAll();
         }
-    }
-
-    class Pairing {
-        public GameObject baseGO;
-        public GameObject targetGO;
-
-        public Pairing(GameObject baseGO, GameObject targetGO) {
-            this.baseGO = baseGO;
-            this.targetGO = targetGO;
-
-            //var targetComponents = targetGO.GetComponents<Component>();
-            //LinkedMovement.Log("Target has " + targetComponents.Length.ToString() + " components");
-            //foreach (var component in targetComponents) {
-            //    LinkedMovement.Log("Component: " + component.name + ", iID: " + component.GetInstanceID());
-            //    var t = component.GetType();
-            //    LinkedMovement.Log("Type: " + t.Name);
-            //    LinkedMovement.Log("---");
-            //}
-
-            //LinkedMovement.Log("Target GO has " + targetGO.transform.childCount.ToString() + " children");
-            //foreach (Transform child in targetGO.transform) {
-            //    LinkedMovement.Log("Child transform GO: " + child.gameObject.name);
-            //}
-        }
-
-        //public void Update() {
-        //    var baseTransform = baseGO.transform;
-        //    bool foundPlatform = false;
-
-        //    var baseChildrenCount = baseTransform.childCount;
-        //    for (var i = 0; i < baseChildrenCount; i++) {
-        //        var child = baseTransform.GetChild(i);
-        //        var childName = child.gameObject.name;
-        //        if (childName.Contains("[Platform]")) {
-        //            foundPlatform = true;
-        //            baseTransform = child;
-        //            //LinkedMovement.Log("Using Platform");
-        //            break;
-        //        }
-        //    }
-        //    if (!foundPlatform && baseChildrenCount > 0) {
-        //        // Take child at 0
-        //        baseTransform = baseTransform.GetChild(0);
-        //        //LinkedMovement.Log("Using child 0");
-        //    }
-            
-        //    //targetGO.transform.SetPositionAndRotation(baseTransform.position, baseTransform.rotation);
-
-        //    //var targetRotationEuler = baseTransform.eulerAngles + new Vector3(-180f, 0f, 0f);
-
-        //    //var targetRotationEuler = baseTransform.eulerAngles + new Vector3(0f, 0f, 0f);
-        //    var targetRotationEuler = baseTransform.eulerAngles + new Vector3(90f, 0f, 0f);
-        //    targetGO.transform.eulerAngles = targetRotationEuler;
-
-        //    targetGO.transform.position = baseTransform.position;
-        //}
     }
 }
