@@ -19,6 +19,7 @@ namespace LinkedMovement.BLERGUI.InGame {
             foreach (BlueprintFile blueprint in blueprints) {
                 names.Add(blueprint.getName());
             }
+            names.Sort();
             return names.ToArray();
         }
 
