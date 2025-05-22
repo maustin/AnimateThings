@@ -94,11 +94,8 @@ namespace LinkedMovement.BLERGUI.InGame {
 
                 // TODO: Calculate less often
                 var prints = BlueprintManager.Instance.getAllBlueprints();
-                //LinkedMovement.Log("# prints: " + prints.Count);
                 var decoPrints = LinkedMovementController.FindDecoBlueprints(prints);
-                //LinkedMovement.Log("# deco prints: " + decoPrints.Count);
                 var decoPrintNames = GetBlueprintNames(decoPrints);
-                //LinkedMovement.Log("# deco print names: " + decoPrintNames.Length);
 
                 using (Scope.Horizontal()) {
                     if (hasSelectedBlueprint && controller.selectedBlueprint?.getName() != selectedBlueprintName) {

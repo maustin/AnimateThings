@@ -4,6 +4,7 @@ using LinkedMovement.UI.InGame;
 using Parkitect;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace LinkedMovement {
@@ -61,14 +62,19 @@ namespace LinkedMovement {
         public BuildableObject baseObject { get; private set; }
         public List<BuildableObject> targetObjects { get; private set; }
 
-        public List<PairBase> pairBases = new List<PairBase>();
-        public List<PairTarget> pairTargets = new List<PairTarget>();
         private List<Pairing> pairings = new List<Pairing>();
 
         public BlueprintBuilder selectedBlueprintBuilder { get; private set; }
 
         public BlueprintFile selectedBlueprint {
             get; private set;
+        }
+
+        public bool catchCreatedObjects { get; private set; }
+        private List<GameObject> blueprintCreatedObjects = new List<GameObject>();
+        public void addBlueprintCreatedObject(GameObject go) {
+            LinkedMovement.Log("Adding blueprintCreatedObject");
+            blueprintCreatedObjects.Add(go);
         }
 
         public void setSelectedBlueprint(BlueprintFile blueprint) {
@@ -121,8 +127,6 @@ namespace LinkedMovement {
             }
             baseObject = null;
             targetObjects.Clear();
-            pairBases.Clear();
-            pairTargets.Clear();
             pairings.Clear();
         }
 
@@ -133,28 +137,18 @@ namespace LinkedMovement {
 
             if (InputManager.getKeyDown("LM_toggleGUI")) {
                 LinkedMovement.Log("Toggle GUI");
-                //mainWindow.toggleWindowOpen();
                 mainWindow.isOpen = !mainWindow.isOpen;
             }
         }
 
         private void OnGUI() {
             if (mainWindow.isOpen) {
-                //mainWindow.drawWindow();
                 mainWindow.Show();
             }
         }
 
         public void addPairing(Pairing pairing) {
             pairings.Add(pairing);
-        }
-
-        public void addPairBase(PairBase pairBase) {
-            pairBases.Add(pairBase);
-        }
-
-        public void addPairTarget(PairTarget pairTarget) {
-            pairTargets.Add(pairTarget);
         }
 
         public void pickBaseObject() {
@@ -248,8 +242,6 @@ namespace LinkedMovement {
         public void joinObjects() {
             LinkedMovement.Log("JOIN!");
 
-            tryToDestroyExistingBlueprintBuilder();
-
             // Attempt to reset base to starting animation position
             var baseAnimator = baseObject.GetComponent<Animator>();
             if (baseAnimator != null) {
@@ -263,7 +255,27 @@ namespace LinkedMovement {
             }
 
             if (selectedBlueprint != null) {
-                LinkedMovement.Log("TODO: blueprints");
+                LinkedMovement.Log("Create blueprint");
+
+                catchCreatedObjects = true;
+                blueprintCreatedObjects.Clear();
+                selectedBlueprintBuilder.OnBuildTriggered += (Builder.OnBuildTriggeredHandler)(() => {
+                    // TODO: This might need to be a delayed call?
+                    LinkedMovement.Log("OnBuildTriggered");
+                    catchCreatedObjects = false;
+                    
+                    LinkedMovement.Log("Got # created objects: " + blueprintCreatedObjects.Count);
+
+                    var pairing = new Pairing(baseObject.gameObject, blueprintCreatedObjects);
+                    pairing.setCustomData(true);
+                    pairing.connect();
+
+                    clearAllSelections();
+                    clearSelection();
+                });
+                MethodInfo methodInfo = selectedBlueprintBuilder.GetType().GetMethod("buildObjects", BindingFlags.NonPublic | BindingFlags.Instance);
+                methodInfo.Invoke(selectedBlueprintBuilder, null);
+                return;
             }
 
             List<GameObject> targetGOs = new List<GameObject>();
@@ -272,18 +284,10 @@ namespace LinkedMovement {
             }
 
             var pairing = new Pairing(baseObject.gameObject, targetGOs);
-            pairings.Add(pairing);
-
-            baseObject.addCustomData(pairing.getPairBase());
-
-            // Hate we iterate twice
-            foreach (var bo in targetObjects) {
-                // TODO: Offsets
-                bo.addCustomData(pairing.getPairTarget());
-            }
+            pairing.setCustomData();
+            pairing.connect();
 
             clearAllSelections();
-
             clearSelection();
         }
 

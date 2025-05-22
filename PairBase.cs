@@ -6,7 +6,7 @@
 
         public PairBase() {
             //LinkedMovement.Log("PairBase DEFAULT CONTRUCTOR: " + pairId);
-            LinkedMovement.GetController().addPairBase(this);
+            //LinkedMovement.GetController().addPairBase(this);
         }
 
         public PairBase(string pId) {

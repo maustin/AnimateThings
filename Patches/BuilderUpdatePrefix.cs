@@ -23,17 +23,7 @@ class BuilderUpdatePrefix {
     static bool Update(Builder __instance) {
         var blueprintBuilder = __instance as BlueprintBuilder;
         if (blueprintBuilder != null) {
-            //LinkedMovement.LinkedMovement.Log("Is BlueprintBuilder");
             if (blueprintBuilder == LinkedMovement.LinkedMovement.GetController().selectedBlueprintBuilder) {
-                //LinkedMovement.LinkedMovement.Log("SAME BlueprintBuilder");
-                //if (!LinkedMovement.LinkedMovement.GetController().didFirstBlueprintBuilderUpdate) {
-                //    LinkedMovement.LinkedMovement.Log("Do first BlueprintBuilder Update");
-                //    LinkedMovement.LinkedMovement.Log("Pre: " + blueprintBuilder.transform.position.ToString());
-                //    blueprintBuilder.transform.position = LinkedMovement.LinkedMovement.GetController().baseObject.transform.position;
-                //    LinkedMovement.LinkedMovement.Log("Pst: " + blueprintBuilder.transform.position.ToString());
-                //    LinkedMovement.LinkedMovement.GetController().didFirstBlueprintBuilderUpdate = true;
-                //    return true;
-                //}
                 return false;
             }
             else {
