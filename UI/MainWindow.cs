@@ -1,10 +1,10 @@
 ﻿// ATTRIB: CheatMod
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LinkedMovement.AltUI {
     class MainWindow : BaseWindow {
-        // TODO: Get this from elsewhere
-        //private string[] selectionModes = {"Individual", "Box"};
         private string[] selectionModeNames = {Selection.Mode.Individual.ToString(), Selection.Mode.Box.ToString()};
         private Selection.Mode[] selectionModes = {Selection.Mode.Individual, Selection.Mode.Box};
         private int selectedSelectionMode = 0;
@@ -44,6 +44,20 @@ namespace LinkedMovement.AltUI {
             GUILayout.Label("Selection mode:");
             selectedSelectionMode = GUILayout.Toolbar(selectedSelectionMode, selectionModeNames);
             GUILayout.EndHorizontal();
+
+            //GUILayout.BeginHorizontal();
+            //GUILayout.Label("Blueprint:");
+            //if (GUILayout.Button("Choose")) {
+            //    var prints = BlueprintManager.Instance.getAllBlueprints();
+            //    LinkedMovement.Log("Blueprints! " + prints.Count);
+
+            //    var decoPrints = LinkedMovementController.FindDecoBlueprints(prints);
+            //    LinkedMovement.Log("# deco prints: " + decoPrints.Count);
+            //    foreach (var decoPrint in decoPrints) {
+            //        LinkedMovement.Log(decoPrint.getName());
+            //    }
+            //}
+            //GUILayout.EndHorizontal();
 
             targetsScrollPosition = GUILayout.BeginScrollView(targetsScrollPosition);
             foreach (var targetObject in targetObjects) {

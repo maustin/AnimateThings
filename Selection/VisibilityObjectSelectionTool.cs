@@ -685,6 +685,7 @@ namespace LinkedMovement.Selection {
             Vector3 max = bounds.max;
             max.y -= 0.005f;
             bounds.max = max;
+            //LinkedMovement.Log("Bounds: " + bounds.ToString());
             var thing = MouseCollisions.Instance.boxcastAll(bounds);
             LinkedMovement.Log("Box tool hit #: " + thing.Length.ToString());
             foreach (MouseCollider.HitInfo hitInfo in MouseCollisions.Instance.boxcastAll(bounds)) {

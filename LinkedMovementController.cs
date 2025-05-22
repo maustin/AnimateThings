@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LinkedMovement {
     public class LinkedMovementController : MonoBehaviour {
-        // TODO: Move this
+        // TODO: Move this to utils
         static public void AttachTargetToBase(Transform baseObject, Transform targetObject) {
             LinkedMovement.Log("Find attach parent between " + baseObject.name + " and " + targetObject.name);
             var baseTransform = baseObject;
@@ -31,6 +31,17 @@ namespace LinkedMovement {
             }
 
             targetObject.SetParent(baseTransform);
+        }
+
+        // TODO: Move this too to utils
+        static public List<BlueprintFile> FindDecoBlueprints(IList<BlueprintFile> blueprints) {
+            var list = new List<BlueprintFile>();
+            foreach (var blueprint in blueprints) {
+                if (blueprint.getCategoryTags().Contains("Deco")) {
+                    list.Add(blueprint);
+                }
+            }
+            return list;
         }
 
         private BaseWindow mainWindow;
@@ -164,7 +175,8 @@ namespace LinkedMovement {
             }
 
             LinkedMovement.Log("Selected BO position:");
-            LinkedMovement.Log(bo.gameObject.transform.position.ToString());
+            LinkedMovement.Log("World: " + bo.gameObject.transform.position.ToString());
+            LinkedMovement.Log("Local: " + bo.gameObject.transform.localPosition.ToString());
 
             //var options = selectionHandler.Options;
             //options.Mode = Selection.Mode.None;
