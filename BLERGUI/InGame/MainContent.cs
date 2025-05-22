@@ -1,6 +1,7 @@
 ﻿using LinkedMovement.BLERGUI.Utils;
 using RapidGUI;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GUILayout;
 
@@ -11,6 +12,15 @@ namespace LinkedMovement.BLERGUI.InGame {
         private Selection.Mode[] selectionModes = { Selection.Mode.Individual, Selection.Mode.Box };
         private int selectedSelectionMode = 0;
         private Vector2 targetsScrollPosition;
+        private string selectedBlueprintName;
+
+        static private string[] GetBlueprintNames(List<BlueprintFile> blueprints) {
+            var names = new List<string>();
+            foreach (BlueprintFile blueprint in blueprints) {
+                names.Add(blueprint.getName());
+            }
+            return names.ToArray();
+        }
 
         public MainContent(LinkedMovementController controller) {
             this.controller = controller;
@@ -63,6 +73,24 @@ namespace LinkedMovement.BLERGUI.InGame {
                     selectedSelectionMode = Toolbar(selectedSelectionMode, selectionModeNames);
                 }
 
+                // TODO: Calculate less often
+                var prints = BlueprintManager.Instance.getAllBlueprints();
+                //LinkedMovement.Log("# prints: " + prints.Count);
+                var decoPrints = LinkedMovementController.FindDecoBlueprints(prints);
+                //LinkedMovement.Log("# deco prints: " + decoPrints.Count);
+                var decoPrintNames = GetBlueprintNames(decoPrints);
+                //LinkedMovement.Log("# deco print names: " + decoPrintNames.Length);
+
+                using (Scope.Horizontal()) {
+                    if (selectedBlueprintName != null && controller.selectedBlueprintName != selectedBlueprintName) {
+                        controller.selectedBlueprintName = selectedBlueprintName;
+                        selectedBlueprintName = null;
+                    }
+                    Label("Blueprint");
+                    //selectedBlueprintName = RGUI.SelectionPopup(selectedBlueprintName, decoPrintNames);
+                    selectedBlueprintName = RGUI.SelectionPopup(controller.selectedBlueprintName, decoPrintNames);
+                }
+
                 var targetObjects = controller.targetObjects;
                 targetsScrollPosition = BeginScrollView(targetsScrollPosition);
                 foreach (var targetObject in targetObjects) {
@@ -77,7 +105,7 @@ namespace LinkedMovement.BLERGUI.InGame {
         }
 
         private void ShowJoin() {
-            if (controller.baseObject != null && controller.targetObjects.Count > 0) {
+            if (controller.baseObject != null && (controller.targetObjects.Count > 0 || controller.selectedBlueprintName != null)) {
                 Space(10f);
                 if (Button("Join Objects!"))
                     controller.joinObjects();

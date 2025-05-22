@@ -14,57 +14,57 @@ namespace RapidGUI
 
     public static partial class RGUIUtility
     {
-        static readonly Dictionary<MouseCursor, CursorData.Data> cursorTable;
+        //static readonly Dictionary<MouseCursor, CursorData.Data> cursorTable;
 
 
-        static RGUIUtility()
-        {
-            var data = Resources.Load<CursorData>("cursorData");
+        //static RGUIUtility()
+        //{
+        //    var data = Resources.Load<CursorData>("cursorData");
 
-            cursorTable = new Dictionary<MouseCursor, CursorData.Data>()
-            {
-                { MouseCursor.Default, null},
-                { MouseCursor.ResizeHorizontal, data.resizeHorizontal},
-                { MouseCursor.ResizeVertical, data.resizeVertical},
-                { MouseCursor.ResizeUpLeft, data.resizeUpLeft},
-            };
+        //    cursorTable = new Dictionary<MouseCursor, CursorData.Data>()
+        //    {
+        //        { MouseCursor.Default, null},
+        //        { MouseCursor.ResizeHorizontal, data.resizeHorizontal},
+        //        { MouseCursor.ResizeVertical, data.resizeVertical},
+        //        { MouseCursor.ResizeUpLeft, data.resizeUpLeft},
+        //    };
 
-            RapidGUIBehaviour.Instance.StartCoroutine(UpdateCursor());
-        }
+        //    RapidGUIBehaviour.Instance.StartCoroutine(UpdateCursor());
+        //}
 
 
-        static float cursorLimitTime;
-        static float GetCursorTime() => Time.realtimeSinceStartup;
+        //static float cursorLimitTime;
+        //static float GetCursorTime() => Time.realtimeSinceStartup;
 
         public static void SetCursor(MouseCursor cursor, float life = 0.1f)
         {
-            if (cursor == MouseCursor.Default)
-            {
-                SetCursorDefault();
-            }
-            else
-            {
-                var data = cursorTable[cursor];
+            //if (cursor == MouseCursor.Default)
+            //{
+            //    SetCursorDefault();
+            //}
+            //else
+            //{
+            //    var data = cursorTable[cursor];
 
-                Cursor.SetCursor(data.tex, data.hotspot, CursorMode.Auto);
-                cursorLimitTime = GetCursorTime() + life;
-            }
+            //    Cursor.SetCursor(data.tex, data.hotspot, CursorMode.Auto);
+            //    cursorLimitTime = GetCursorTime() + life;
+            //}
         }
 
         public static void SetCursorDefault()
         {
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-            cursorLimitTime = float.MaxValue;
+            //Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            //cursorLimitTime = float.MaxValue;
         }
 
 
-        static IEnumerator UpdateCursor()
-        {
-            while (true)
-            {
-                yield return new WaitUntil(() => GetCursorTime() > cursorLimitTime);
-                SetCursorDefault();
-            }
-        }
+        //static IEnumerator UpdateCursor()
+        //{
+        //    while (true)
+        //    {
+        //        yield return new WaitUntil(() => GetCursorTime() > cursorLimitTime);
+        //        SetCursorDefault();
+        //    }
+        //}
     }
 }

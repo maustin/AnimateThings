@@ -21,7 +21,7 @@ namespace LinkedMovement.UI.InGame {
                 Pinnable = false,
                 IsOpen = true,
             };
-            window.Rect.position = new Vector2(Screen.width - 10.0f - width, 75.0f);
+            window.Rect.position = new Vector2(Screen.width - 200.0f - width, 75.0f);
             window.Add(content.DoGUI);
         }
 

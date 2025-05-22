@@ -65,6 +65,8 @@ namespace LinkedMovement {
         public List<PairTarget> pairTargets = new List<PairTarget>();
         private List<Pairing> pairings = new List<Pairing>();
 
+        public string selectedBlueprintName;
+
         private void Awake() {
             LinkedMovement.Log("LinkedMovementController Awake");
             targetObjects = new List<BuildableObject>();
@@ -218,6 +220,11 @@ namespace LinkedMovement {
                 LinkedMovement.Log("Couldn't find Animator");
             }
 
+            if (selectedBlueprintName != null) {
+                LinkedMovement.Log("TODO: blueprints");
+            }
+            return;
+
             List<GameObject> targetGOs = new List<GameObject>();
             foreach (var bo in targetObjects) {
                 targetGOs.Add(bo.gameObject);
@@ -236,6 +243,7 @@ namespace LinkedMovement {
 
             baseObject = null;
             targetObjects.Clear();
+            selectedBlueprintName = null;
 
             clearSelection();
         }
