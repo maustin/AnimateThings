@@ -344,7 +344,8 @@ namespace LinkedMovement.Selection {
                     break;
             }
             // Don't like the deep linking but.. eh
-            LinkedMovement.Controller.endSelection();
+            LinkedMovement.GetController().endSelection();
+            //LinkedMovement.Controller.endSelection();
         }
         private bool HandleChangeSelectedHiddenObject() {
             if (NumberOfHiddenObjects > 1) {
@@ -701,7 +702,8 @@ namespace LinkedMovement.Selection {
             }
             endPositionOffset = Vector3.zero;
             // Don't like the deep linking but.. eh
-            LinkedMovement.Controller.endSelection();
+            LinkedMovement.GetController().endSelection();
+            //LinkedMovement.Controller.endSelection();
         }
 
         private void RectangleSelectionStart(Vector3 startPosition) {

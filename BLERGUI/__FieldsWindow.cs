@@ -2,7 +2,7 @@
 using UnityEngine;
 
 namespace LinkedMovement.UI {
-    class FieldsWindow : WindowBase {
+    class __FieldsWindow : __WindowBase {
         protected override string title => "FieldsWindow";
 
         public string stringVal;

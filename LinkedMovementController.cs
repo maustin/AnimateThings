@@ -1,5 +1,6 @@
 ﻿// ATTRIB: HideScenery (very partial)
-using LinkedMovement.AltUI;
+//using LinkedMovement.AltUI;
+using LinkedMovement.UI.InGame;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -44,7 +45,8 @@ namespace LinkedMovement {
             return list;
         }
 
-        private BaseWindow mainWindow;
+        //private BaseWindow mainWindow;
+        private MainWindow mainWindow;
 
         private SelectionHandler selectionHandler;
         private bool selectionHandlerEnabled {
@@ -66,6 +68,7 @@ namespace LinkedMovement {
         private void Awake() {
             LinkedMovement.Log("LinkedMovementController Awake");
             targetObjects = new List<BuildableObject>();
+            //mainWindow = new MainWindow(this);
             mainWindow = new MainWindow(this);
             selectionHandler = gameObject.AddComponent<SelectionHandler>();
             selectionHandler.controller = this;
@@ -77,7 +80,7 @@ namespace LinkedMovement {
         }
 
         private void OnDestroy() {
-            LinkedMovement.Controller = null;
+            LinkedMovement.ClearController();
             if (selectionHandler != null) {
                 GameObject.Destroy(selectionHandler);
                 selectionHandler = null;
@@ -96,13 +99,15 @@ namespace LinkedMovement {
 
             if (InputManager.getKeyDown("LM_toggleGUI")) {
                 LinkedMovement.Log("Toggle GUI");
-                mainWindow.toggleWindowOpen();
+                //mainWindow.toggleWindowOpen();
+                mainWindow.isOpen = !mainWindow.isOpen;
             }
         }
 
         private void OnGUI() {
             if (mainWindow.isOpen) {
-                mainWindow.drawWindow();
+                //mainWindow.drawWindow();
+                mainWindow.Show();
             }
         }
 
@@ -139,9 +144,7 @@ namespace LinkedMovement {
 
         public void pickTargetObject(Selection.Mode newMode) {
             LinkedMovement.Log("pickTargetObject");
-            // TODO: Box select
-
-            //var newMode = Selection.Mode.Individual;
+            
             var options = selectionHandler.Options;
             if (options.Mode == newMode) {
                 LinkedMovement.Log("Set target select none");
@@ -164,11 +167,9 @@ namespace LinkedMovement {
             
             if (isSettingBase) {
                 baseObject = bo;
-                //isSettingBase = false;
             }
             else if (isSettingTarget) {
                 targetObjects.Add(bo);
-                //isSettingTarget = false;
             } else {
                 LinkedMovement.Log("setSelectedBuildableObject while NOT SELECTING");
                 return;
@@ -177,11 +178,6 @@ namespace LinkedMovement {
             LinkedMovement.Log("Selected BO position:");
             LinkedMovement.Log("World: " + bo.gameObject.transform.position.ToString());
             LinkedMovement.Log("Local: " + bo.gameObject.transform.localPosition.ToString());
-
-            //var options = selectionHandler.Options;
-            //options.Mode = Selection.Mode.None;
-            //disableSelectionHandler();
-            //clearSelection();
         }
 
         public void endSelection() {
@@ -193,7 +189,6 @@ namespace LinkedMovement {
             var options = selectionHandler.Options;
             options.Mode = Selection.Mode.None;
             disableSelectionHandler();
-            //clearSelection();
         }
 
         public void clearBaseObject() {
@@ -210,6 +205,18 @@ namespace LinkedMovement {
 
         public void joinObjects() {
             LinkedMovement.Log("JOIN!");
+
+            // Attempt to reset base to starting animation position
+            var baseAnimator = baseObject.GetComponent<Animator>();
+            if (baseAnimator != null) {
+                LinkedMovement.Log("Found Animator, reset time");
+                //anim_gun.Play("idle", -1, 0f);
+                baseAnimator.Rebind();
+                baseAnimator.Update(0f);
+            }
+            else {
+                LinkedMovement.Log("Couldn't find Animator");
+            }
 
             List<GameObject> targetGOs = new List<GameObject>();
             foreach (var bo in targetObjects) {

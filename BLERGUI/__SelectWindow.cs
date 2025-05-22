@@ -2,7 +2,7 @@
 using UnityEngine;
 
 namespace LinkedMovement.UI {
-    class SelectWindow : MonoBehaviour {
+    class __SelectWindow : MonoBehaviour {
         WindowLaunchers launchers;
 
         public void Start() {
@@ -11,7 +11,7 @@ namespace LinkedMovement.UI {
                 name = "Select Window"
             };
 
-            var v = launchers.Add("Field", typeof(FieldsWindow));
+            var v = launchers.Add("Field", typeof(__FieldsWindow));
             v.Open();
 
             Debug.Log("Contains? " + launchers.Contains("Field").ToString());

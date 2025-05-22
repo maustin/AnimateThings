@@ -16,7 +16,7 @@ namespace LinkedMovement {
 
         public static LinkedMovement Instance;
         public static Harmony Harmony;
-        public static LinkedMovementController Controller;
+        private static LinkedMovementController Controller;
 
         public static LinkedMovementController GetController() {
             if (Controller == null) {
@@ -25,6 +25,10 @@ namespace LinkedMovement {
                 Controller = go.AddComponent<LinkedMovementController>();
             }
             return Controller;
+        }
+
+        public static void ClearController() {
+            Controller = null;
         }
 
         private KeybindManager _keybindManager;

@@ -34,6 +34,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BLERGUI\InGame\MainContent.cs" />
+    <Compile Include="BLERGUI\InGame\MainWindow.cs" />
+    <Compile Include="BLERGUI\Utils\CollapsibleWindow.cs" />
+    <Compile Include="BLERGUI\Utils\Controls.cs" />
+    <Compile Include="BLERGUI\Utils\Scope.cs" />
+    <Compile Include="BLERGUI\Utils\Styles.cs" />
+    <Compile Include="BLERGUI\Utils\Tooltip.cs" />
     <Compile Include="InParkHarmonyInjector.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="PairBase.cs" />
@@ -105,9 +112,9 @@
     <Compile Include="SelectionHandler.cs" />
     <Compile Include="Selection\HitUtility.cs" />
     <Compile Include="Selection\VisibilityObjectSelectionTool.cs" />
-    <Compile Include="BLERGUI\FieldsWindow.cs" />
-    <Compile Include="BLERGUI\SelectWindow.cs" />
-    <Compile Include="BLERGUI\WindowBase.cs" />
+    <Compile Include="BLERGUI\__FieldsWindow.cs" />
+    <Compile Include="BLERGUI\__SelectWindow.cs" />
+    <Compile Include="BLERGUI\__WindowBase.cs" />
     <Compile Include="Utils\Block.cs" />
     <Compile Include="Utils\BoundsExtensions.cs" />
   </ItemGroup>

@@ -2,7 +2,7 @@
 using UnityEngine;
 
 namespace LinkedMovement.UI {
-    public abstract class WindowBase : MonoBehaviour, IDoGUI {
+    public abstract class __WindowBase : MonoBehaviour, IDoGUI {
         protected abstract string title { get; }
 
         private void OnGUI() {
