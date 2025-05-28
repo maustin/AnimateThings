@@ -20,6 +20,7 @@ namespace LinkedMovement {
 
         public static LinkedMovementController GetController() {
             if (Controller == null) {
+                Log("Create Controller!");
                 GameObject go = new GameObject();
                 go.name = "LinkedMovementController";
                 Controller = go.AddComponent<LinkedMovementController>();
@@ -28,6 +29,8 @@ namespace LinkedMovement {
         }
 
         public static void ClearController() {
+            Log("ClearController");
+            GameObject.Destroy(Controller);
             Controller = null;
         }
 

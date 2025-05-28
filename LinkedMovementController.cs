@@ -1,5 +1,6 @@
 ﻿// ATTRIB: HideScenery (very partial)
 using LinkedMovement.UI;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -87,6 +88,8 @@ namespace LinkedMovement {
             tryToCreateBlueprintBuilder();
         }
 
+        public string pairName = "";
+
         public bool catchCreatedObjects { get; private set; }
         private List<GameObject> blueprintCreatedObjects = new List<GameObject>();
         public void addBlueprintCreatedObject(GameObject go) {
@@ -133,18 +136,25 @@ namespace LinkedMovement {
         }
 
         private void OnDisable() {
+            LinkedMovement.Log("LinkedMovementController OnDisable");
             disableSelectionHandler();
         }
 
         private void OnDestroy() {
+            LinkedMovement.Log("LinkedMovementController OnDestroy");
             LinkedMovement.ClearController();
             if (selectionHandler != null) {
                 GameObject.Destroy(selectionHandler);
                 selectionHandler = null;
             }
+            clearAllSelections();
             baseObject = null;
             targetObjects.Clear();
             pairings.Clear();
+            if (windowManager != null) {
+                windowManager.destroy();
+                windowManager = null;
+            }
         }
 
         private void Update() {
@@ -169,6 +179,10 @@ namespace LinkedMovement {
 
         public void addPairing(Pairing pairing) {
             pairings.Add(pairing);
+        }
+
+        public List<Pairing> getPairings() {
+            return pairings;
         }
 
         public void pickBaseObject() {
@@ -267,6 +281,7 @@ namespace LinkedMovement {
         }
 
         public void clearAllSelections() {
+            pairName = "";
             clearBaseObject();
             clearTargetObjects();
             tryToDestroyExistingBlueprintBuilder();
@@ -275,6 +290,8 @@ namespace LinkedMovement {
 
         public void joinObjects() {
             LinkedMovement.Log("JOIN!");
+
+            // TODO: Allow blueprint and individual objects
 
             if (selectedBlueprint != null) {
                 LinkedMovement.Log("Create blueprint");
@@ -288,10 +305,11 @@ namespace LinkedMovement {
                     
                     LinkedMovement.Log("Got # created objects: " + blueprintCreatedObjects.Count);
 
-                    var pairing = new Pairing(baseObject.gameObject, blueprintCreatedObjects);
+                    var pairing = new Pairing(baseObject.gameObject, blueprintCreatedObjects, null, pairName);
                     pairing.setCustomData(true, basePositionOffset, baseRotationOffset);
                     pairing.connect();
 
+                    // TODO: Eliminate duplicate code
                     clearAllSelections();
                     clearSelection();
                 });
@@ -305,13 +323,17 @@ namespace LinkedMovement {
                 targetGOs.Add(bo.gameObject);
             }
 
-            var pairing = new Pairing(baseObject.gameObject, targetGOs);
+            var pairing = new Pairing(baseObject.gameObject, targetGOs, null, pairName);
             // TODO: Preview single objects & use offsets
             pairing.setCustomData();
             pairing.connect();
 
             clearAllSelections();
             clearSelection();
+        }
+
+        public void showExistingLinks() {
+            windowManager.showExistingLinks();
         }
 
         private void enableSelectionHandler() {

@@ -8,12 +8,13 @@ namespace LinkedMovement
         public GameObject baseGO;
         public List<GameObject> targetGOs = new List<GameObject>();
         public string pairingId;
+        public string pairingName;
 
         public Pairing() {
             LinkedMovement.Log("Pairing DEFAULT CONTSTRUCTOR");
         }
 
-        public Pairing(GameObject baseGO, List<GameObject> targetGOs, string pId = null) {
+        public Pairing(GameObject baseGO, List<GameObject> targetGOs, string pId = null, string name = "") {
             LinkedMovement.Log("Pairing contstructor with options");
             this.baseGO = baseGO;
             this.targetGOs = new List<GameObject>(targetGOs);
@@ -25,6 +26,8 @@ namespace LinkedMovement
                 pairingId = Guid.NewGuid().ToString();
             }
             LinkedMovement.Log("Pairing ID: " + pairingId);
+
+            pairingName = name;
 
             LinkedMovement.GetController().addPairing(this);
         }
@@ -105,7 +108,7 @@ namespace LinkedMovement
         }
 
         public PairBase getPairBase(float posOffsetX, float posOffsetY, float posOffsetZ, float rotOffsetX, float rotOffsetY, float rotOffsetZ) {
-            return new PairBase(pairingId, posOffsetX, posOffsetY, posOffsetZ, rotOffsetX, rotOffsetY, rotOffsetZ);
+            return new PairBase(pairingId, pairingName, posOffsetX, posOffsetY, posOffsetZ, rotOffsetX, rotOffsetY, rotOffsetZ);
         }
 
         public PairTarget getPairTarget(float offsetX, float offsetY, float offsetZ) {

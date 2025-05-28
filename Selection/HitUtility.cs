@@ -70,7 +70,7 @@ namespace LinkedMovement.Selection {
         public static void GetObjectsBelowMouse(CalcVisibility calcVisibility, List<BuildableObjectBelowMouseInfo> results) {
             Debug.Assert(results.Count == 0);
 
-            LinkedMovement.Log("HitUtility.GetObjectsBelowMouse");
+            //LinkedMovement.Log("HitUtility.GetObjectsBelowMouse");
 
             // BuildableObjectBelowMouseInfo
             //public BuildableObject HitObject;
@@ -109,7 +109,7 @@ namespace LinkedMovement.Selection {
             Utility.ObjectBelowMouseInfo belowMouseInfo = Utility.getObjectBelowMouse<BuildableObject>();
 
             if (!belowMouseInfo.hitSomething) {
-                LinkedMovement.Log("GetObjectsBelowMouse miss");
+                //LinkedMovement.Log("GetObjectsBelowMouse miss");
                 return;
             }
 
@@ -121,7 +121,7 @@ namespace LinkedMovement.Selection {
 
             var bo = belowMouseInfo.hitObject as BuildableObject;
             if (bo == null) {
-                LinkedMovement.Log("GetObjectsBelowMouse not BuildableObject");
+                //LinkedMovement.Log("GetObjectsBelowMouse not BuildableObject");
                 return;
             }
 
@@ -131,7 +131,7 @@ namespace LinkedMovement.Selection {
             obj.HitVisibility = Visibility.Visible;
             obj.HitLayer = belowMouseInfo.hitLayerMask;
 
-            LinkedMovement.Log("GetObjectsBelowMouse Adding BO");
+            //LinkedMovement.Log("GetObjectsBelowMouse Adding BO");
             results.Add(obj);
 
             //try {

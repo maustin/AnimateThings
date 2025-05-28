@@ -63,7 +63,21 @@ namespace LinkedMovement.UI.InGame {
                 LinkedMovement.GetController().setBaseRotationOffset(baseRotationOffset);
             }
 
+            //LinkedMovement.Log("MainContent.DoGUI");
+            //LinkedMovement.Log(Environment.StackTrace);
+
+            //LinkedMovement.Log("Begin");
+            //LinkedMovement.Log(Event.current.type.ToString());
+
+            //if (Event.current.type == EventType.Repaint) {
+            //    LinkedMovement.Log("Skip Repaint");
+            //    return;
+            //}
+            //LinkedMovement.Log("Draw");
+
             using (Scope.Vertical()) {
+                //Space(10f);
+                ShowExistingButton();
                 Space(10f);
                 ShowBaseSelect();
                 //Space(30f);
@@ -71,12 +85,28 @@ namespace LinkedMovement.UI.InGame {
                 //GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(0.1f));
                 Space(15f);
                 ShowTargetsSelect();
-                Space(20f);
+                Space(15f);
+                ShowPairName();
+                Space(5f);
                 ShowJoin();
+            }
+
+            //LinkedMovement.Log("End MainContent");
+        }
+
+        private void ShowExistingButton() {
+            //LinkedMovement.Log("ShowExistingButton");
+            using (Scope.Vertical()) {
+                using (Scope.Horizontal()) {
+                    if (Button("Show Existing Links")) {
+                        controller.showExistingLinks();
+                    }
+                }
             }
         }
 
         private void ShowBaseSelect() {
+            //LinkedMovement.Log("ShowBaseSelect");
             using (Scope.Vertical()) {
                 using (Scope.Horizontal()) {
                     Label("Base");
@@ -120,6 +150,7 @@ namespace LinkedMovement.UI.InGame {
         }
 
         private void ShowTargetsSelect() {
+            //LinkedMovement.Log("ShowTargetsSelect");
             bool hasSelectedBlueprint = selectedBlueprintName != null;
             using (Scope.Vertical()) {
                 using (Scope.Horizontal()) {
@@ -160,7 +191,15 @@ namespace LinkedMovement.UI.InGame {
             }
         }
 
+        private void ShowPairName() {
+            //LinkedMovement.Log("ShowPairName");
+            using (Scope.Horizontal()) {
+                controller.pairName = RGUI.Field(controller.pairName, "Pair name:");
+            }
+        }
+
         private void ShowJoin() {
+            //LinkedMovement.Log("ShowJoin");
             using (Scope.Vertical()) {
                 var showJoin = controller.baseObject != null && (controller.targetObjects.Count > 0 || controller.selectedBlueprint != null);
                 var showClearAll = controller.baseObject != null || controller.targetObjects.Count > 0 || controller.selectedBlueprint != null;

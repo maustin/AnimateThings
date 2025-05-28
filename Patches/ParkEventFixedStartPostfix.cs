@@ -39,7 +39,7 @@ class ParkEventFixedStartPostfix {
                         pairTargetGOs.Add(pairTarget.gameObject);
                     }
                     LinkedMovement.LinkedMovement.Log($"Creating Pairing with {pairTargetGOs.Count} targets");
-                    var pairing = new Pairing(so.gameObject, pairTargetGOs, pairBase.pairId);
+                    var pairing = new Pairing(so.gameObject, pairTargetGOs, pairBase.pairId, pairBase.pairName);
                     pairing.connect();
                 } else {
                     LinkedMovement.LinkedMovement.Log("No pair matches found");
