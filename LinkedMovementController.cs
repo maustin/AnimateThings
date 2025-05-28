@@ -1,8 +1,5 @@
 ﻿// ATTRIB: HideScenery (very partial)
 using LinkedMovement.UI;
-using LinkedMovement.UI.InGame;
-using Parkitect;
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -64,6 +61,14 @@ namespace LinkedMovement {
         public List<BuildableObject> targetObjects { get; private set; }
 
         private List<Pairing> pairings = new List<Pairing>();
+
+        private List<BuildableObject> platformObjects = new List<BuildableObject>();
+        public void addPlatformObject(BuildableObject bo) {
+            platformObjects.Add(bo);
+        }
+        public void removePlatformObject(BuildableObject bo) {
+            platformObjects.Remove(bo);
+        }
 
         public BlueprintBuilder selectedBlueprintBuilder { get; private set; }
 
@@ -147,15 +152,18 @@ namespace LinkedMovement {
                 return;
             }
 
-            //if (InputManager.getKeyDown("LM_toggleGUI")) {
             if (InputManager.getKeyUp("LM_toggleGUI")) {
                 LinkedMovement.Log("Toggle GUI");
                 windowManager.showMainWindow();
             }
+
+            // TODO: This might be CPU taxing!
+            foreach (var bo in platformObjects) {
+                MouseCollisions.Instance.addColliders(bo);
+            }
         }
 
         private void OnGUI() {
-            //LinkedMovement.Log("Controller OnGUI -----");
             windowManager.OnGUI();
         }
 

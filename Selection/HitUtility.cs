@@ -70,31 +70,109 @@ namespace LinkedMovement.Selection {
         public static void GetObjectsBelowMouse(CalcVisibility calcVisibility, List<BuildableObjectBelowMouseInfo> results) {
             Debug.Assert(results.Count == 0);
 
-            try {
-                GetAllObjectsBelowMouse(calcVisibility, tmpResults);
-                // add hidden until first visible or block
-                foreach (var hit in tmpResults) {
-                    switch (hit.HitVisibility) {
-                        case Visibility.Hidden:
-                            results.Add(hit);
-                            break;
-                        case Visibility.Block:
-                            return;
-                        case Visibility.Visible:
-                            results.Add(hit);
-                            return;
-                    }
-                }
+            LinkedMovement.Log("HitUtility.GetObjectsBelowMouse");
+
+            // BuildableObjectBelowMouseInfo
+            //public BuildableObject HitObject;
+            //public float HitDistance;
+            //public Visibility HitVisibility;
+            //public int HitLayer;
+
+            // FROM
+            // ObjectBelowMouseInfo
+            //public bool hitSomething;
+            //public IMouseSelectable hitObject;
+            //public Vector3 hitPosition;
+            //public Vector3 hitNormal;
+            //public float hitDistance;
+            //public int hitLayerMask;
+
+            //var b = Utility.getObjectBelowMouse();
+            //if (b.hitSomething) {
+            //    LinkedMovement.Log("Hit something");
+            //    var t = b.hitObject.GetType();
+            //    LinkedMovement.Log("hitObject type: " + t.Name);
+            //    return;
+            //} else {
+            //    LinkedMovement.Log("Miss");
+            //    return;
+            //}
+
+            //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            //RaycastHit[] hits = Physics.RaycastAll(ray);
+            //foreach (RaycastHit hit in hits) {
+            //    GameObject go = hit.collider.gameObject;
+            //    LinkedMovement.Log(go.name);
+            //}
+            //return;
+
+            Utility.ObjectBelowMouseInfo belowMouseInfo = Utility.getObjectBelowMouse<BuildableObject>();
+
+            if (!belowMouseInfo.hitSomething) {
+                LinkedMovement.Log("GetObjectsBelowMouse miss");
+                return;
             }
-            finally {
-                tmpResults.Clear();
+
+            //var smb = belowMouseInfo.hitObject as SerializedMonoBehaviour;
+            //if (smb == null) {
+            //    LinkedMovement.Log("GetObjectsBelowMouse not SerializedMonoBehaviour");
+            //    return;
+            //}
+
+            var bo = belowMouseInfo.hitObject as BuildableObject;
+            if (bo == null) {
+                LinkedMovement.Log("GetObjectsBelowMouse not BuildableObject");
+                return;
             }
+
+            var obj = new BuildableObjectBelowMouseInfo();
+            obj.HitObject = bo;
+            obj.HitDistance = belowMouseInfo.hitDistance;
+            obj.HitVisibility = Visibility.Visible;
+            obj.HitLayer = belowMouseInfo.hitLayerMask;
+
+            LinkedMovement.Log("GetObjectsBelowMouse Adding BO");
+            results.Add(obj);
+
+            //try {
+            //    SerializedMonoBehaviour hitObject = Utility.getObjectBelowMouse<SerializedMonoBehaviour>().hitObject as SerializedMonoBehaviour;
+            //    if (hitObject != null) {
+            //        LinkedMovement.Log("HitUtility FOUND HITOBJECT!!!");
+            //    }
+            //}
+            //catch {
+            //    LinkedMovement.Log("HitUtility DERP!");
+            //}
+
+            //try {
+            //    GetAllObjectsBelowMouse(calcVisibility, tmpResults);
+            //    // add hidden until first visible or block
+            //    LinkedMovement.Log("HitUtility GetObjectsBelowMouse count: " + tmpResults.Count);
+            //    foreach (var hit in tmpResults) {
+            //        LinkedMovement.Log(hit.HitObject.name);
+            //        switch (hit.HitVisibility) {
+            //            case Visibility.Hidden:
+            //                results.Add(hit);
+            //                break;
+            //            case Visibility.Block:
+            //                return;
+            //            case Visibility.Visible:
+            //                results.Add(hit);
+            //                return;
+            //        }
+            //    }
+            //}
+            //finally {
+            //    tmpResults.Clear();
+            //}
         }
 
         public static void GetAllObjectsBelowMouse(CalcVisibility calcVisibility, List<BuildableObjectBelowMouseInfo> results) {
             Debug.Assert(results.Count == 0);
 
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            var hits = MouseCollisions.Instance.raycastAll(ray, float.MaxValue);
+            LinkedMovement.Log("GetAllObjectsBelowMouse hits count: " + hits.Length);
             foreach (var hit in MouseCollisions.Instance.raycastAll(ray, float.MaxValue)) {
                 var o = hit.hitObject.GetComponentInParent<BuildableObject>();
                 if (o != null) {

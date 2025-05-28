@@ -451,6 +451,8 @@ namespace LinkedMovement.Selection {
                             Name(o.HitObject); EOL();
                         }
 
+                        LinkedMovement.Log("ShowTooltip " + tooltip.ToString());
+
                         UITooltipController.Instance.showTooltip(tooltip.ToString(), true, updateTooltipTimeout * 1.1f);
                         tooltip.Clear();
                     }

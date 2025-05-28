@@ -67,9 +67,9 @@ namespace LinkedMovement.UI.InGame {
                 Space(10f);
                 ShowBaseSelect();
                 //Space(30f);
-                Space(10f);
-                GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(0.1f));
-                Space(10f);
+                Space(15f);
+                //GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(0.1f));
+                Space(15f);
                 ShowTargetsSelect();
                 Space(20f);
                 ShowJoin();

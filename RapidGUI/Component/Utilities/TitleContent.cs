@@ -38,7 +38,7 @@ namespace RapidGUI
 
         public T Add(Func<bool> checkEnableFunc, Func<bool> guiFunc)
         {
-            Debug.Log("TitleContent add funcData");
+            //Debug.Log("TitleContent add funcData");
             funcDatas.Add(new FuncData()
             {
                 checkEnableFunc = checkEnableFunc,
