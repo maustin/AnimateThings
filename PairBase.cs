@@ -1,12 +1,12 @@
 ﻿namespace LinkedMovement
 {
     public class PairBase : SerializedRawObject {
-        // TODO: Move to utils?
         public static void Destroy(BuildableObject bo, PairBase pairBase) {
+            LinkedMovement.Log("PairBase.Destroy");
             var pairing = LinkedMovement.GetController().findPairingByID(pairBase.pairId);
             if (pairing == null) {
-                // Shouldn't happen!
-                LinkedMovement.Log("ERROR! PairBase.Destroy failed to find Pairing!!");
+                // Pairing has already been removed
+                LinkedMovement.Log("PairBase.Destroy already destroyed pairing " + bo.name);
             } else {
                 pairing.removePairTargets();
             }

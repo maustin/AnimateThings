@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace LinkedMovement
 {
+    // TODO: Determine if this is needed
     internal sealed class Injector {
         private static Injector _injector = null;
         public static Injector Instance {

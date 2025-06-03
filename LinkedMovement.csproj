@@ -121,6 +121,7 @@
     <Compile Include="UI\WindowManager.cs" />
     <Compile Include="Utils\Block.cs" />
     <Compile Include="Utils\BoundsExtensions.cs" />
+    <Compile Include="Utils\TAUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

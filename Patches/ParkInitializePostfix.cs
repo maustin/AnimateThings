@@ -4,7 +4,6 @@ using System.Reflection;
 #nullable disable
 [HarmonyPatch]
 class ParkInitializePostfix {
-    [HarmonyTargetMethod]
     static MethodBase TargetMethod() {
         MethodBase methodBase = (MethodBase)AccessTools.Method(typeof(Park), "Initialize");
         if (methodBase != null) {

@@ -1,8 +1,6 @@
 ﻿using HarmonyLib;
 using LinkedMovement;
-using System;
 using System.Reflection;
-using UnityEngine;
 
 #nullable disable
 [HarmonyPatch]

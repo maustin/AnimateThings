@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using LinkedMovement;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -7,7 +6,6 @@ using System.Reflection;
 #nullable disable
 [HarmonyPatch]
 class BlueprintBuilderImplementationOnAfterBuildPostfix {
-    [HarmonyTargetMethod]
     static MethodBase TargetMethod() {
         Type[] p = new[] { typeof(List<BuildableObject>) };
         MethodBase methodBase = (MethodBase)AccessTools.Method(typeof(BlueprintBuilderImplementation), "onAfterBuild", p);

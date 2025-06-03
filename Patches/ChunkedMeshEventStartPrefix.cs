@@ -5,7 +5,6 @@ using System.Reflection;
 #nullable disable
 [HarmonyPatch]
 class ChunkedMeshEventStartPrefix {
-    [HarmonyTargetMethod]
     static MethodBase TargetMethod() {
         MethodBase methodBase = (MethodBase)AccessTools.Method(typeof(ChunkedMesh), "eventStart");
         if (methodBase != null) {

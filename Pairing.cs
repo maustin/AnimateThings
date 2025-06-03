@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinkedMovement.Utils;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +14,6 @@ namespace LinkedMovement
 
         private bool connected = false;
 
-        // TODO: Move to utils
         public void UpdateMouseColliders(BuildableObject bo) {
             if (bo.mouseColliders != null) {
                 foreach (MouseCollider mouseCollider in bo.mouseColliders)
@@ -21,10 +21,9 @@ namespace LinkedMovement
             }
         }
 
-        // TODO: Move to utils
         public void Destroy(Pairing pairing) {
             // This pairing has been cleared
-            LinkedMovement.Log("Destroy Pairing " + pairing.getPairingName());
+            LinkedMovement.Log("Pairing.Destroy Pairing: " + pairing.getPairingName());
             var didRemove = LinkedMovement.GetController().removePairing(pairing);
             if (!didRemove) {
                 LinkedMovement.Log("ERROR! Failed to find Pairing");
@@ -104,7 +103,7 @@ namespace LinkedMovement
 
                 targetGO.transform.position = baseGO.transform.position + new Vector3(pairTarget.offsetX, pairTarget.offsetY, pairTarget.offsetZ) + new Vector3(pairBase.posOffsetX, pairBase.posOffsetY, pairBase.posOffsetZ);
                 LinkedMovement.Log($"TP x: {targetGO.transform.position.x}, y: {targetGO.transform.position.y}, z: {targetGO.transform.position.z}");
-                LinkedMovementController.AttachTargetToBase(baseGO.transform, targetGO.transform);
+                TAUtils.AttachTargetToBase(baseGO.transform, targetGO.transform);
             }
 
             connected = true;

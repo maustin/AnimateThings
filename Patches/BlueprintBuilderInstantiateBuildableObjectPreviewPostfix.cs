@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using LinkedMovement;
 using System;
 using System.Reflection;
 using UnityEngine;
@@ -7,7 +6,6 @@ using UnityEngine;
 #nullable disable
 [HarmonyPatch]
 class BlueprintBuilderInstantiateBuildableObjectPreviewPostfix {
-    [HarmonyTargetMethod]
     static MethodBase TargetMethod() {
         MethodBase methodBase = (MethodBase)AccessTools.Method(typeof(BlueprintBuilder), "instantiateBuildableObjectPreview");
         if (methodBase != null) {

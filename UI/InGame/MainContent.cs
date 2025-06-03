@@ -1,6 +1,6 @@
 ﻿using LinkedMovement.UI.Utils;
+using LinkedMovement.Utils;
 using RapidGUI;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GUILayout;
@@ -43,14 +43,11 @@ namespace LinkedMovement.UI.InGame {
             controller = LinkedMovement.GetController();
 
             var prints = BlueprintManager.Instance.getAllBlueprints();
-            decoPrints = LinkedMovementController.FindDecoBlueprints(prints);
+            decoPrints = TAUtils.FindDecoBlueprints(prints);
             decoPrintNames = GetBlueprintNames(decoPrints);
         }
 
-        // TODO: Possibly should call controller methods after UI update has completed (e.g. call later)
-
         public void DoGUI() {
-            //LinkedMovement.Log("MainContent DoGUI");
             if (controller == null) {
                 LinkedMovement.Log("NO CONTROLLER SET!");
                 return;
@@ -78,7 +75,6 @@ namespace LinkedMovement.UI.InGame {
         }
 
         private void ShowExistingButton() {
-            //LinkedMovement.Log("ShowExistingButton");
             using (Scope.Vertical()) {
                 using (Scope.Horizontal()) {
                     if (Button("Show Existing Links")) {
@@ -89,7 +85,6 @@ namespace LinkedMovement.UI.InGame {
         }
 
         private void ShowBaseSelect() {
-            //LinkedMovement.Log("ShowBaseSelect");
             using (Scope.Vertical()) {
                 using (Scope.Horizontal()) {
                     Label("Base");
@@ -133,7 +128,6 @@ namespace LinkedMovement.UI.InGame {
         }
 
         private void ShowTargetsSelect() {
-            //LinkedMovement.Log("ShowTargetsSelect");
             bool hasSelectedBlueprint = selectedBlueprintName != null;
             using (Scope.Vertical()) {
                 using (Scope.Horizontal()) {
@@ -175,14 +169,12 @@ namespace LinkedMovement.UI.InGame {
         }
 
         private void ShowPairName() {
-            //LinkedMovement.Log("ShowPairName");
             using (Scope.Horizontal()) {
                 controller.pairName = RGUI.Field(controller.pairName, "Pair name:");
             }
         }
 
         private void ShowJoin() {
-            //LinkedMovement.Log("ShowJoin");
             using (Scope.Vertical()) {
                 var showJoin = controller.baseObject != null && (controller.targetObjects.Count > 0 || controller.selectedBlueprint != null);
                 var showClearAll = controller.baseObject != null || controller.targetObjects.Count > 0 || controller.selectedBlueprint != null;

@@ -5,6 +5,7 @@ using static UnityEngine.GUI;
 
 namespace LinkedMovement.UI.Utils {
     //todo: don't show when `Esc` Menu
+    // TODO: Think this can be eliminated
     internal sealed class CollapsibleWindow : TitleContent<CollapsibleWindow>, IDoGUIWindow {
         public CollapsibleWindow(string name) : base(name) { }
 

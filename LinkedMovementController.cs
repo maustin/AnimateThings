@@ -1,51 +1,12 @@
 ﻿// ATTRIB: HideScenery (very partial)
 using LinkedMovement.UI;
 using Parkitect.UI;
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
 namespace LinkedMovement {
     public class LinkedMovementController : MonoBehaviour {
-        // TODO: Move this to utils
-        static public void AttachTargetToBase(Transform baseObject, Transform targetObject) {
-            LinkedMovement.Log("Find attach parent between " + baseObject.name + " and " + targetObject.name);
-            var baseTransform = baseObject;
-            bool foundPlatform = false;
-
-            var baseChildrenCount = baseTransform.childCount;
-            for (var i = 0; i < baseChildrenCount; i++) {
-                var child = baseTransform.GetChild(i);
-                var childName = child.gameObject.name;
-                if (childName.Contains("[Platform]")) {
-                    foundPlatform = true;
-                    baseTransform = child;
-                    //LinkedMovement.Log("Using Platform");
-                    break;
-                }
-            }
-            // TODO: Not sure about this case
-            if (!foundPlatform && baseChildrenCount > 0) {
-                // Take child at 0
-                baseTransform = baseTransform.GetChild(0);
-                //LinkedMovement.Log("Using child 0");
-            }
-
-            targetObject.SetParent(baseTransform);
-        }
-
-        // TODO: Move this to to utils
-        static public List<BlueprintFile> FindDecoBlueprints(IList<BlueprintFile> blueprints) {
-            var list = new List<BlueprintFile>();
-            foreach (var blueprint in blueprints) {
-                if (blueprint.getCategoryTags().Contains("Deco")) {
-                    list.Add(blueprint);
-                }
-            }
-            return list;
-        }
-
         private WindowManager windowManager;
 
         private SelectionHandler selectionHandler;
@@ -54,9 +15,9 @@ namespace LinkedMovement {
             set => selectionHandler.enabled = value;
         }
 
-        // TODO: Make better
         private bool isSettingBase = false;
         private bool isSettingTarget = false;
+        // TODO: Can this be eliminated?
         private bool baseIsTriggerable = false;
 
         public BuildableObject baseObject { get; private set; }
@@ -298,8 +259,6 @@ namespace LinkedMovement {
 
         public void joinObjects() {
             LinkedMovement.Log("JOIN!");
-
-            // TODO: Allow blueprint and individual objects
 
             if (selectedBlueprint != null) {
                 LinkedMovement.Log("Create blueprint");

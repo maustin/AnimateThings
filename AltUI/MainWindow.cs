@@ -45,20 +45,6 @@ namespace LinkedMovement.AltUI {
             selectedSelectionMode = GUILayout.Toolbar(selectedSelectionMode, selectionModeNames);
             GUILayout.EndHorizontal();
 
-            //GUILayout.BeginHorizontal();
-            //GUILayout.Label("Blueprint:");
-            //if (GUILayout.Button("Choose")) {
-            //    var prints = BlueprintManager.Instance.getAllBlueprints();
-            //    LinkedMovement.Log("Blueprints! " + prints.Count);
-
-            //    var decoPrints = LinkedMovementController.FindDecoBlueprints(prints);
-            //    LinkedMovement.Log("# deco prints: " + decoPrints.Count);
-            //    foreach (var decoPrint in decoPrints) {
-            //        LinkedMovement.Log(decoPrint.getName());
-            //    }
-            //}
-            //GUILayout.EndHorizontal();
-
             targetsScrollPosition = GUILayout.BeginScrollView(targetsScrollPosition);
             foreach (var targetObject in targetObjects) {
                 GUILayout.BeginHorizontal();

@@ -7,7 +7,6 @@ using UnityEngine;
 #nullable disable
 [HarmonyPatch]
 class ParkEventFixedStartPostfix {
-    [HarmonyTargetMethod]
     static MethodBase TargetMethod() {
         MethodBase methodBase = (MethodBase)AccessTools.Method(typeof(Park), "eventFixedStart");
         if (methodBase != null) {

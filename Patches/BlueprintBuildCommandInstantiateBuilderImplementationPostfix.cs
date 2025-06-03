@@ -1,12 +1,10 @@
 ﻿using HarmonyLib;
-using LinkedMovement;
 using System;
 using System.Reflection;
 
 #nullable disable
 [HarmonyPatch]
 class BlueprintBuildCommandInstantiateBuilderImplementationPostfix {
-    [HarmonyTargetMethod]
     static MethodBase TargetMethod() {
         MethodBase methodBase = (MethodBase)AccessTools.Method(typeof(BlueprintBuildCommand), "instantiateBuilderImplementation");
         if (methodBase != null) {

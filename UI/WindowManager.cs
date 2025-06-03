@@ -71,20 +71,15 @@ namespace LinkedMovement.UI {
 
         public void DoGUI()
         {
-            //LinkedMovement.Log("WindowManager.OnGUI start");
             if (mainWindow != null) {
-                //LinkedMovement.Log("WindowManager.OnGUI mainWindow");
                 mainWindow.DoGUI();
             }
             if (infoWindow != null) {
-                //LinkedMovement.Log("WindowManager.OnGUI infoWindow");
                 infoWindow.DoGUI();
             }
             if (existingLinks != null) {
-                //LinkedMovement.Log("WindowManager.OnGUI existingLinks");
                 existingLinks.DoGUI();
             }
-            //LinkedMovement.Log("WindowManager.OnGUI end");
         }
     }
 }
