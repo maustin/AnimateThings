@@ -49,19 +49,19 @@ namespace LinkedMovement
             LinkedMovement.Log("Pairing connect, # targets: " + targetGOs.Count);
 
             if (baseGO == null) {
-                LinkedMovement.Log("MISSING BASE GO!");
+                LinkedMovement.Log("connect MISSING BASE GO!");
                 return;
             }
 
             var baseBO = baseGO.GetComponent<BuildableObject>();
             if (baseBO == null) {
-                LinkedMovement.Log("MISSING BASE BO!");
+                LinkedMovement.Log("connect MISSING BASE BO!");
                 return;
             }
 
             LinkedMovement.GetController().removeAnimatedBuildableObject(baseBO);
 
-            LinkedMovement.Log("iterate targetGOs");
+            LinkedMovement.Log("connect iterate targetGOs");
             foreach (GameObject targetGO in targetGOs) {
                 // If ChunkedMesh, it's a built-in object and we need to handle it
                 var targetChunkedMesh = targetGO.GetComponent<ChunkedMesh>();
@@ -73,26 +73,26 @@ namespace LinkedMovement
                     if (targetMeshRenderer != null) {
                         targetMeshRenderer.enabled = true;
                     } else {
-                        LinkedMovement.Log("MESHRENDERER NULL!");
+                        LinkedMovement.Log("connect MESHRENDERER NULL!");
                     }
                 }
 
                 PairBase pairBase;
                 baseBO.tryGetCustomData(out pairBase);
                 if (pairBase == null) {
-                    LinkedMovement.Log("MISSING PAIRBASE!");
+                    LinkedMovement.Log("connect MISSING PAIRBASE!");
                     return;
                 }
 
                 var targetBO = targetGO.GetComponent<BuildableObject>();
                 if (targetBO == null) {
-                    LinkedMovement.Log("MISSING TARGET BO!");
+                    LinkedMovement.Log("connect MISSING TARGET BO!");
                     return;
                 }
                 PairTarget pairTarget;
                 targetBO.tryGetCustomData(out pairTarget);
                 if (pairTarget == null) {
-                    LinkedMovement.Log("MISSING PAIRTARGET!");
+                    LinkedMovement.Log("connect MISSING PAIRTARGET!");
                     return;
                 }
 
@@ -179,6 +179,25 @@ namespace LinkedMovement
 
         public string getPairingName() {
             return pairingName != "" ? pairingName : pairingId;
+        }
+
+        public void updatePairingName(string newPairingName) {
+            pairingName = newPairingName;
+
+            var baseBO = baseGO.GetComponent<BuildableObject>();
+            if (baseBO == null) {
+                LinkedMovement.Log("updatePairingName MISSING BASE BO!");
+                return;
+            }
+
+            PairBase pairBase;
+            baseBO.tryGetCustomData(out pairBase);
+            if (pairBase == null) {
+                LinkedMovement.Log("updatePairingName MISSING PAIRBASE!");
+                return;
+            }
+
+            pairBase.pairName = newPairingName;
         }
     }
 }

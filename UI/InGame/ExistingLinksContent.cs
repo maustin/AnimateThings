@@ -1,5 +1,6 @@
 ﻿using LinkedMovement.UI.Utils;
 using RapidGUI;
+using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GUILayout;
 
@@ -8,8 +9,11 @@ namespace LinkedMovement.UI.InGame {
         private LinkedMovementController controller;
         private Vector2 scrollPosition;
 
+        private Dictionary<Pairing, string> selectedPairingsAndNames;
+
         public ExistingLinksContent() {
             controller = LinkedMovement.GetController();
+            selectedPairingsAndNames = new Dictionary<Pairing, string>();
         }
 
         public void DoGUI() {
@@ -25,7 +29,28 @@ namespace LinkedMovement.UI.InGame {
             using (Scope.Vertical()) {
                 var name = pairing.getPairingName();
                 using (Scope.Horizontal()) {
-                    GUILayout.Label(name);
+                    if (GUILayout.Button(name, RGUIStyle.flatButtonLeft)) {
+                        LinkedMovement.Log("Click Pairing");
+                        var hasPairingNameField = selectedPairingsAndNames.ContainsKey(pairing);
+                        if (hasPairingNameField == true) {
+                            selectedPairingsAndNames.Remove(pairing);
+                        } else {
+                            selectedPairingsAndNames.Add(pairing, name);
+                        }
+                    }
+                }
+                using (Scope.Horizontal()) {
+                    var hasPairingNameField = selectedPairingsAndNames.ContainsKey(pairing);
+                    if (hasPairingNameField == true) {
+                        var origPairName = selectedPairingsAndNames[pairing];
+                        var newPairName = RGUI.Field(origPairName, "Pair Name: ");
+                        if (newPairName != origPairName) {
+                            LinkedMovement.Log("Update pair name: " + newPairName);
+                            selectedPairingsAndNames[pairing] = newPairName;
+
+                            pairing.updatePairingName(newPairName);
+                        }
+                    }
                 }
                 using (Scope.Horizontal()) {
                     GUILayout.Space(10f);
