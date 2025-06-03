@@ -13,14 +13,7 @@ namespace LinkedMovement
         public string pairingName;
 
         private bool connected = false;
-
-        public void UpdateMouseColliders(BuildableObject bo) {
-            if (bo.mouseColliders != null) {
-                foreach (MouseCollider mouseCollider in bo.mouseColliders)
-                    mouseCollider.updatePosition();
-            }
-        }
-
+                
         public void Destroy(Pairing pairing) {
             // This pairing has been cleared
             LinkedMovement.Log("Pairing.Destroy Pairing: " + pairing.getPairingName());
@@ -112,14 +105,14 @@ namespace LinkedMovement
         public void update() {
             if (!connected) return;
 
-            UpdateMouseColliders(baseGO.GetComponent<BuildableObject>());
+            TAUtils.UpdateMouseColliders(baseGO.GetComponent<BuildableObject>());
 
             foreach (GameObject targetGO in targetGOs) {
                 var targetBO = targetGO.GetComponent<BuildableObject>();
                 if (targetBO == null) {
                     continue;
                 }
-                UpdateMouseColliders(targetBO);
+                TAUtils.UpdateMouseColliders(targetBO);
             }
         }
 

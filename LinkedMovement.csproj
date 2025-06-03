@@ -34,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Patches\BuilderUpdatePrefix.cs" />
     <Compile Include="Patches\SerializedMonoBehaviourOnDestroyPostfix.cs" />
     <Compile Include="UI\InGame\ExistingLinksContent.cs" />
     <Compile Include="UI\InGame\MainContent.cs" />
@@ -47,7 +48,6 @@
     <Compile Include="PairBase.cs" />
     <Compile Include="Pairing.cs" />
     <Compile Include="PairTarget.cs" />
-    <Compile Include="Patches\BlueprintBuildCommandInstantiateBuilderImplementationPostfix.cs" />
     <Compile Include="Patches\BlueprintBuilderImplementationOnAfterBuildPostfix.cs" />
     <Compile Include="Patches\BlueprintBuilderInstantiateBuildableObjectPreviewPostfix.cs" />
     <Compile Include="Patches\ChunkedMeshEventStartPrefix.cs" />

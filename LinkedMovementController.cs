@@ -1,5 +1,5 @@
-﻿// ATTRIB: HideScenery (very partial)
-using LinkedMovement.UI;
+﻿using LinkedMovement.UI;
+using LinkedMovement.Utils;
 using Parkitect.UI;
 using System.Collections.Generic;
 using System.Reflection;
@@ -34,12 +34,14 @@ namespace LinkedMovement {
         public Vector3 basePositionOffset { get; private set; }
         public void setBasePositionOffset(Vector3 value) {
             basePositionOffset = value;
-            tryToCreateBlueprintBuilder();
+            //tryToCreateBlueprintBuilder();
+            tryUpdateTargetsTransform();
         }
         public Vector3 baseRotationOffset { get; private set; }
         public void setBaseRotationOffset(Vector3 value) {
             baseRotationOffset = value;
-            tryToCreateBlueprintBuilder();
+            //tryToCreateBlueprintBuilder();
+            tryUpdateTargetsTransform();
         }
 
         public string pairName = "";
@@ -55,7 +57,8 @@ namespace LinkedMovement {
             LinkedMovement.Log("setSelectedBlueprint " + blueprint.getName());
             
             selectedBlueprint = blueprint;
-            tryToCreateBlueprintBuilder();
+            //tryToCreateBlueprintBuilder();
+            tryUpdateTargetsTransform();
         }
 
         private void tryToDestroyExistingBlueprintBuilder() {
@@ -68,16 +71,37 @@ namespace LinkedMovement {
 
         private void tryToCreateBlueprintBuilder() {
             tryToDestroyExistingBlueprintBuilder();
-            if (baseObject == null || selectedBlueprint == null) {
-                LinkedMovement.Log("Cannot create blueprint builder, missing component");
+            if (selectedBlueprint == null) {
+                //LinkedMovement.Log("Cannot create blueprint builder, missing component");
                 return;
             }
 
-            LinkedMovement.Log("Create new builder");
+            LinkedMovement.Log("Create new BlueprintBuilder");
             // Create new builder
             selectedBlueprintBuilder = UnityEngine.Object.Instantiate<BlueprintBuilder>(ScriptableSingleton<AssetManager>.Instance.blueprintBuilderGO);
             selectedBlueprintBuilder.skipDeco = false; // TODO: ????
             selectedBlueprintBuilder.filePath = selectedBlueprint.path;
+        }
+
+        private void tryUpdateTargetsTransform() {
+            if (baseObject == null) {
+                // Nothing to attach to!
+                LinkedMovement.Log("LMController tryUpdateTargetsTransform no base!");
+                return;
+            }
+
+            // Try to update blueprint if present
+            LinkedMovement.Log("LMController tryUpdateTargetsTransform");
+            tryToCreateBlueprintBuilder();
+
+            // Set transforms for single targets if present
+            foreach (var targetBO in targetObjects) {
+                LinkedMovement.Log("LMController tryUpdateTargetsTransform for target " + targetBO.name);
+                // TODO: Save original parent & pos?
+                //targetGO.transform.position = baseGO.transform.position + new Vector3(pairTarget.offsetX, pairTarget.offsetY, pairTarget.offsetZ) + new Vector3(pairBase.posOffsetX, pairBase.posOffsetY, pairBase.posOffsetZ);
+                targetBO.transform.position = baseObject.transform.position + new Vector3(basePositionOffset.x, basePositionOffset.y, basePositionOffset.z);
+                targetBO.transform.SetParent(baseObject.transform);
+            }
         }
 
         private void Awake() {
@@ -207,7 +231,7 @@ namespace LinkedMovement {
                 clearBaseObject();
                 baseObject = bo;
                 setupBaseObject();
-                tryToCreateBlueprintBuilder();
+                //tryToCreateBlueprintBuilder();
             }
             else if (isSettingTarget) {
                 targetObjects.Add(bo);
@@ -215,6 +239,8 @@ namespace LinkedMovement {
                 LinkedMovement.Log("setSelectedBuildableObject while NOT SELECTING");
                 return;
             }
+
+            tryUpdateTargetsTransform();
 
             LinkedMovement.Log("Selected BO position:");
             LinkedMovement.Log("World: " + bo.gameObject.transform.position.ToString());
@@ -290,7 +316,8 @@ namespace LinkedMovement {
 
             var pairing = new Pairing(baseObject.gameObject, targetGOs, null, pairName);
             // TODO: Preview single objects & use offsets
-            pairing.setCustomData();
+            pairing.setCustomData(true, basePositionOffset, baseRotationOffset);
+            //pairing.setCustomData();
             pairing.connect();
 
             clearAllSelections();

@@ -38,5 +38,12 @@ namespace LinkedMovement.Utils {
             }
             return list;
         }
+
+        static public void UpdateMouseColliders(BuildableObject bo) {
+            if (bo.mouseColliders != null) {
+                foreach (MouseCollider mouseCollider in bo.mouseColliders)
+                    mouseCollider.updatePosition();
+            }
+        }
     }
 }
