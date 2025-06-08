@@ -129,7 +129,7 @@ namespace RapidGUI
         {
             var style = new GUIStyle(GUI.skin.window);
 
-            style.normal.background = darkWindowTexNormal = CreateTexDark(style.normal.background, 0.5f, 1.9f);
+            style.normal.background = darkWindowTexNormal = CreateTexDark(style.normal.background, 0.6f, 2f);
             style.onNormal.background = darkWindowTexOnNormal = CreateTexDark(style.onNormal.background, 0.5f, 1.9f);
 
             style.name = nameof(darkWindow);
@@ -172,11 +172,6 @@ namespace RapidGUI
             for (var i = 0; i < pixels.Length; ++i)
             {
                 var col = pixels[i];
-                //LinkedMovement.LinkedMovement.Log($"TexDark r: {col.r}, g: {col.g}, b: {col.b}, a: {col.a}");
-                //col.r = 0.3f;
-                //col.g = 0.3f;
-                //col.b = 0.3f;
-                //col.a = 1.0f;
                 col.r *= colorRate;
                 col.g *= colorRate;
                 col.b *= colorRate;
