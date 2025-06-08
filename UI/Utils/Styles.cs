@@ -14,6 +14,7 @@ namespace LinkedMovement.UI.Utils {
 
             DarkWindowTitleBarStyle = style;
         }
+
         public static GUIStyle DarkWindowTitleBarMinimizedStyle;
         private static void InitializeDarkWindowTitleBarMinimizedStyle() {
             var style = new GUIStyle(DarkWindowTitleBarStyle);
@@ -25,9 +26,18 @@ namespace LinkedMovement.UI.Utils {
             DarkWindowTitleBarMinimizedStyle = style;
         }
 
+        public static GUIStyle HorizontalLine;
+        private static void InitializeHorizontalLine() {
+            HorizontalLine = new GUIStyle();
+            HorizontalLine.normal.background = Texture2D.whiteTexture;
+            HorizontalLine.margin = new RectOffset(4, 4, 4, 4);
+            HorizontalLine.fixedHeight = 1;
+        }
+
         static Styles() {
             InitializeDarkWindowTitleBarStyle();
             InitializeDarkWindowTitleBarMinimizedStyle();
+            InitializeHorizontalLine();
         }
 
         private static Texture2D CreateTexDarkTitleBar(Texture2D src) {

@@ -1,4 +1,5 @@
 ﻿using LinkedMovement.UI.Utils;
+using LinkedMovement.Utils;
 using RapidGUI;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,15 +55,17 @@ namespace LinkedMovement.UI.InGame {
                 }
                 using (Scope.Horizontal()) {
                     GUILayout.Space(10f);
-                    if (GUILayout.Button(pairing.baseGO.name, RGUIStyle.flatButtonLeft)) {
-                        LinkedMovement.Log("Focus base " + pairing.baseGO.name);
+                    var baseName = TAUtils.GetGameObjectBuildableName(pairing.baseGO);
+                    if (GUILayout.Button(baseName, RGUIStyle.flatButtonLeft)) {
+                        LinkedMovement.Log("Focus base " + baseName);
                         GameController.Instance.cameraController.focusOn(pairing.baseGO.transform.position);
                     }
                 }
                 foreach (var target in pairing.targetGOs) {
+                    var targetName = TAUtils.GetGameObjectBuildableName(target);
                     using (Scope.Horizontal()) {
                         GUILayout.Space(20f);
-                        GUILayout.Label(target.name);
+                        GUILayout.Label(targetName);
                     }
                 }
                 using (Scope.Vertical()) {

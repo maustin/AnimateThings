@@ -45,5 +45,12 @@ namespace LinkedMovement.Utils {
                     mouseCollider.updatePosition();
             }
         }
+
+        static public string GetGameObjectBuildableName(GameObject go) {
+            var buildableObject = go.GetComponent<BuildableObject>();
+            if (buildableObject != null)
+                return buildableObject.getName();
+            return go.name;
+        }
     }
 }
