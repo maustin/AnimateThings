@@ -46,9 +46,6 @@ namespace LinkedMovement.UI.InGame {
                             selectedPairingsBaseOffset.Add(pairing, pairBase.getPositionOffset());
                         }
                     }
-                    if (Button("Delete", Width(65))) {
-                        pairing.destroy();
-                    }
                 }
                 var hasPairingNameField = selectedPairingsAndNames.ContainsKey(pairing);
                 if (hasPairingNameField) {
@@ -72,6 +69,7 @@ namespace LinkedMovement.UI.InGame {
                             pairing.updatePairingBaseOffset(newBasePositionOffset);
                         }
                     }
+                    // Base
                     using (Scope.Horizontal()) {
                         Space(10f);
                         var baseName = TAUtils.GetGameObjectBuildableName(pairing.baseGO);
@@ -81,7 +79,11 @@ namespace LinkedMovement.UI.InGame {
                             var baseBO = TAUtils.GetBuildableObjectFromGameObject(pairing.baseGO);
                             TAUtils.HighlightBuildableObject(baseBO);
                         }
+                        if (Button("Delete", Width(65f))) {
+                            GameObject.Destroy(pairing.baseGO);
+                        }
                     }
+                    // Targets
                     foreach (var target in pairing.targetGOs) {
                         var targetName = TAUtils.GetGameObjectBuildableName(target);
                         using (Scope.Horizontal()) {
@@ -91,6 +93,9 @@ namespace LinkedMovement.UI.InGame {
                                 GameController.Instance.cameraController.focusOn(target.transform.position);
                                 var targetBO = TAUtils.GetBuildableObjectFromGameObject(target);
                                 TAUtils.HighlightBuildableObject(targetBO);
+                            }
+                            if (Button("Delete", Width(65f))) {
+                                GameObject.Destroy(target);
                             }
                         }
                     }
