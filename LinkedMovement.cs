@@ -1,10 +1,16 @@
 ﻿using HarmonyLib;
+using Parkitect.Mods.AssetPacks;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 namespace LinkedMovement {
     public class LinkedMovement : AbstractMod {
         public const string VERSION_NUMBER = "1.0";
-        public override string getIdentifier() => "artex.linkedMovement";
+        //public override string getIdentifier() => "artex.linkedMovement";
+        public override string getIdentifier() => "com.themeparkitect.LinkedMovementCode";
         public override string getName() => "Linked Movement";
         public override string getDescription() => "move things";
         public override string getVersionNumber() {
@@ -17,6 +23,9 @@ namespace LinkedMovement {
         public static LinkedMovement Instance;
         public static Harmony Harmony;
         private static LinkedMovementController Controller;
+        private static bool KeybindsRegistered;
+
+        private AssetBundle assetBundle;
 
         public static LinkedMovementController GetController() {
             if (Controller == null) {
@@ -53,6 +62,73 @@ namespace LinkedMovement {
 
             Log("Patching...");
             Harmony.PatchAll();
+            Log("Patching complete");
+
+            Log("Attempt to load assets");
+
+            var currentModDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            Log("Mod directory: " + currentModDirectory);
+            var assetProjectPath = System.IO.Path.Combine(currentModDirectory, "assets\\LinkedMovement.assetProject");
+            Log("assetProject: " + assetProjectPath);
+            // AssetPackMod
+
+            var assembly = Assembly.Load("Parkitect");
+            var type = assembly.GetType("Parkitect.Mods.AssetPacks.AssetPackMod");
+
+            if (type == null) {
+                Log("failed to get type");
+            } else {
+                Log("got type");
+                //Log(type.AssemblyQualifiedName);
+                //Log(type.Attributes.ToString());
+                //Log(type.ToString());
+                //Log(type.FullDescription());
+                //Log(type.BaseType.FullName);
+                
+                //var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
+                Type[] parameterTypes = new Type[] {typeof(string)};
+                //types[0] = typeof(string);
+                var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, parameterTypes, null);
+                if (ctor == null) {
+                    Log("failed to get constructor");
+                } else {
+                    Log("got constructor");
+                    var instance = ctor.Invoke(new object[] { assetProjectPath }) as AbstractMod;
+                    var folderPath = System.IO.Path.GetDirectoryName(assetProjectPath);
+                    var orderPriority = instance.getOrderPriority();
+                    Log($"folder path: {folderPath}, order: {orderPriority}");
+                    var modEntry = ModManager.Instance.addMod(instance, folderPath, AbstractGameContent.ContentSource.USER_CREATED, orderPriority);
+                    if (modEntry != null) {
+                        Log("Added mod");
+                    } else {
+                        Log("Failed to add mod");
+                    }
+                }
+            }
+
+            //var modEntry = new ModManager.ModEntry()
+
+            //AssetPackM
+
+            ////
+            //AssetPack assetPack = JsonUtility.FromJson<AssetPack>(File.ReadAllText(System.IO.Path.Combine(currentModDirectory, "LinkedMovement.assetProject")));
+            //// Remove?
+            //Log(System.IO.Path.Combine(currentModDirectory, "assetPack"));
+            //// Why this?
+            //System.IO.Path.Combine(currentModDirectory, "LinkedMovement");
+            ////
+            //assetBundle = AssetBundle.LoadFromFile(System.IO.Path.Combine(currentModDirectory, "assetPack"));
+            //if (assetBundle == null) {
+            //    throw new Exception("LinkedMovement: Failed to load AssetBundle!");
+            //}
+            //var allAssetsArr = assetBundle.GetAllAssetNames();
+            //var allAssetsStr = string.Join(", ", allAssetsArr);
+            //Log("Assets: " + allAssetsStr);
+            ////
+            //assetBundle.Unload(false);
+            ////
+
+            Log("Assets load complete");
             Log("Startup complete");
         }
 
@@ -76,15 +152,21 @@ namespace LinkedMovement {
         }
 
         private void registerHotkeys() {
+            if (KeybindsRegistered) {
+                Log("keybinds already registered");
+                return;
+            }
             Log("register hotkeys");
             _keybindManager = new KeybindManager(getIdentifier(), getName());
             _keybindManager.AddKeybind("LM_toggleGUI", "Toggle Linker UI", "Toggles whether the Linker UI is visible", KeyCode.Keypad3);
             _keybindManager.RegisterAll();
+            KeybindsRegistered = true;
         }
 
         private void unregisterHotkeys() {
             Log("unregister hotkeys");
             _keybindManager.UnregisterAll();
+            KeybindsRegistered = false;
         }
     }
 }
