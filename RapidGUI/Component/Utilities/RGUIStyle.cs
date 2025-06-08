@@ -159,6 +159,10 @@ namespace RapidGUI
             for (var i = 0; i < pixels.Length; ++i)
             {
                 var col = pixels[i];
+                //col.r = 0.3f;
+                //col.g = 0.3f;
+                //col.b = 0.3f;
+                //col.a = 1.0f;
                 col.r *= colorRate;
                 col.g *= colorRate;
                 col.b *= colorRate;

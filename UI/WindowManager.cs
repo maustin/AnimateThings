@@ -61,7 +61,7 @@ namespace LinkedMovement.UI {
                 var width = 400f;
                 existingLinks = new WindowLauncher("Animatect - Existing Links", width);
                 existingLinks.SetHeight(500f);
-                existingLinks.rect.position = new Vector2(Screen.width * 0.5f - width * 0.5f, Screen.height * 0.5f - 250f);
+                existingLinks.rect.position = new Vector2(Screen.width - 400.0f - width, 175.0f);
                 var existingPairsContent = new ExistingLinksContent();
                 existingLinks.Add(existingPairsContent.DoGUI);
                 existingLinks.Open();

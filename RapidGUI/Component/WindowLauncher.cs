@@ -39,13 +39,10 @@ namespace RapidGUI
 
         public void DoGUI()
         {
-            //Debug.Log("WindowLauncher isEnable: " + isEnable.ToString() + ", isOpen: " + isOpen.ToString());
-            //Debug.Log(Environment.StackTrace);
             if (isEnable)
             {
                 bool changed = false;
                 using (new GUILayout.HorizontalScope()) {
-                    //changed = isOpen != GUILayout.Toggle(isOpen, "❏ " + name, Style.toggle);
                     titleAction?.Invoke();
                 }
 
@@ -66,7 +63,6 @@ namespace RapidGUI
 
                 if (isOpen)
                 {
-                    //WindowInvoker.Add(this);
                     DoGUIWindow();
                 }
             }
@@ -77,8 +73,6 @@ namespace RapidGUI
 
         public void DoGUIWindow()
         {
-            //Debug.Log("WindowLauncher DoGUIWindow open: " + isOpen.ToString() + ", enable: " + isEnable.ToString());
-            //Debug.Log(Environment.StackTrace);
             if (isOpen && isEnable)
             {
                 var pos = rect.position;

@@ -76,15 +76,22 @@ namespace LinkedMovement.UI.InGame {
                         Space(10f);
                         var baseName = TAUtils.GetGameObjectBuildableName(pairing.baseGO);
                         if (Button(baseName, RGUIStyle.flatButtonLeft)) {
-                            LinkedMovement.Log("ExistingLinksContent Focus base " + baseName);
+                            LinkedMovement.Log("ExistingLinksContent focus base " + baseName);
                             GameController.Instance.cameraController.focusOn(pairing.baseGO.transform.position);
+                            var baseBO = TAUtils.GetBuildableObjectFromGameObject(pairing.baseGO);
+                            TAUtils.HighlightBuildableObject(baseBO);
                         }
                     }
                     foreach (var target in pairing.targetGOs) {
                         var targetName = TAUtils.GetGameObjectBuildableName(target);
                         using (Scope.Horizontal()) {
                             Space(20f);
-                            Label(targetName);
+                            if (Button(targetName, RGUIStyle.flatButtonLeft)) {
+                                LinkedMovement.Log("ExistingLinksContent focus target " + targetName);
+                                GameController.Instance.cameraController.focusOn(target.transform.position);
+                                var targetBO = TAUtils.GetBuildableObjectFromGameObject(target);
+                                TAUtils.HighlightBuildableObject(targetBO);
+                            }
                         }
                     }
                     using (Scope.Vertical()) {

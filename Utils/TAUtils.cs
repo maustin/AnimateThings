@@ -1,8 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace LinkedMovement.Utils {
     static class TAUtils {
+        static private HighlightOverlayController.HighlightHandle CurrentHighlightHandle;
+        static private BuildableObject CurrentHighlightedObject;
+        static private IEnumerator CurrentHightlightCoroutine;
+
         static public void AttachTargetToBase(Transform baseObject, Transform targetObject) {
             LinkedMovement.Log("Find attach parent between " + baseObject.name + " and " + targetObject.name);
             var baseTransform = baseObject;
@@ -68,6 +73,38 @@ namespace LinkedMovement.Utils {
             PairTarget pairTarget;
             smb.tryGetCustomData(out pairTarget);
             return pairTarget;
+        }
+
+        static public void HighlightBuildableObject(BuildableObject bo) {
+            if (CurrentHighlightedObject != null) {
+                CurrentHighlightedObject.OnKilled -= new SerializedMonoBehaviour.OnKilledHandler(OnHighlightedObjectKilled);
+                if (CurrentHightlightCoroutine != null) {
+                    CurrentHighlightedObject.StopCoroutine(CurrentHightlightCoroutine);
+                }
+            }
+            CurrentHighlightHandle?.remove();
+
+            CurrentHighlightHandle = HighlightOverlayController.Instance.add(bo.getRenderersToHighlight());
+            CurrentHighlightedObject = bo;
+            CurrentHighlightedObject.OnKilled += new SerializedMonoBehaviour.OnKilledHandler(OnHighlightedObjectKilled);
+
+            CurrentHightlightCoroutine = ClearHighlightOnBuildableObject(bo);
+            bo.StartCoroutine(CurrentHightlightCoroutine);
+        }
+
+        private static void OnHighlightedObjectKilled(SerializedMonoBehaviour smb) {
+            CurrentHighlightedObject.OnKilled -= new SerializedMonoBehaviour.OnKilledHandler(OnHighlightedObjectKilled);
+            CurrentHighlightedObject = null;
+            CurrentHighlightHandle?.remove();
+            CurrentHighlightHandle = null;
+        }
+
+        private static IEnumerator ClearHighlightOnBuildableObject(BuildableObject bo) {
+            yield return new WaitForSecondsRealtime(2f);
+            if (bo == CurrentHighlightedObject) {
+                OnHighlightedObjectKilled(bo);
+                CurrentHightlightCoroutine = null;
+            }
         }
     }
 }
