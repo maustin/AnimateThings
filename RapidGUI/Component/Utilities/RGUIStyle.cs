@@ -8,6 +8,7 @@ namespace RapidGUI
         public static GUIStyle flatButtonLeft;
         public static GUIStyle popupFlatButton;
         public static GUIStyle popup;
+        public static GUIStyle popupTitle;
         public static GUIStyle darkWindow;
         public static GUIStyle alignLeftBox;
 
@@ -34,6 +35,7 @@ namespace RapidGUI
             CreateFlatButtonLeft();
             CreatePopupFlatButton();
             CreatePopup();
+            CreatePopupTitle();
             CreateDarkWindow();
             CreateAlignLeftBox();
             CreateWarningLabel();
@@ -105,27 +107,37 @@ namespace RapidGUI
             popupTex.SetPixels(new[] { new Color(brightness, brightness, brightness, alpha) });
             popupTex.Apply();
 
-            style.normal.background =
-            style.hover.background = popupTex;
+            style.normal.background = style.hover.background = popupTex;
 
             style.name = nameof(popup);
             popup = style;
         }
 
+        static void CreatePopupTitle() {
+            var style = new GUIStyle(GUI.skin.label);
+            style.fontSize = 18;
+            style.alignment = TextAnchor.MiddleCenter;
+            style.fontStyle = FontStyle.Bold;
+            style.normal.textColor = Color.white;
+            style.normal.background = Texture2D.blackTexture;
 
-        public static void CreateDarkWindow()
+            popupTitle = style;
+        }
+
+
+        static void CreateDarkWindow()
         {
             var style = new GUIStyle(GUI.skin.window);
 
-            style.normal.background = darkWindowTexNormal = CreateTexDark(style.normal.background, 0.5f, 1.4f);
-            style.onNormal.background = darkWindowTexOnNormal = CreateTexDark(style.onNormal.background, 0.6f, 1.5f);
+            style.normal.background = darkWindowTexNormal = CreateTexDark(style.normal.background, 0.5f, 1.9f);
+            style.onNormal.background = darkWindowTexOnNormal = CreateTexDark(style.onNormal.background, 0.5f, 1.9f);
 
             style.name = nameof(darkWindow);
 
             darkWindow = style;
         }
 
-        public static void CreateAlignLeftBox()
+        static void CreateAlignLeftBox()
         {
             var style = new GUIStyle(GUI.skin.box)
             {
@@ -136,8 +148,9 @@ namespace RapidGUI
             alignLeftBox = style;
         }
 
-        public static Texture2D CreateTexDark(Texture2D src, float colorRate, float alphaRate)
+        static Texture2D CreateTexDark(Texture2D src, float colorRate, float alphaRate)
         {
+            LinkedMovement.LinkedMovement.Log($"RGUIStyle.CreateTexDark w: {src.width}, h: {src.height}");
             // copy texture trick.
             // Graphics.CopyTexture(src, dst) must same format src and dst.
             // but src format can't call GetPixels().
@@ -159,6 +172,7 @@ namespace RapidGUI
             for (var i = 0; i < pixels.Length; ++i)
             {
                 var col = pixels[i];
+                //LinkedMovement.LinkedMovement.Log($"TexDark r: {col.r}, g: {col.g}, b: {col.b}, a: {col.a}");
                 //col.r = 0.3f;
                 //col.g = 0.3f;
                 //col.b = 0.3f;
@@ -178,7 +192,7 @@ namespace RapidGUI
         }
 
 
-        private static void CreateWarningLabel()
+        static void CreateWarningLabel()
         {
             var style = new GUIStyle(GUI.skin.box)
             {
@@ -190,7 +204,7 @@ namespace RapidGUI
             warningLabel = style;
         }
 
-        private static void CreateWarningLabelNoStyle()
+        static void CreateWarningLabelNoStyle()
         {
             var style = new GUIStyle(GUI.skin.label)
             {

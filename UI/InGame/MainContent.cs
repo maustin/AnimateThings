@@ -62,6 +62,8 @@ namespace LinkedMovement.UI.InGame {
             }
 
             using (Scope.Vertical()) {
+                //Space(10f);
+                GUILayout.Label("Anitect - Link Objects", RGUIStyle.popupTitle);
                 Space(10f);
                 ShowExistingButton();
                 Space(10f);

@@ -31,6 +31,9 @@ namespace LinkedMovement.UI.InGame {
 
         private void buildPairingUI(Pairing pairing) {
             using (Scope.Vertical()) {
+                GUILayout.Label("Anitect - Existing Links", RGUIStyle.popupTitle);
+                Space(10f);
+
                 var name = pairing.getPairingName();
                 var pairBase = pairing.getExistingPairBase();
                 using (Scope.Horizontal()) {
