@@ -14,24 +14,13 @@ namespace LinkedMovement.UI.InGame {
 
         private BuildableObject baseBO;
 
-        //private Vector3 startingPosition;
-        //private Vector3 targetPosition = Vector3.zero;
-        ////private Vector3 startingRotation;
-        ////private Vector3 targetRotation = Vector3.zero;
-
-        //private bool isTriggerable = false;
-        //private float toDuration = 1f;
-        //private string toEase = "";
-        //private float fromDelay = 0f;
-        //private float fromDuration = 1f;
-        //private string fromEase = "";
-        //private float restartDelay = 0f;
-
         private LMAnimationParams animationParams;
 
         private Sequence sequence;
 
         // TODO: Need ability to load existing animation
+
+        // TODO: Shared animation editor UI
 
         public CreateAmimationContent(WindowLauncher launcher) {
             controller = LinkedMovement.GetController();
