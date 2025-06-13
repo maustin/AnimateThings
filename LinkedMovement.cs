@@ -94,22 +94,26 @@ namespace LinkedMovement {
                 } else {
                     Log("got constructor");
                     var instance = ctor.Invoke(new object[] { assetProjectPath }) as AbstractMod;
-                    var folderPath = System.IO.Path.GetDirectoryName(assetProjectPath);
-                    var orderPriority = instance.getOrderPriority();
-                    Log($"folder path: {folderPath}, order: {orderPriority}");
-                    var modEntry = ModManager.Instance.addMod(instance, folderPath, AbstractGameContent.ContentSource.USER_CREATED, orderPriority);
-                    if (modEntry != null) {
-                        Log("Added mod, enabling");
-                        Log("Is enabled: " + modEntry.isEnabled);
-                        Log("Is active: " + modEntry.isActive());
-                        var existingModEntry = ScriptableSingleton<AssetManager>.Instance.modContext;
-                        
-                        modEntry.setActive(true);
-
-                        ScriptableSingleton<AssetManager>.Instance.modContext = existingModEntry;
-                        ScriptableSingleton<InputManager>.Instance.modContext = existingModEntry;
+                    if (ModManager.Instance.hasMod(instance.getIdentifier(), instance.getVersionIdentifier())) {
+                        Log("already loaded assets");
                     } else {
-                        Log("Failed to add mod");
+                        var folderPath = System.IO.Path.GetDirectoryName(assetProjectPath);
+                        var orderPriority = instance.getOrderPriority();
+                        Log($"folder path: {folderPath}, order: {orderPriority}");
+                        var modEntry = ModManager.Instance.addMod(instance, folderPath, AbstractGameContent.ContentSource.USER_CREATED, orderPriority);
+                        if (modEntry != null) {
+                            Log("Added mod, enabling");
+                            Log("Is enabled: " + modEntry.isEnabled);
+                            Log("Is active: " + modEntry.isActive());
+                            var existingModEntry = ScriptableSingleton<AssetManager>.Instance.modContext;
+
+                            modEntry.setActive(true);
+
+                            ScriptableSingleton<AssetManager>.Instance.modContext = existingModEntry;
+                            ScriptableSingleton<InputManager>.Instance.modContext = existingModEntry;
+                        } else {
+                            Log("Failed to add mod");
+                        }
                     }
                 }
             }

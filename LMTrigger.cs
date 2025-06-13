@@ -55,7 +55,7 @@ namespace LinkedMovement {
         }
 
         public AbstractEditorPanel createEditorPanel(EffectEntry effectEntry, RectTransform parentRectTransform) {
-            AnimationTriggerEffectEditorPanel editorPanel = UnityEngine.Object.Instantiate<AnimationTriggerEffectEditorPanel>(ScriptableSingleton<UIAssetManager>.Instance.animationTriggerEffectEditorPanel, (Transform)parentRectTransform);
+            AnimationTriggerEffectEditorPanel editorPanel = Object.Instantiate<AnimationTriggerEffectEditorPanel>(ScriptableSingleton<UIAssetManager>.Instance.animationTriggerEffectEditorPanel, (Transform)parentRectTransform);
             editorPanel.setEffectEntry(effectEntry);
             return (AbstractEditorPanel)editorPanel;
         }
