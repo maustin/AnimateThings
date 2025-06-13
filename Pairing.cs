@@ -55,7 +55,11 @@ namespace LinkedMovement
             LinkedMovement.Log("Has Sequence Animation: " + (baseAnimParams != null));
             if (baseAnimParams != null) {
                 LinkedMovement.Log("Base target pos: " + baseAnimParams.targetPosition.ToString());
-                pairBase.sequence = TAUtils.BuildAnimationSequence(baseBO.transform, baseAnimParams);
+                if (baseAnimParams.isTriggerable) {
+                    baseBO.gameObject.AddComponent<LMTrigger>().animationParams = baseAnimParams;
+                } else {
+                    pairBase.sequence = TAUtils.BuildAnimationSequence(baseBO.transform, baseAnimParams);
+                }
             }
 
             LinkedMovement.Log("connect iterate targetGOs");

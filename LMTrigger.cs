@@ -1,54 +1,87 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//using UnityEngine;
+﻿using DG.Tweening;
+using LinkedMovement.Utils;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-//namespace LinkedMovement {
-//    public class LMTrigger : MonoBehaviour, IEffect {
-//        private SerializedMonoBehaviour effectBehaviour;
-//        private List<EffectBoxHandle> effectBoxHandles;
+namespace LinkedMovement {
+    public class LMTrigger : MonoBehaviour, IEffect {
+        private SerializedMonoBehaviour effectBehaviour;
+        private List<EffectBoxHandle> effectBoxHandles;
+        private Sequence sequence;
 
-//        private void Awake() {
-//            effectBehaviour = GetComponent<SerializedMonoBehaviour>();
-//        }
+        public LMAnimationParams animationParams;
 
-//        public SerializedMonoBehaviour getEffectBehaviour() => this.effectBehaviour;
+        public LMTrigger() {
+            LinkedMovement.Log("LMTrigger constructor");
+        }
 
-//        EffectRunner.ExecutionHandle execute(EffectEntry effectEntry); // TODO
+        private void Awake() {
+            LinkedMovement.Log("LMTrigger.Awake");
+            effectBehaviour = GetComponent<SerializedMonoBehaviour>();
+        }
 
-//        public EffectBoxHandle linkEffectBox(EffectBox effectBox) {
-//            if (effectBoxHandles == null)
-//                effectBoxHandles = new List<EffectBoxHandle>();
-//            EffectBoxHandle effectBoxHandle = new EffectBoxHandle(effectBox);
-//            effectBoxHandles.Add(effectBoxHandle);
-//            return effectBoxHandle;
-//        }
+        public SerializedMonoBehaviour getEffectBehaviour() => this.effectBehaviour;
 
-//        public void unlinkEffectBox(EffectBoxHandle effectBoxHandle) {
-//            if (effectBoxHandles == null)
-//                return;
-//            effectBoxHandles.Remove(effectBoxHandle);
-//            if (effectBoxHandles.Count != 0)
-//                return;
-//            effectBoxHandles = null;
-//        }
+        public EffectRunner.ExecutionHandle execute(EffectEntry effectEntry) {
+            LinkedMovement.Log("LMTrigger.execute");
+            if (sequence != null) {
+                LinkedMovement.Log("Kill existing sequence");
+                sequence.Kill();
+            }
 
-//        public AbstractEditorPanel createEditorPanel(EffectEntry effectEntry, RectTransform parentRectTransform) {
-//            AnimationTriggerEffectEditorPanel editorPanel = UnityEngine.Object.Instantiate<AnimationTriggerEffectEditorPanel>(ScriptableSingleton<UIAssetManager>.Instance.animationTriggerEffectEditorPanel, (Transform) parentRectTransform);
-//            editorPanel.setEffectEntry(effectEntry);
-//            return (AbstractEditorPanel) editorPanel;
-//        }
+            EffectRunner.ExecutionHandle andExecute = new EffectRunner.ExecutionHandle((MonoBehaviour)this, this.playEffect());
+            andExecute.onComplete += new EffectRunner.ExecutionHandle.OnComplete(this.onCompleteHandler);
+            return andExecute;
+        }
 
-//        public void initializeOnFirstAssignment(EffectEntry effectEntry) {
-//            //
-//        }
+        public EffectBoxHandle linkEffectBox(EffectBox effectBox) {
+            LinkedMovement.Log("LMTrigger.linkEffectBox");
+            if (effectBoxHandles == null)
+                effectBoxHandles = new List<EffectBoxHandle>();
+            EffectBoxHandle effectBoxHandle = new EffectBoxHandle(effectBox);
+            effectBoxHandles.Add(effectBoxHandle);
+            return effectBoxHandle;
+        }
 
-//        public string getName(EffectEntry effectEntry) => effectBehaviour.getName();
+        public void unlinkEffectBox(EffectBoxHandle effectBoxHandle) {
+            LinkedMovement.Log("LMTrigger.unlinkEffectBox");
+            if (effectBoxHandles == null)
+                return;
+            effectBoxHandles.Remove(effectBoxHandle);
+            if (effectBoxHandles.Count != 0)
+                return;
+            effectBoxHandles = null;
+        }
 
-//        public Sprite getSprite(EffectEntry effectEntry) {
-//            return ScriptableSingleton<UIAssetManager>.Instance.effectIconGeneric;
-//        }
-//    }
-//}
+        public AbstractEditorPanel createEditorPanel(EffectEntry effectEntry, RectTransform parentRectTransform) {
+            AnimationTriggerEffectEditorPanel editorPanel = UnityEngine.Object.Instantiate<AnimationTriggerEffectEditorPanel>(ScriptableSingleton<UIAssetManager>.Instance.animationTriggerEffectEditorPanel, (Transform)parentRectTransform);
+            editorPanel.setEffectEntry(effectEntry);
+            return (AbstractEditorPanel)editorPanel;
+        }
+
+        public void initializeOnFirstAssignment(EffectEntry effectEntry) {
+            //
+        }
+
+        public string getName(EffectEntry effectEntry) => effectBehaviour.getName();
+
+        public Sprite getSprite(EffectEntry effectEntry) {
+            return ScriptableSingleton<UIAssetManager>.Instance.effectIconGeneric;
+        }
+
+        private IEnumerator playEffect() {
+            LinkedMovement.Log("LMTrigger.playEffect");
+            sequence = TAUtils.BuildAnimationSequence(gameObject.transform, animationParams);
+            sequence.Play();
+            yield return null;
+        }
+
+        private void onCompleteHandler(EffectRunner.ExecutionHandle handle, bool successful) {
+            LinkedMovement.Log("LMTrigger.onCompleteHandler");
+            if (sequence != null) {
+                sequence = null;
+            }
+        }
+    }
+}

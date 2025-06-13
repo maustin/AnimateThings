@@ -56,10 +56,6 @@ namespace LinkedMovement
             this.positionOffset = positionOffset;
             this.rotationOffset = rotationOffset;
             this.animParams = animParams;
-            if (animParams != null) {
-                LinkedMovement.Log("Has animParams");
-                LinkedMovement.Log("Target Pos: " + animParams.targetPosition.ToString());
-            }
         }
 
         public Vector3 getPositionOffset() {
