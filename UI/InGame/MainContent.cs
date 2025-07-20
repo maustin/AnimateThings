@@ -85,7 +85,7 @@ namespace LinkedMovement.UI.InGame {
             using (Scope.Vertical()) {
                 using (Scope.Horizontal()) {
                     if (Button("Show Existing Links")) {
-                        controller.showExistingLinks();
+                        //controller.showExistingLinks();
                     }
                 }
             }

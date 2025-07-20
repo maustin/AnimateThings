@@ -8,8 +8,6 @@ using UnityEngine;
 
 namespace LinkedMovement {
     public class LinkedMovementController : MonoBehaviour {
-        private WindowManager windowManager;
-
         private SelectionHandler selectionHandler;
         private bool selectionHandlerEnabled {
             get => selectionHandler.enabled;
@@ -20,6 +18,8 @@ namespace LinkedMovement {
         private bool isSettingTarget = false;
         // TODO: Can this be eliminated?
         private bool baseIsTriggerable = false;
+
+        public WindowManager windowManager;
 
         public BuildableObject baseObject { get; private set; }
         // TODO: Getter setter useful here?
@@ -153,7 +153,9 @@ namespace LinkedMovement {
 
             if (InputManager.getKeyUp("LM_toggleGUI")) {
                 LinkedMovement.Log("Toggle GUI");
-                windowManager.showMainWindow();
+                // TODO:
+                //windowManager.showMainWindow();
+                windowManager.createWindow(WindowManager.WindowType.ModeDetermination, null);
             }
 
             // TODO: Should this be != ? Or just skip?
@@ -248,7 +250,8 @@ namespace LinkedMovement {
                 if (baseAnimator == null)
                 {
                     //windowManager.showInfoWindow("Selected base object has no animation.");
-                    windowManager.showCreateAnimationWindow();
+                    // TODO:
+                    //windowManager.showCreateAnimationWindow();
                     return;
                 }
 
@@ -361,9 +364,10 @@ namespace LinkedMovement {
             clearSelection();
         }
 
-        public void showExistingLinks() {
-            windowManager.showExistingLinksWindow();
-        }
+        //public void showExistingAnimatronics() {
+        //    // TODO:
+        //    //windowManager.showExistingLinksWindow();
+        //}
 
         public void tryToDeletePairing(Pairing pairing) {
             LinkedMovement.Log("tryToDeletePairing " + pairing.getPairingName());
