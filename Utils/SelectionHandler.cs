@@ -157,9 +157,12 @@ namespace LinkedMovement {
             //selectedObjectBuffer.Clear();
         }
         private void OnRemovedSelectedObject(BuildableObject o) {
+            LinkedMovement.Log("SelectionHandler.OnRemovedSelectedObject");
             if (o == null) {
                 return;
             }
+
+            LinkedMovement.Log($"OnAdd: {o.GetType().Name} -- {o.getName()}");
 
             // Mod.DebugLog($"OnRemove: {o.GetType().Name} -- {o.getName()}");
 

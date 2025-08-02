@@ -4,7 +4,7 @@ using UnityEngine;
 namespace LinkedMovement {
     public class LMAnimationParams : SerializedRawObject {
         [Serialized]
-        public Vector3 startingPosition;
+        public Vector3 startingPosition = Vector3.zero;
         [Serialized]
         public Vector3 targetPosition = Vector3.zero;
         //public Vector3 startingRotation;

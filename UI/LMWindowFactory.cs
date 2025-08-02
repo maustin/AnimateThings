@@ -35,7 +35,8 @@ namespace LinkedMovement.UI {
                     title = "Create Animatronic";
                     width = 400;
                     position = getWindowPositionRight(width);
-                    //content = 
+                    //content = new CreateAmimationContent();
+                    content = new CreateAnimatronicContent();
                     break;
                 case WindowManager.WindowType.ShowExistingAnimatronics:
                     title = "Existing Animatronics";

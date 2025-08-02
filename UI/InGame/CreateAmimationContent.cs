@@ -8,8 +8,8 @@ using UnityEngine;
 using static UnityEngine.GUILayout;
 
 namespace LinkedMovement.UI.InGame {
-    internal class CreateAmimationContent : IDoGUI {
-        private WindowLauncher launcher;
+    internal class CreateAmimationContent : LMWindowContent {
+        //private WindowLauncher launcher;
         private LinkedMovementController controller;
 
         private BuildableObject baseBO;
@@ -22,15 +22,15 @@ namespace LinkedMovement.UI.InGame {
 
         // TODO: Shared animation editor UI
 
-        public CreateAmimationContent(WindowLauncher launcher) {
+        public CreateAmimationContent() {
             controller = LinkedMovement.GetController();
             baseBO = controller.baseObject;
             //startingPosition = baseBO.transform.position;
-            animationParams = new LMAnimationParams(baseBO.transform.position);
-            this.launcher = launcher;
+            animationParams = new LMAnimationParams(); // (baseBO.transform.position);
+            //this.launcher = launcher;
         }
 
-        public void DoGUI() {
+        override public void DoGUI() {
             using (Scope.Vertical()) {
                 GUILayout.Label("Animatronitect - Create Animation", RGUIStyle.popupTitle);
                 Space(10f);
@@ -86,13 +86,15 @@ namespace LinkedMovement.UI.InGame {
                     if (Button("Save", Width(65f))) {
                         controller.animationParams = animationParams;
                         killSequence();
-                        launcher.CloseWindow();
+                        //launcher.CloseWindow();
+                        windowManager.removeWindow(this.window);
                     }
                     GUILayout.FlexibleSpace();
                     if (Button("Cancel", Width(65f))) {
                         controller.animationParams = null;
                         killSequence();
-                        launcher.CloseWindow();
+                        //launcher.CloseWindow();
+                        windowManager.removeWindow(this.window);
                     }
                 }
             }

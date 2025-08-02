@@ -40,6 +40,8 @@
     <Compile Include="Patches\SerializedMonoBehaviourInitializePostfix.cs" />
     <Compile Include="Patches\SerializedMonoBehaviourOnDestroyPostfix.cs" />
     <Compile Include="UI\Components\HorizontalLine.cs" />
+    <Compile Include="UI\Content\CreateAnimatronicContent.cs" />
+    <Compile Include="UI\Content\CreateAnimatronicSelectSubContent.cs" />
     <Compile Include="UI\Content\CreateNewContent.cs" />
     <Compile Include="UI\Content\ModeDeterminationContent.cs" />
     <Compile Include="UI\InGame\CreateAmimationContent.cs" />
