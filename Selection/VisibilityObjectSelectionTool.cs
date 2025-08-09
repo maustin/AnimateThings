@@ -119,35 +119,27 @@ namespace LinkedMovement.Selection {
 
         public event OnAddedSelectedObjectHandler OnAddedSelectedObject;
         public event OnRemovedSelectedObjectHandler OnRemovedSelectedObject;
-        private readonly HashSet<BuildableObject> selectedObjects = new HashSet<BuildableObject>();
-        public IEnumerable<BuildableObject> GetSelectedObjects() {
-            return selectedObjects;
-        }
-        public int NumberOfSelectedObjects => selectedObjects.Count;
+        
         public bool DeselectOnRemove = false;
         public void Add(BuildableObject o) {
-            //LinkedMovement.Log("CustomSelectionTool Add");
-            if (selectedObjects.Add(o)) {
-                OnAdd(o);
-            }
+            LinkedMovement.Log("CustomSelectionTool Add");
+            OnAdd(o);
         }
         private void OnAdd(BuildableObject o) {
-            //LinkedMovement.Log("CustomSelectionTool OnAdd");
+            LinkedMovement.Log("CustomSelectionTool OnAdd");
             OnAddedSelectedObject?.Invoke(o);
         }
         public void Remove(BuildableObject o) {
-            if (selectedObjects.Remove(o)) {
-                OnRemove(o);
-            }
+            LinkedMovement.Log("CustomSelectionTool Remove");
+            OnRemove(o);
         }
         private void OnRemove(BuildableObject o) {
+            LinkedMovement.Log("CustomSelectionTool OnRemove");
             OnRemovedSelectedObject?.Invoke(o);
         }
         public void DeselectAll() {
-            foreach (var o in selectedObjects) {
-                OnRemove(o);
-            }
-            selectedObjects.Clear();
+            LinkedMovement.Log("CustomSelectionTool DeselectAll");
+            // TODO: ?
         }
 
         private readonly IndividualSelectionTool individualSelectionTool = new IndividualSelectionTool();
@@ -266,17 +258,6 @@ namespace LinkedMovement.Selection {
                 return false;
             }
         }
-        private bool TryGetSelectedHiddenObject(out BuildableObjectBelowMouseInfo o) {
-            if (selectedHiddenObjectIndex < 0) {
-                o = default;
-                return false;
-            }
-            else {
-                Debug.Assert(selectedHiddenObjectIndex >= 0 && selectedHiddenObjectIndex < currentObjects.Count);
-                o = currentObjects[selectedHiddenObjectIndex];
-                return true;
-            }
-        }
 
         public void Tick() {
             // true when objects below mouse are different from previous tick
@@ -313,14 +294,18 @@ namespace LinkedMovement.Selection {
             if (UIUtility.isMouseUsable()) {
                 // add objects
                 if (Input.GetMouseButtonDown(0)) {
+                    LinkedMovement.Log("Vis Tick mouse 0 down");
                     if (TryGetVisibleObject(out var o)) {
+                        LinkedMovement.Log("Do Add");
                         OnSelectedObject(SelectionOperation.Add, o.HitObject);
                         mouseDown = true;
                     }
                 }
                 // remove
                 else if (Input.GetMouseButtonDown(1)) {
-                    if (TryGetSelectedHiddenObject(out var o)) {
+                    LinkedMovement.Log("Vis Tick mouse 1 down");
+                    if (TryGetVisibleObject(out var o)) {
+                        LinkedMovement.Log("Do Remove");
                         OnSelectedObject(SelectionOperation.Remove, o.HitObject);
                         mouseDown = true;
                     }
@@ -343,13 +328,10 @@ namespace LinkedMovement.Selection {
                     OnRemove(o);
                     break;
             }
-            // Don't like the deep linking but.. eh
-            LinkedMovement.GetController().endSelection();
-            //LinkedMovement.Controller.endSelection();
         }
         private bool HandleChangeSelectedHiddenObject() {
             if (NumberOfHiddenObjects > 1) {
-                // TODO: this
+                // TODO: this (actually don't think this is needed)
                 LinkedMovement.Log("HandleChangeSelectedHiddenObject: TODO");
                 //if (InputManager.getKeyDown(KeyHandler.MoveHiddenCloserKeyIdentifier)) {
                 //    var newIdx = selectedHiddenObjectIndex - 1;
@@ -703,9 +685,6 @@ namespace LinkedMovement.Selection {
                 }
             }
             endPositionOffset = Vector3.zero;
-            // Don't like the deep linking but.. eh
-            LinkedMovement.GetController().endSelection();
-            //LinkedMovement.Controller.endSelection();
         }
 
         private void RectangleSelectionStart(Vector3 startPosition) {

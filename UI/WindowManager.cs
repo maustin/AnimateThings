@@ -27,6 +27,8 @@ namespace LinkedMovement.UI {
             LinkedMovement.Log("Destroy WindowManager");
         }
 
+        public bool uiPresent() {  return activeWindows.Count > 0; }
+
         public void createWindow(WindowType type, object data) {
             LMWindow window = LMWindowFactory.BuildWindow(type, data, this);
             if (window != null) {

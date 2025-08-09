@@ -4,9 +4,6 @@ using LinkedMovement.UI.InGame;
 using RapidGUI;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace LinkedMovement.UI {
@@ -35,7 +32,6 @@ namespace LinkedMovement.UI {
                     title = "Create Animatronic";
                     width = 400;
                     position = getWindowPositionRight(width);
-                    //content = new CreateAmimationContent();
                     content = new CreateAnimatronicContent();
                     break;
                 case WindowManager.WindowType.ShowExistingAnimatronics:

@@ -97,7 +97,7 @@ namespace LinkedMovement.UI.Content {
                     using (Scope.Horizontal()) {
                         Label(targetObject.getName());
                         if (Button("Clear", Width(65)))
-                            controller.clearTargetObject(targetObject);
+                            controller.removeTargetBuildableObject(targetObject);
                     }
                 }
                 EndScrollView();

@@ -14,18 +14,12 @@ namespace LinkedMovement {
             set => selectionHandler.enabled = value;
         }
 
-        private bool isSettingBase = false;
-        private bool isSettingTarget = false;
-        // TODO: Can this be eliminated?
-        private bool baseIsTriggerable = false;
-
         public WindowManager windowManager;
 
-        public BuildableObject baseObject { get; private set; }
         // TODO: Getter setter useful here?
         public LMAnimationParams animationParams;
         public List<BuildableObject> targetObjects { get; private set; }
-        public Dictionary<BuildableObject, Vector3> targetOriginTransformPositions { get; private set; }
+        //public Dictionary<BuildableObject, Vector3> targetOriginTransformPositions { get; private set; }
 
         public List<BuildableObject> animatedBuildableObjects { get; private set; }
         public void addAnimatedBuildableObject(BuildableObject bo) {
@@ -35,87 +29,49 @@ namespace LinkedMovement {
             animatedBuildableObjects.Remove(bo);
         }
 
+        private List<BuildableObject> queuedRemovalTargets = new List<BuildableObject>();
+        private Dictionary<BuildableObject, HighlightOverlayController.HighlightHandle> highlightHandles = new Dictionary<BuildableObject, HighlightOverlayController.HighlightHandle>();
+
         private List<Pairing> pairings = new List<Pairing>();
 
-        public BlueprintBuilder selectedBlueprintBuilder { get; private set; }
-
-        public BlueprintFile selectedBlueprint {
-            get; private set;
-        }
-
-        public Vector3 basePositionOffset { get; private set; }
-        public void setBasePositionOffset(Vector3 value) {
-            basePositionOffset = value;
-            tryUpdateTargetsTransform();
-        }
-        public Vector3 baseRotationOffset { get; private set; }
-        public void setBaseRotationOffset(Vector3 value) {
-            baseRotationOffset = value;
-            tryUpdateTargetsTransform();
-        }
+        //public Vector3 basePositionOffset { get; private set; }
+        //public void setBasePositionOffset(Vector3 value) {
+        //    basePositionOffset = value;
+        //    tryUpdateTargetsTransform();
+        //}
+        //public Vector3 baseRotationOffset { get; private set; }
+        //public void setBaseRotationOffset(Vector3 value) {
+        //    baseRotationOffset = value;
+        //    tryUpdateTargetsTransform();
+        //}
 
         public string pairName = "";
 
-        public bool catchCreatedObjects { get; private set; }
-        private List<GameObject> blueprintCreatedObjects = new List<GameObject>();
-        public void addBlueprintCreatedObject(GameObject go) {
-            LinkedMovement.Log("Adding blueprintCreatedObject");
-            blueprintCreatedObjects.Add(go);
-        }
-
-        public void setSelectedBlueprint(BlueprintFile blueprint) {
-            LinkedMovement.Log("setSelectedBlueprint " + blueprint.getName());
-            
-            selectedBlueprint = blueprint;
-            tryUpdateTargetsTransform();
-        }
-
-        private void tryToDestroyExistingBlueprintBuilder() {
-            LinkedMovement.Log("try destroy existing blueprint builder");
-            if (selectedBlueprintBuilder != null) {
-                GameObject.Destroy(selectedBlueprintBuilder.gameObject);
-                selectedBlueprintBuilder = null;
-            }
-        }
-
-        private void tryToCreateBlueprintBuilder() {
-            tryToDestroyExistingBlueprintBuilder();
-            if (selectedBlueprint == null) {
-                //LinkedMovement.Log("Cannot create blueprint builder, missing component");
-                return;
-            }
-
-            LinkedMovement.Log("Create new BlueprintBuilder");
-            // Create new builder
-            selectedBlueprintBuilder = UnityEngine.Object.Instantiate<BlueprintBuilder>(ScriptableSingleton<AssetManager>.Instance.blueprintBuilderGO);
-            selectedBlueprintBuilder.skipDeco = false; // TODO: ????
-            selectedBlueprintBuilder.filePath = selectedBlueprint.path;
-        }
-
         private void tryUpdateTargetsTransform() {
-            if (baseObject == null) {
-                // Nothing to attach to!
-                LinkedMovement.Log("LMController tryUpdateTargetsTransform no base!");
-                return;
-            }
+            // TODO
+            //if (baseObject == null) {
+            //    // Nothing to attach to!
+            //    LinkedMovement.Log("LMController tryUpdateTargetsTransform no base!");
+            //    return;
+            //}
 
-            // Try to update blueprint if present
-            LinkedMovement.Log("LMController tryUpdateTargetsTransform");
-            tryToCreateBlueprintBuilder();
+            //// Try to update blueprint if present
+            ////LinkedMovement.Log("LMController tryUpdateTargetsTransform");
+            ////tryToCreateBlueprintBuilder();
 
-            // Set transforms for single targets if present
-            foreach (var targetBO in targetObjects) {
-                LinkedMovement.Log("LMController tryUpdateTargetsTransform for target " + targetBO.name);
+            //// Set transforms for single targets if present
+            //foreach (var targetBO in targetObjects) {
+            //    LinkedMovement.Log("LMController tryUpdateTargetsTransform for target " + targetBO.name);
 
-                targetBO.transform.position = baseObject.transform.position + new Vector3(basePositionOffset.x, basePositionOffset.y, basePositionOffset.z);
-                targetBO.transform.SetParent(baseObject.transform);
-            }
+            //    targetBO.transform.position = baseObject.transform.position + new Vector3(basePositionOffset.x, basePositionOffset.y, basePositionOffset.z);
+            //    targetBO.transform.SetParent(baseObject.transform);
+            //}
         }
 
         private void Awake() {
             LinkedMovement.Log("LinkedMovementController Awake");
             targetObjects = new List<BuildableObject>();
-            targetOriginTransformPositions = new Dictionary<BuildableObject, Vector3>();
+            //targetOriginTransformPositions = new Dictionary<BuildableObject, Vector3>();
             animatedBuildableObjects = new List<BuildableObject>();
             windowManager = new WindowManager();
             selectionHandler = gameObject.AddComponent<SelectionHandler>();
@@ -137,7 +93,7 @@ namespace LinkedMovement {
                 selectionHandler = null;
             }
             clearAllSelections();
-            baseObject = null;
+            //baseObject = null;
             targetObjects.Clear();
             pairings.Clear();
             if (windowManager != null) {
@@ -147,19 +103,25 @@ namespace LinkedMovement {
         }
 
         private void Update() {
+            //LinkedMovement.Log("Controller update");
             if (UIUtility.isInputFieldFocused() || GameController.Instance.isGameInputLocked() || GameController.Instance.isQuittingGame) {
                 return;
             }
 
-            if (InputManager.getKeyUp("LM_toggleGUI")) {
+            if (InputManager.getKeyUp("LM_toggleGUI") && !windowManager.uiPresent()) {
                 LinkedMovement.Log("Toggle GUI");
-                // TODO:
-                //windowManager.showMainWindow();
                 windowManager.createWindow(WindowManager.WindowType.ModeDetermination, null);
             }
 
-            // TODO: Should this be != ? Or just skip?
+            if (queuedRemovalTargets.Count > 0) {
+                foreach (var target in queuedRemovalTargets) {
+                    removeTargetBuildableObject(target);
+                }
+                queuedRemovalTargets.Clear();
+            }
+
             var mouseTool = GameController.Instance.getActiveMouseTool();
+            // TODO: Log? What is dis?
             if (mouseTool == null) return;
 
             foreach (var bo in animatedBuildableObjects) {
@@ -200,24 +162,24 @@ namespace LinkedMovement {
             return pairings.Contains(pairing);
         }
 
-        public void pickBaseObject() {
-            LinkedMovement.Log("pickBaseObject");
+        //public void pickBaseObject() {
+        //    LinkedMovement.Log("pickBaseObject");
 
-            var newMode = Selection.Mode.Individual;
-            var options = selectionHandler.Options;
-            if (options.Mode == newMode) {
-                LinkedMovement.Log("Set base select none");
-                isSettingBase = false;
-                options.Mode = Selection.Mode.None;
-                disableSelectionHandler();
-            } else {
-                LinkedMovement.Log("Set base select individual");
-                isSettingBase = true;
-                isSettingTarget = false;
-                options.Mode = newMode;
-                enableSelectionHandler();
-            }
-        }
+        //    var newMode = Selection.Mode.Individual;
+        //    var options = selectionHandler.Options;
+        //    if (options.Mode == newMode) {
+        //        LinkedMovement.Log("Set base select none");
+        //        isSettingBase = false;
+        //        options.Mode = Selection.Mode.None;
+        //        disableSelectionHandler();
+        //    } else {
+        //        LinkedMovement.Log("Set base select individual");
+        //        isSettingBase = true;
+        //        isSettingTarget = false;
+        //        options.Mode = newMode;
+        //        enableSelectionHandler();
+        //    }
+        //}
 
         public void pickTargetObject(Selection.Mode newMode) {
             LinkedMovement.Log("pickTargetObject");
@@ -225,49 +187,40 @@ namespace LinkedMovement {
             var options = selectionHandler.Options;
             if (options.Mode == newMode) {
                 LinkedMovement.Log("Set target select none");
-                isSettingTarget = false;
                 options.Mode = Selection.Mode.None;
                 disableSelectionHandler();
             }
             else {
                 LinkedMovement.Log("Set target select mode " + newMode.ToString());
-                isSettingBase = false;
-                isSettingTarget = true;
                 options.Mode = newMode;
                 enableSelectionHandler();
             }
         }
 
-        public void setSelectedBuildableObject(BuildableObject bo) {
-            if (bo == null)
+        public void addTargetBuildableObject(BuildableObject bo) {
+            LinkedMovement.Log("addTargetBuildableObject");
+            if (bo == null) {
+                LinkedMovement.Log("null BuildableObject");
                 return;
-            
-            if (isSettingBase) {
-                // TODO: Add popup asking if non-animating base should add animation
-                clearBaseObject();
-                baseObject = bo;
-                var baseAnimator = bo.GetComponent<Animator>();
-                if (baseAnimator == null)
-                {
-                    //windowManager.showInfoWindow("Selected base object has no animation.");
-                    // TODO:
-                    //windowManager.showCreateAnimationWindow();
-                    return;
-                }
+            }
+            if (targetObjects.Contains(bo)) {
+                LinkedMovement.Log("BuildableObject already added");
+                return;
+            }
 
-                //clearBaseObject();
-                //baseObject = bo;
-                setupBaseObject();
+            targetObjects.Add(bo);
+
+            // Ensure target bo isn't already highlighted
+            if (highlightHandles.ContainsKey(bo)) {
+                highlightHandles[bo].remove();
+                highlightHandles.Remove(bo);
             }
-            else if (isSettingTarget) {
-                targetObjects.Add(bo);
-                var p = bo.transform.position;
-                var tarPosition = new Vector3(p.x, p.y, p.z);
-                targetOriginTransformPositions.Add(bo, tarPosition);
-            } else {
-                LinkedMovement.Log("setSelectedBuildableObject while NOT SELECTING");
-                return;
-            }
+
+            // Build highlight
+            List<Renderer> renderers = new List<Renderer>();
+            bo.retrieveRenderersToHighlight(renderers);
+            var highlightHandle = HighlightOverlayController.Instance.add(renderers, -1, Color.yellow);
+            highlightHandles.Add(bo, highlightHandle);
 
             tryUpdateTargetsTransform();
 
@@ -276,39 +229,74 @@ namespace LinkedMovement {
             LinkedMovement.Log("Local: " + bo.gameObject.transform.localPosition.ToString());
         }
 
-        public bool getBaseIsTriggerable() {
-            return baseIsTriggerable;
+        public void queueRemoveTargetBuildableObject(BuildableObject bo) {
+            LinkedMovement.Log("queueRemoveTargetBuildableObject");
+            queuedRemovalTargets.Add(bo);
         }
+
+        public void removeTargetBuildableObject(BuildableObject bo) {
+            LinkedMovement.Log("removeTargetBuildableObject");
+            if (bo == null) {
+                LinkedMovement.Log("null BuildableObject");
+                return;
+            }
+
+            if (highlightHandles.ContainsKey(bo)) {
+                highlightHandles[bo].remove();
+                highlightHandles.Remove(bo);
+            } else {
+                LinkedMovement.Log("No highlight handle found");
+            }
+
+            targetObjects.Remove(bo);
+
+            tryUpdateTargetsTransform();
+        }
+
+        //public void setSelectedBuildableObject(BuildableObject bo) {
+        //    if (bo == null)
+        //        return;
+            
+        //    if (isSettingBase) {
+        //        // TODO: Add popup asking if non-animating base should add animation
+        //        clearBaseObject();
+        //        baseObject = bo;
+        //        var baseAnimator = bo.GetComponent<Animator>();
+        //        if (baseAnimator == null)
+        //        {
+        //            //windowManager.showInfoWindow("Selected base object has no animation.");
+        //            // TODO:
+        //            //windowManager.showCreateAnimationWindow();
+        //            return;
+        //        }
+
+        //        //clearBaseObject();
+        //        //baseObject = bo;
+        //        setupBaseObject();
+        //    }
+        //    else if (isSettingTarget) {
+        //        targetObjects.Add(bo);
+        //        var p = bo.transform.position;
+        //        var tarPosition = new Vector3(p.x, p.y, p.z);
+        //        targetOriginTransformPositions.Add(bo, tarPosition);
+        //    } else {
+        //        LinkedMovement.Log("setSelectedBuildableObject while NOT SELECTING");
+        //        return;
+        //    }
+
+        //    tryUpdateTargetsTransform();
+
+        //    LinkedMovement.Log("Selected BO position:");
+        //    LinkedMovement.Log("World: " + bo.gameObject.transform.position.ToString());
+        //    LinkedMovement.Log("Local: " + bo.gameObject.transform.localPosition.ToString());
+        //}
 
         public void endSelection() {
             LinkedMovement.Log("Controller endSelection");
 
-            isSettingBase = false;
-            isSettingTarget = false;
-
             var options = selectionHandler.Options;
             options.Mode = Selection.Mode.None;
             disableSelectionHandler();
-        }
-
-        public void clearBaseObject() {
-            resetBaseObject();
-            baseObject = null;
-        }
-
-        public void clearTargetObject(BuildableObject target) {
-            LinkedMovement.Log("Controller clearTargetObject");
-            target.transform.SetParent(null);
-            Vector3 priorTargetPosition;
-            targetOriginTransformPositions.TryGetValue(target, out priorTargetPosition);
-            if (priorTargetPosition != null) {
-                LinkedMovement.Log("clearTargetObject found prior and resetting");
-                target.transform.position = priorTargetPosition;
-            } else {
-                LinkedMovement.Log("clearTargetObject failed to find prior!");
-            }
-            targetOriginTransformPositions.Remove(target);
-            targetObjects.Remove(target);
         }
 
         public void clearTargetObjects() {
@@ -317,38 +305,40 @@ namespace LinkedMovement {
 
         public void clearAllSelections() {
             pairName = "";
-            targetOriginTransformPositions.Clear();
-            clearBaseObject();
             clearTargetObjects();
-            tryToDestroyExistingBlueprintBuilder();
-            selectedBlueprint = null;
+            queuedRemovalTargets.Clear();
+
+            foreach (var handle in highlightHandles.Values) {
+                handle.remove();
+            }
+            highlightHandles.Clear();
         }
 
         public void joinObjects() {
             LinkedMovement.Log("JOIN!");
 
-            if (selectedBlueprint != null) {
-                LinkedMovement.Log("Create blueprint");
+            //if (selectedBlueprint != null) {
+            //    LinkedMovement.Log("Create blueprint");
 
-                catchCreatedObjects = true;
-                blueprintCreatedObjects.Clear();
-                selectedBlueprintBuilder.OnBuildTriggered += (Builder.OnBuildTriggeredHandler)(() => {
-                    LinkedMovement.Log("OnBuildTriggered");
-                    catchCreatedObjects = false;
+            //    catchCreatedObjects = true;
+            //    blueprintCreatedObjects.Clear();
+            //    selectedBlueprintBuilder.OnBuildTriggered += (Builder.OnBuildTriggeredHandler)(() => {
+            //        LinkedMovement.Log("OnBuildTriggered");
+            //        catchCreatedObjects = false;
                     
-                    LinkedMovement.Log("Got # created objects: " + blueprintCreatedObjects.Count);
+            //        LinkedMovement.Log("Got # created objects: " + blueprintCreatedObjects.Count);
 
-                    var pairing = new Pairing(baseObject.gameObject, blueprintCreatedObjects, null, pairName);
-                    pairing.setCustomData(true, basePositionOffset, baseRotationOffset, animationParams);
-                    pairing.connect();
+            //        var pairing = new Pairing(baseObject.gameObject, blueprintCreatedObjects, null, pairName);
+            //        pairing.setCustomData(true, basePositionOffset, baseRotationOffset, animationParams);
+            //        pairing.connect();
 
-                    clearAllSelections();
-                    clearSelection();
-                });
-                MethodInfo methodInfo = selectedBlueprintBuilder.GetType().GetMethod("buildObjects", BindingFlags.NonPublic | BindingFlags.Instance);
-                methodInfo.Invoke(selectedBlueprintBuilder, null);
-                return;
-            }
+            //        clearAllSelections();
+            //        clearSelection();
+            //    });
+            //    MethodInfo methodInfo = selectedBlueprintBuilder.GetType().GetMethod("buildObjects", BindingFlags.NonPublic | BindingFlags.Instance);
+            //    methodInfo.Invoke(selectedBlueprintBuilder, null);
+            //    return;
+            //}
 
             List<GameObject> targetGOs = new List<GameObject>();
             foreach (var bo in targetObjects) {
@@ -356,18 +346,14 @@ namespace LinkedMovement {
             }
             LinkedMovement.Log("Join # single targets: " + targetGOs.Count);
 
-            var pairing = new Pairing(baseObject.gameObject, targetGOs, null, pairName);
-            pairing.setCustomData(false, basePositionOffset, baseRotationOffset, animationParams);
-            pairing.connect();
+            // TODO
+            //var pairing = new Pairing(baseObject.gameObject, targetGOs, null, pairName);
+            //pairing.setCustomData(false, basePositionOffset, baseRotationOffset, animationParams);
+            //pairing.connect();
 
             clearAllSelections();
             clearSelection();
         }
-
-        //public void showExistingAnimatronics() {
-        //    // TODO:
-        //    //windowManager.showExistingLinksWindow();
-        //}
 
         public void tryToDeletePairing(Pairing pairing) {
             LinkedMovement.Log("tryToDeletePairing " + pairing.getPairingName());
@@ -418,40 +404,40 @@ namespace LinkedMovement {
             selectionHandler.DeselectAll();
         }
 
-        private void resetBaseObject() {
-            if (baseObject == null) return;
+        //private void resetBaseObject() {
+        //    if (baseObject == null) return;
 
-            LinkedMovement.Log("resetBaseObject");
+        //    LinkedMovement.Log("resetBaseObject");
 
-            // There should always be an Animator on selected base objects
-            var baseAnimator = baseObject.GetComponent<Animator>();
-            if (baseAnimator == null) return;
-            baseAnimator.Rebind();
-            baseAnimator.Update(0f);
+        //    // There should always be an Animator on selected base objects
+        //    var baseAnimator = baseObject.GetComponent<Animator>();
+        //    if (baseAnimator == null) return;
+        //    baseAnimator.Rebind();
+        //    baseAnimator.Update(0f);
 
-            if (!baseIsTriggerable) {
-                baseAnimator.StartPlayback();
-                baseAnimator.speed = 1f;
-                baseIsTriggerable = false;
-            }
-        }
+        //    if (!baseIsTriggerable) {
+        //        baseAnimator.StartPlayback();
+        //        baseAnimator.speed = 1f;
+        //        baseIsTriggerable = false;
+        //    }
+        //}
 
-        private void setupBaseObject() {
-            LinkedMovement.Log("setupBaseObject");
+        //private void setupBaseObject() {
+        //    LinkedMovement.Log("setupBaseObject");
             
-            var baseAnimator = baseObject.GetComponent<Animator>();
-            baseAnimator.Rebind();
-            baseAnimator.Update(0f);
-            baseAnimator.StopPlayback();
+        //    var baseAnimator = baseObject.GetComponent<Animator>();
+        //    baseAnimator.Rebind();
+        //    baseAnimator.Update(0f);
+        //    baseAnimator.StopPlayback();
 
-            var modTriggerable = baseObject.GetComponent<ModAnimationTrigger>();
-            if (modTriggerable != null) {
-                LinkedMovement.Log("Is triggerable");
-                baseIsTriggerable = true;
-            } else {
-                LinkedMovement.Log("Not triggerable, stop animation");
-                baseAnimator.speed = 0f;
-            }
-        }
+        //    var modTriggerable = baseObject.GetComponent<ModAnimationTrigger>();
+        //    if (modTriggerable != null) {
+        //        LinkedMovement.Log("Is triggerable");
+        //        baseIsTriggerable = true;
+        //    } else {
+        //        LinkedMovement.Log("Not triggerable, stop animation");
+        //        baseAnimator.speed = 0f;
+        //    }
+        //}
     }
 }

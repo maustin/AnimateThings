@@ -24,15 +24,15 @@ namespace LinkedMovement.UI.Content {
                 Space(10f);
 
                 using (Scope.Horizontal()) {
+                    Label("Selection mode");
+                    selectedSelectionMode = Toolbar(selectedSelectionMode, selectionModeNames);
+                }
+
+                using (Scope.Horizontal()) {
                     Label("Target Objects");
                     if (Button("Select", Width(64))) {
                         controller.pickTargetObject(selectionModes[selectedSelectionMode]);
                     }
-                }
-
-                using (Scope.Horizontal()) {
-                    Label("Selection mode");
-                    selectedSelectionMode = Toolbar(selectedSelectionMode, selectionModeNames);
                 }
 
                 var targetObjects = controller.targetObjects;
@@ -41,7 +41,7 @@ namespace LinkedMovement.UI.Content {
                     using (Scope.Horizontal()) {
                         Label(targetObject.getName());
                         if (Button("X", Width(40)))
-                            controller.clearTargetObject(targetObject);
+                            controller.queueRemoveTargetBuildableObject(targetObject);
                     }
                 }
                 EndScrollView();

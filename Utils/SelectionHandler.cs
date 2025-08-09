@@ -7,10 +7,11 @@ using UnityEngine;
 namespace LinkedMovement {
     class SelectionHandler : MonoBehaviour {
         private readonly CustomSelectionTool tool = new();
-        internal Calc calc;
-        public int NumberOfHiddenObjects => tool.NumberOfSelectedObjects;
-        public readonly Options Options = new();
         private Park park;
+
+        internal Calc calc;
+
+        public readonly Options Options = new();
         public bool ShowGui = true;
         public LinkedMovementController controller;
 
@@ -29,37 +30,19 @@ namespace LinkedMovement {
 
         private void OnEnable() {
             LinkedMovement.Log("SelectionHandler OnEnable");
-            //foreach (var o in tool.GetSelectedObjects()) {
-            //    LinkedMovement.Log("SelectionHandler OnEnable ADD EXISTING");
-            //    OnAddedSelectedObject(o);
-            //}
+            
             Injector.Instance.Apply(calc.BuildableObjectVisibility);
             tool.CalcIndividualVisibility = calc.BuildableObjectVisibility;
             tool.CalcBoxAction = calc.BoxAction;
         }
 
-        // OLD UI call
-        //private UI.InGame.MainWindow ui;
-        //private void OnGUI() {
-        //    if (ShowGui) {
-        //        (ui ??= new UI.InGame.MainWindow(this)).Show();
-        //    }
-        //    else {
-        //        UI.InGame.Indicator.Show();
-        //    }
-        //}
-
         private void OnDisable() {
             LinkedMovement.Log("SelectionHandler OnDisable");
-            //LinkedMovement.Log(System.Environment.StackTrace);
             GameController.Instance.removeMouseTool(tool);
 
             tool.CalcIndividualVisibility = IndividualSelectionTool.DefaultVisibility;
             tool.CalcBoxAction = BoxSelectionTool.DefaultAction;
             Injector.Instance.Remove();
-            //foreach (var o in tool.GetSelectedObjects()) {
-            //    OnRemovedSelectedObject(o);
-            //}
             DeselectAll();
         }
 
@@ -139,22 +122,13 @@ namespace LinkedMovement {
             HighlightMaterial.color = color;
         }
 
-        //private readonly List<SerializedMonoBehaviour> selectedObjectBuffer = new();
         private void OnAddedSelectedObject(BuildableObject o) {
             if (o == null) {
                 return;
             }
 
             LinkedMovement.Log($"OnAdd: {o.GetType().Name} -- {o.getName()}");
-            controller.setSelectedBuildableObject(o);
-            //DeselectAll();
-            //return;
-
-            //o.retrieveObjectsBelongingToThis(selectedObjectBuffer);
-            //foreach (var c in selectedObjectBuffer) {
-            //    Utility.attachMaterialManagerByObject(c, HideSceneryTag, HighlightMaterial, null, true);
-            //}
-            //selectedObjectBuffer.Clear();
+            controller.addTargetBuildableObject(o);
         }
         private void OnRemovedSelectedObject(BuildableObject o) {
             LinkedMovement.Log("SelectionHandler.OnRemovedSelectedObject");
@@ -162,19 +136,11 @@ namespace LinkedMovement {
                 return;
             }
 
-            LinkedMovement.Log($"OnAdd: {o.GetType().Name} -- {o.getName()}");
-
-            // Mod.DebugLog($"OnRemove: {o.GetType().Name} -- {o.getName()}");
-
-            //o.retrieveObjectsBelongingToThis(selectedObjectBuffer);
-            //foreach (var c in selectedObjectBuffer) {
-            //    Utility.destroyMaterialManagerByObject(c, HideSceneryTag);
-            //}
-            //selectedObjectBuffer.Clear();
+            LinkedMovement.Log($"OnRemove: {o.GetType().Name} -- {o.getName()}");
+            controller.removeTargetBuildableObject(o);
         }
         public void DeselectAll() {
             LinkedMovement.Log("SelectionHandler DeselectAll");
-            //LinkedMovement.Log(System.Environment.StackTrace);
             tool.DeselectAll();
         }
 

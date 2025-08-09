@@ -44,10 +44,7 @@
     <Compile Include="UI\Content\CreateAnimatronicSelectSubContent.cs" />
     <Compile Include="UI\Content\CreateNewContent.cs" />
     <Compile Include="UI\Content\ModeDeterminationContent.cs" />
-    <Compile Include="UI\InGame\CreateAmimationContent.cs" />
-    <Compile Include="UI\InGame\ExistingLinksContent.cs" />
     <Compile Include="UI\Content\InfoContent.cs" />
-    <Compile Include="UI\InGame\MainContent.cs" />
     <Compile Include="UI\LMWindow.cs" />
     <Compile Include="UI\LMWindowContent.cs" />
     <Compile Include="UI\LMWindowFactory.cs" />
@@ -66,11 +63,6 @@
     <Compile Include="Patches\ChunkedMeshEventStartPrefix.cs" />
     <Compile Include="Patches\ParkEventFixedStartPostfix.cs" />
     <Compile Include="Patches\ParkInitializePostfix.cs" />
-    <Compile Include="AltUI\BaseWindow.cs" />
-    <Compile Include="AltUI\Indicator.cs" />
-    <Compile Include="AltUI\MainWindow.cs" />
-    <Compile Include="AltUI\Tooltip.cs" />
-    <Compile Include="AltUI\WindowIDManager.cs" />
     <Compile Include="Utils\Calc.cs" />
     <Compile Include="KeybindManager.cs" />
     <Compile Include="LinkedMovement.cs" />
@@ -436,6 +428,8 @@
   <ItemGroup>
     <None Include="RapidGUI\Component\Utilities\Cursor\Resources\cursorData.asset" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="UI\InGame\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
