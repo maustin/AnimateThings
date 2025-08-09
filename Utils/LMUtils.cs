@@ -1,10 +1,11 @@
-﻿using DG.Tweening;
+﻿// ATTRIB: TransformAnarchy
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace LinkedMovement.Utils {
-    static class TAUtils {
+    static class LMUtils {
         static private HighlightOverlayController.HighlightHandle CurrentHighlightHandle;
         static private BuildableObject CurrentHighlightedObject;
         static private IEnumerator CurrentHightlightCoroutine;
@@ -94,7 +95,7 @@ namespace LinkedMovement.Utils {
         }
 
         static public Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams) {
-            LinkedMovement.Log("TAUtils.GetAnimationSequence");
+            LinkedMovement.Log("LMUtils.GetAnimationSequence");
 
             Sequence sequence = DOTween.Sequence();
             var toTween = DOTween.To(() => transform.position, x => transform.position = x, animationParams.startingPosition + animationParams.targetPosition, animationParams.toDuration);

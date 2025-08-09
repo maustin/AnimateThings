@@ -23,14 +23,14 @@ class SerializedMonoBehaviourOnDestroyPostfix {
 
         LinkedMovement.LinkedMovement.GetController().removeAnimatedBuildableObject(bo);
 
-        PairBase pairBase = TAUtils.GetPairBaseFromSerializedMonoBehaviour(bo);
+        PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(bo);
 
         if (pairBase != null) {
             LinkedMovement.LinkedMovement.Log("SerializedMonoBehaviour.OnDestroy destroy PairBase");
             PairBase.Destroy(bo, pairBase);
         }
 
-        PairTarget pairTarget = TAUtils.GetPairTargetFromSerializedMonoBehaviour(bo);
+        PairTarget pairTarget = LMUtils.GetPairTargetFromSerializedMonoBehaviour(bo);
 
         if (pairTarget != null) {
             LinkedMovement.LinkedMovement.Log("SerializedMonoBehaviour.OnDestroy destroy PairTarget");

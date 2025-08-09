@@ -29,7 +29,7 @@ class ChunkedMeshEventStartPrefix {
         if (deco == null) {
             return true;
         }
-        PairTarget pairTarget = TAUtils.GetPairTargetFromSerializedMonoBehaviour(deco);
+        PairTarget pairTarget = LMUtils.GetPairTargetFromSerializedMonoBehaviour(deco);
         if (pairTarget != null) {
             return false;
         }

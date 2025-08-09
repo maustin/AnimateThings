@@ -8,16 +8,7 @@ using static UnityEngine.GUILayout;
 
 namespace LinkedMovement.UI.Content {
     internal class CreateAnimatronicContent : LMWindowContent {
-        private enum CreationSteps {
-            Select,
-            Assemble,
-            Animate,
-        }
-
         private LinkedMovementController controller;
-
-        private CreationSteps creationStep = CreationSteps.Select;
-        private string animatronicName = string.Empty;
 
         private IDoGUI selectSubContent;
         private IDoGUI assembleSubContent;
@@ -27,8 +18,8 @@ namespace LinkedMovement.UI.Content {
             controller = LinkedMovement.GetController();
 
             selectSubContent = new CreateAnimatronicSelectSubContent();
-            //
-            //
+            assembleSubContent = new CreateBaseSubContent();
+            //animateSubContent 
         }
 
         public override void DoGUI() {
@@ -37,21 +28,21 @@ namespace LinkedMovement.UI.Content {
             using (Scope.Vertical()) {
                 using (Scope.Horizontal()) {
                     Label("Name");
-                    animatronicName = RGUI.Field(animatronicName);
+                    controller.animatronicName = RGUI.Field(controller.animatronicName);
                 }
 
                 Space(5f);
 
-                Label((creationStep == CreationSteps.Select ? "> " : "") + "Select Objects");
-                Label((creationStep == CreationSteps.Assemble ? "> " : "") + "Assemble");
-                Label((creationStep == CreationSteps.Animate ? "> " : "") + "Animate");
+                Label((controller.getCreationStep() == LinkedMovementController.CreationSteps.Select ? "> " : "") + "Select Objects");
+                Label((controller.getCreationStep() == LinkedMovementController.CreationSteps.Assemble ? "> " : "") + "Assemble");
+                Label((controller.getCreationStep() == LinkedMovementController.CreationSteps.Animate ? "> " : "") + "Animate");
 
                 Space(5f);
                 HorizontalLine.DrawHorizontalLine(Color.grey);
                 Space(5f);
             }
 
-            if (creationStep == CreationSteps.Select) {
+            if (controller.getCreationStep() == LinkedMovementController.CreationSteps.Select) {
                 selectSubContent.DoGUI();
 
                 HorizontalLine.DrawHorizontalLine(Color.grey);
@@ -63,18 +54,28 @@ namespace LinkedMovement.UI.Content {
 
                     using (Scope.GuiEnabled(controller.targetObjects.Count > 0)) {
                         if (Button("Next >", Width(65))) {
-                            // do thing
+                            controller.setCreationStep(LinkedMovementController.CreationSteps.Assemble);
                         }
                     }
                 }
             }
-            if (creationStep == CreationSteps.Assemble) {
-                //
+            if (controller.getCreationStep() == LinkedMovementController.CreationSteps.Assemble) {
+                assembleSubContent.DoGUI();
 
                 HorizontalLine.DrawHorizontalLine(Color.grey);
-                // PREV NEXT
+
+                using (Scope.Horizontal()) {
+                    if (Button("< Back", Width(65))) {
+                        controller.setCreationStep(LinkedMovementController.CreationSteps.Select);
+                    }
+
+                    // TODO
+                    using (Scope.GuiEnabled(false)) {
+                        Button("Next >", Width(65));
+                    }
+                }
             }
-            if (creationStep == CreationSteps.Animate) {
+            if (controller.getCreationStep() == LinkedMovementController.CreationSteps.Animate) {
                 //
 
                 HorizontalLine.DrawHorizontalLine(Color.grey);

@@ -27,7 +27,7 @@ namespace LinkedMovement {
         private static LinkedMovementController Controller;
         private static bool KeybindsRegistered;
 
-        private AssetBundle assetBundle;
+        //private AssetBundle assetBundle;
 
         public static LinkedMovementController GetController() {
             if (Controller == null) {

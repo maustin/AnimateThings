@@ -27,7 +27,7 @@ class ParkEventFixedStartPostfix {
         LinkedMovement.LinkedMovement.Log("SerializedObjects count: " + sos.Count);
 
         foreach (var so in sos) {
-            PairBase pairBase = TAUtils.GetPairBaseFromSerializedMonoBehaviour(so);
+            PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(so);
             if (pairBase != null) {
                 LinkedMovement.LinkedMovement.Log("Found pairBase");
 
@@ -53,7 +53,7 @@ class ParkEventFixedStartPostfix {
         var targets = new List<SerializedMonoBehaviour>();
         var sos = GameController.Instance.getSerializedObjects();
         foreach (var so in sos) {
-            PairTarget pairTarget = TAUtils.GetPairTargetFromSerializedMonoBehaviour(so);
+            PairTarget pairTarget = LMUtils.GetPairTargetFromSerializedMonoBehaviour(so);
             if (pairTarget != null) {
                 if (pairTarget.pairId == pairBase.pairId) {
                     LinkedMovement.LinkedMovement.Log("Same pairId!");

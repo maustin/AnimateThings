@@ -106,7 +106,7 @@ namespace LinkedMovement.UI.Content {
 
         private void showNameUI() {
             using (Scope.Horizontal()) {
-                controller.pairName = RGUI.Field(controller.pairName, "Pair name:");
+                //controller.pairName = RGUI.Field(controller.pairName, "Pair name:");
             }
         }
 

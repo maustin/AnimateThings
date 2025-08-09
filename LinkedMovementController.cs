@@ -8,11 +8,19 @@ using UnityEngine;
 
 namespace LinkedMovement {
     public class LinkedMovementController : MonoBehaviour {
+        // TODO: Move out
+        public enum CreationSteps {
+            Select,
+            Assemble,
+            Animate,
+        }
+
         private SelectionHandler selectionHandler;
         private bool selectionHandlerEnabled {
             get => selectionHandler.enabled;
             set => selectionHandler.enabled = value;
         }
+        private CreationSteps creationStep = CreationSteps.Select;
 
         public WindowManager windowManager;
 
@@ -20,6 +28,8 @@ namespace LinkedMovement {
         public LMAnimationParams animationParams;
         public List<BuildableObject> targetObjects { get; private set; }
         //public Dictionary<BuildableObject, Vector3> targetOriginTransformPositions { get; private set; }
+
+        public string animatronicName = string.Empty;
 
         public List<BuildableObject> animatedBuildableObjects { get; private set; }
         public void addAnimatedBuildableObject(BuildableObject bo) {
@@ -45,7 +55,7 @@ namespace LinkedMovement {
         //    tryUpdateTargetsTransform();
         //}
 
-        public string pairName = "";
+        //public string pairName = "";
 
         private void tryUpdateTargetsTransform() {
             // TODO
@@ -125,7 +135,7 @@ namespace LinkedMovement {
             if (mouseTool == null) return;
 
             foreach (var bo in animatedBuildableObjects) {
-                TAUtils.UpdateMouseColliders(bo);
+                LMUtils.UpdateMouseColliders(bo);
             }
 
             foreach (var pairing in pairings) {
@@ -137,6 +147,34 @@ namespace LinkedMovement {
             if (OptionsMenu.instance != null) return;
 
             windowManager.DoGUI();
+        }
+
+        public CreationSteps getCreationStep() { return creationStep; }
+
+        public void setCreationStep(CreationSteps newStep) {
+            LinkedMovement.Log("setCreationStep " + newStep.ToString());
+            if (newStep == creationStep) {
+                LinkedMovement.Log("Already in creation step " + newStep.ToString());
+                return;
+            }
+
+            // TODO: Lock checks to specific state changes?
+            if (animatronicName == string.Empty) {
+                LinkedMovement.Log("DO THING!");
+                // TODO: Get #?
+                animatronicName = "New Animatronic";
+
+                //var position = targetObjects[0].transform.position;
+                //LinkedMovement.Log("Target pos: " + position.ToString());
+                //Deco d2 = ScriptableSingleton<AssetManager>.Instance.instantiatePrefab<Deco>("98f0269770ff44247b38607fdb2cf837", position, Quaternion.identity);
+                //if (d2 != null) {
+                //    LinkedMovement.Log("Instantiated base!!!");
+                //} else {
+                //    LinkedMovement.Log("No instantiate base");
+                //}
+            }
+
+            creationStep = newStep;
         }
 
         public List<Pairing> getPairings() {
@@ -291,20 +329,20 @@ namespace LinkedMovement {
         //    LinkedMovement.Log("Local: " + bo.gameObject.transform.localPosition.ToString());
         //}
 
-        public void endSelection() {
-            LinkedMovement.Log("Controller endSelection");
+        //public void endSelection() {
+        //    LinkedMovement.Log("Controller endSelection");
 
-            var options = selectionHandler.Options;
-            options.Mode = Selection.Mode.None;
-            disableSelectionHandler();
-        }
+        //    var options = selectionHandler.Options;
+        //    options.Mode = Selection.Mode.None;
+        //    disableSelectionHandler();
+        //}
 
         public void clearTargetObjects() {
             targetObjects.Clear();
         }
 
         public void clearAllSelections() {
-            pairName = "";
+            animatronicName = string.Empty;
             clearTargetObjects();
             queuedRemovalTargets.Clear();
 

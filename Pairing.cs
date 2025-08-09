@@ -45,11 +45,11 @@ namespace LinkedMovement
                 return;
             }
 
-            var baseBO = TAUtils.GetBuildableObjectFromGameObject(baseGO);
+            var baseBO = LMUtils.GetBuildableObjectFromGameObject(baseGO);
 
             LinkedMovement.GetController().removeAnimatedBuildableObject(baseBO);
 
-            PairBase pairBase = TAUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
+            PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
 
             var baseAnimParams = pairBase.animParams;
             LinkedMovement.Log("Has Sequence Animation: " + (baseAnimParams != null));
@@ -58,7 +58,7 @@ namespace LinkedMovement
                 if (baseAnimParams.isTriggerable) {
                     baseBO.gameObject.AddComponent<LMTrigger>().animationParams = baseAnimParams;
                 } else {
-                    pairBase.sequence = TAUtils.BuildAnimationSequence(baseBO.transform, baseAnimParams);
+                    pairBase.sequence = LMUtils.BuildAnimationSequence(baseBO.transform, baseAnimParams);
                 }
             }
 
@@ -78,8 +78,8 @@ namespace LinkedMovement
                     }
                 }
 
-                var targetBO = TAUtils.GetBuildableObjectFromGameObject(targetGO);
-                PairTarget pairTarget = TAUtils.GetPairTargetFromSerializedMonoBehaviour(targetBO);
+                var targetBO = LMUtils.GetBuildableObjectFromGameObject(targetGO);
+                PairTarget pairTarget = LMUtils.GetPairTargetFromSerializedMonoBehaviour(targetBO);
 
                 LinkedMovement.GetController().removeAnimatedBuildableObject(targetBO);
 
@@ -95,7 +95,7 @@ namespace LinkedMovement
                 targetGO.transform.position = baseGO.transform.position + pairTargetOffset + pairBaseOffset;
                 LinkedMovement.Log($"World x: {targetGO.transform.position.x}, y: {targetGO.transform.position.y}, z: {targetGO.transform.position.z}");
                 LinkedMovement.Log($"Local x: {targetGO.transform.localPosition.x}, y: {targetGO.transform.localPosition.y}, z: {targetGO.transform.localPosition.z}");
-                TAUtils.AttachTargetToBase(baseGO.transform, targetGO.transform);
+                LMUtils.AttachTargetToBase(baseGO.transform, targetGO.transform);
             }
 
             connected = true;
@@ -105,17 +105,17 @@ namespace LinkedMovement
             if (!connected) return;
             // TODO: Skip if sequence and not animating
 
-            var bo = TAUtils.GetBuildableObjectFromGameObject(baseGO);
-            TAUtils.UpdateMouseColliders(bo);
+            var bo = LMUtils.GetBuildableObjectFromGameObject(baseGO);
+            LMUtils.UpdateMouseColliders(bo);
 
             foreach (GameObject targetGO in targetGOs) {
-                var targetBO = TAUtils.GetBuildableObjectFromGameObject(targetGO);
-                TAUtils.UpdateMouseColliders(targetBO);
+                var targetBO = LMUtils.GetBuildableObjectFromGameObject(targetGO);
+                LMUtils.UpdateMouseColliders(targetBO);
             }
         }
 
         public void setCustomData(bool useTargetPositionOffset = false, Vector3 basePositionOffset = new Vector3(), Vector3 baseRotationOffset = new Vector3(), LMAnimationParams animationParams = null) {
-            var baseBO = TAUtils.GetBuildableObjectFromGameObject(baseGO);
+            var baseBO = LMUtils.GetBuildableObjectFromGameObject(baseGO);
             baseBO.addCustomData(getPairBase(basePositionOffset, baseRotationOffset, animationParams));
 
             LinkedMovement.Log("setCustomData basePositionOffset: " + basePositionOffset.ToString());
@@ -128,7 +128,7 @@ namespace LinkedMovement
                 
                 LinkedMovement.Log("offset: " + offset.ToString());
 
-                var targetBO = TAUtils.GetBuildableObjectFromGameObject(targetGO);
+                var targetBO = LMUtils.GetBuildableObjectFromGameObject(targetGO);
                 targetBO.addCustomData(getPairTarget(offset));
             }
         }
@@ -146,8 +146,8 @@ namespace LinkedMovement
                 return null;
             }
 
-            var baseBO = TAUtils.GetBuildableObjectFromGameObject(baseGO);
-            PairBase pairBase = TAUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
+            var baseBO = LMUtils.GetBuildableObjectFromGameObject(baseGO);
+            PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
 
             return pairBase;
         }
@@ -171,25 +171,25 @@ namespace LinkedMovement
         public void updatePairingName(string newPairingName) {
             pairingName = newPairingName;
 
-            var baseBO = TAUtils.GetBuildableObjectFromGameObject(baseGO);
-            PairBase pairBase = TAUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
+            var baseBO = LMUtils.GetBuildableObjectFromGameObject(baseGO);
+            PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
 
             pairBase.pairName = newPairingName;
         }
 
         public void updatePairingBaseOffset(Vector3 newPositionOffset) {
             LinkedMovement.Log("Pairing.updatePairingBaseOffset");
-            var baseBO = TAUtils.GetBuildableObjectFromGameObject(baseGO);
+            var baseBO = LMUtils.GetBuildableObjectFromGameObject(baseGO);
 
             var baseAnimator = baseBO.GetComponent<Animator>();
             baseAnimator.Rebind();
             baseAnimator.Update(0f);
 
-            var pairBase = TAUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
+            var pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
             pairBase.setPositionOffset(newPositionOffset);
 
             foreach (var targetGO in targetGOs) {
-                var targetBO = TAUtils.GetBuildableObjectFromGameObject(targetGO);
+                var targetBO = LMUtils.GetBuildableObjectFromGameObject(targetGO);
                 if (targetBO == null) continue;
 
                 LinkedMovement.Log("Pairing.updatePairingBaseOffset update target position");
