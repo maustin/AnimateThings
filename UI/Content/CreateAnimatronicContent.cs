@@ -1,8 +1,6 @@
 ﻿using LinkedMovement.UI.Components;
 using LinkedMovement.UI.Utils;
 using RapidGUI;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GUILayout;
 
@@ -19,7 +17,7 @@ namespace LinkedMovement.UI.Content {
 
             selectSubContent = new CreateAnimatronicSelectSubContent();
             assembleSubContent = new CreateBaseSubContent();
-            //animateSubContent 
+            animateSubContent = new CreateAnimationSubContent();
         }
 
         public override void DoGUI() {
@@ -77,17 +75,33 @@ namespace LinkedMovement.UI.Content {
 
                     FlexibleSpace();
 
-                    // TODO
-                    using (Scope.GuiEnabled(false)) {
-                        Button("Next >", Width(65));
+                    using (Scope.GuiEnabled(controller.originObject != null)) {
+                        if (Button("Next >", Width(65))) {
+                            controller.setCreationStep(LinkedMovementController.CreationSteps.Animate);
+                        }
                     }
                 }
             }
             if (controller.getCreationStep() == LinkedMovementController.CreationSteps.Animate) {
-                //
+                animateSubContent.DoGUI();
+
+                FlexibleSpace();
 
                 HorizontalLine.DrawHorizontalLine(Color.grey);
-                // PREV FlexibleSpace(); NEXT
+
+                using (Scope.Horizontal()) {
+                    if (Button("< Back", Width(65))) {
+                        controller.setCreationStep(LinkedMovementController.CreationSteps.Assemble);
+                    }
+
+                    FlexibleSpace();
+
+                    using (Scope.GuiEnabled(false)) {
+                        if (Button("Finish ✓", Width(65))) {
+                            // TODO
+                        }
+                    }
+                }
             }
         }
     }

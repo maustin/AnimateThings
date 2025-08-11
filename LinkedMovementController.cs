@@ -3,17 +3,19 @@ using LinkedMovement.UI;
 using LinkedMovement.Utils;
 using Parkitect.UI;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 
 namespace LinkedMovement {
     public class LinkedMovementController : MonoBehaviour {
-        // TODO: Move enum out?
+        // TODO: Move enum out
         public enum CreationSteps {
             Select,
             Assemble,
             Animate,
         }
+
+        // TODO: Lots of this should prob be moved out to differentiate between
+        // create new animation and edit existing animation
 
         private SelectionHandler selectionHandler;
         private bool selectionHandlerEnabled {
@@ -28,6 +30,9 @@ namespace LinkedMovement {
         public LMAnimationParams animationParams;
         public List<BuildableObject> targetObjects { get; private set; }
         //public Dictionary<BuildableObject, Vector3> targetOriginTransformPositions { get; private set; }
+
+        //private Dictionary<BuildableObject, Vector3> animationOriginalPositions;
+        //private Dictionary<BuildableObject, Quaternion> animationOriginalRotations;
 
         public BuildableObject originObject { get; private set; }
         public Vector3 originPosition {
@@ -46,20 +51,19 @@ namespace LinkedMovement {
                 }
             }
         }
-        private Vector3 _originPositionOffset;
-        public Vector3 originPositionOffset {
-            get {
-                if (_originPositionOffset == null) {
-                    throw new System.Exception("NO ORIGIN POSITION OFFSET!");
-                } else {
-                    return _originPositionOffset;
-                }
-            }
-            set {
-                setOriginOffsetPosition(value);
-            }
-        }
-        // TODO: offset rot
+        //private Vector3 _originPositionOffset;
+        //public Vector3 originPositionOffset {
+        //    get {
+        //        if (_originPositionOffset == null) {
+        //            throw new System.Exception("NO ORIGIN POSITION OFFSET!");
+        //        } else {
+        //            return _originPositionOffset;
+        //        }
+        //    }
+        //    set {
+        //        setOriginOffsetPosition(value);
+        //    }
+        //}
 
         public string animatronicName = string.Empty;
 
@@ -113,8 +117,11 @@ namespace LinkedMovement {
         private void Awake() {
             LinkedMovement.Log("LinkedMovementController Awake");
             targetObjects = new List<BuildableObject>();
-            //targetOriginTransformPositions = new Dictionary<BuildableObject, Vector3>();
+            //animationOriginalPositions = new Dictionary<BuildableObject, Vector3>();
+            //animationOriginalRotations = new Dictionary<BuildableObject, Quaternion>();
+
             animatedBuildableObjects = new List<BuildableObject>();
+
             windowManager = new WindowManager();
             selectionHandler = gameObject.AddComponent<SelectionHandler>();
             selectionHandler.controller = this;
@@ -193,10 +200,11 @@ namespace LinkedMovement {
             selectionHandlerEnabled = false;
 
             // Select -> Assemble
-            if (creationStep == CreationSteps.Select && newStep == CreationSteps.Assemble) {
-                // TODO
-                // If origin exists and targets have changed, add new targets to origin
-            }
+            //if (creationStep == CreationSteps.Select && newStep == CreationSteps.Assemble) {
+            //    // TODO
+            //    // If origin exists and targets have changed, add new targets to origin
+            //    // Don't think necessary as attachment will now happen when moving to Animate state
+            //}
 
             //if (newStep == CreationSteps.Select) {
             //    //
@@ -227,6 +235,13 @@ namespace LinkedMovement {
             //    //}
             //}
 
+            if (creationStep == CreationSteps.Assemble && newStep == CreationSteps.Animate) {
+                enterAnimateState();
+            }
+            if (creationStep == CreationSteps.Animate && newStep == CreationSteps.Assemble) {
+                exitAnimateState();
+            }
+
             creationStep = newStep;
         }
 
@@ -253,25 +268,6 @@ namespace LinkedMovement {
             return pairings.Contains(pairing);
         }
 
-        //public void pickBaseObject() {
-        //    LinkedMovement.Log("pickBaseObject");
-
-        //    var newMode = Selection.Mode.Individual;
-        //    var options = selectionHandler.Options;
-        //    if (options.Mode == newMode) {
-        //        LinkedMovement.Log("Set base select none");
-        //        isSettingBase = false;
-        //        options.Mode = Selection.Mode.None;
-        //        disableSelectionHandler();
-        //    } else {
-        //        LinkedMovement.Log("Set base select individual");
-        //        isSettingBase = true;
-        //        isSettingTarget = false;
-        //        options.Mode = newMode;
-        //        enableSelectionHandler();
-        //    }
-        //}
-
         public void generateOrigin() {
             LinkedMovement.Log("generateOrigin");
 
@@ -288,11 +284,6 @@ namespace LinkedMovement {
             } else {
                 LinkedMovement.Log("FAILED to instantiate origin");
             }
-        }
-
-        private void setOriginOffsetPosition(Vector3 newPositionOffset) {
-            // TODO
-            _originPositionOffset = newPositionOffset;
         }
 
         public void pickTargetObject(Selection.Mode newMode) {
@@ -542,6 +533,32 @@ namespace LinkedMovement {
             var midZ = minZ + ((maxZ - minZ) * 0.5f);
 
             return new Vector3(midX, midY, midZ);
+        }
+
+        private void enterAnimateState() {
+            LinkedMovement.Log("Enter Animate State");
+
+            animationParams = new LMAnimationParams(originObject.transform.position);
+            
+            // set targets parent
+            foreach (var targetBO in targetObjects) {
+                targetBO.transform.SetParent(originObject.transform);
+            }
+            //targetBO.transform.SetParent(baseObject.transform);
+        }
+
+        private void exitAnimateState() {
+            LinkedMovement.Log("Exit Animate State");
+            // TODO
+            // Reset animation
+            // clear targets parent
+            foreach (var targetBO in targetObjects) {
+                targetBO.transform.SetParent(null);
+            }
+        }
+
+        private void finishAnimatronic() {
+            // TODO
         }
 
         //private void resetBaseObject() {
