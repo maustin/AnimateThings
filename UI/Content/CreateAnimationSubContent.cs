@@ -138,6 +138,31 @@ namespace LinkedMovement.UI.Content {
                     }
                 }
 
+                using (Scope.GuiEnabled(!animationParams.isTriggerable)) {
+                    using (Scope.Horizontal()) {
+                        GUILayout.Label("Delay animation on park load");
+                        var newUseInitialStartDelay = RGUI.Field(animationParams.useInitialStartDelay);
+                        if (animationParams.useInitialStartDelay != newUseInitialStartDelay) {
+                            LinkedMovement.Log("SET use initial start delay");
+                            animationParams.useInitialStartDelay = newUseInitialStartDelay;
+                        }
+                    }
+                }
+
+                using (Scope.GuiEnabled(!animationParams.isTriggerable && animationParams.useInitialStartDelay)) {
+                    using (Scope.Horizontal()) {
+                        var newInitialDelayMin = RGUI.Field(animationParams.initialStartDelayMin, "min");
+                        var newInitialDelayMax = RGUI.Field(animationParams.initialStartDelayMax, "max");
+                        if (!animationParams.initialStartDelayMin.Equals(newInitialDelayMin) || !animationParams.initialStartDelayMax.Equals(newInitialDelayMax)) {
+                            LinkedMovement.Log("SET initial delay range");
+                            animationParams.initialStartDelayMin = newInitialDelayMin;
+                            animationParams.initialStartDelayMax = newInitialDelayMax;
+                        }
+                    }
+                }
+
+                Space(10f);
+
                 GUILayout.FlexibleSpace();
             }
         }

@@ -5,6 +5,8 @@ using UnityEngine;
 namespace LinkedMovement {
     public class LMAnimationParams : SerializedRawObject {
         [Serialized]
+        public string name = string.Empty;
+        [Serialized]
         public Vector3 startingPosition = Vector3.zero;
         [Serialized]
         public Vector3 targetPosition = Vector3.zero;
@@ -26,6 +28,12 @@ namespace LinkedMovement {
         public string fromEase = LMEase.InOutQuad.ToString();
         [Serialized]
         public float restartDelay = 0f;
+        [Serialized]
+        public bool useInitialStartDelay = false;
+        [Serialized]
+        public float initialStartDelayMin = 0f;
+        [Serialized]
+        public float initialStartDelayMax = 0f;
 
         public LMAnimationParams() {
             LinkedMovement.Log("LMAnimationParams base constructor");

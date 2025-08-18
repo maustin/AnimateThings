@@ -112,6 +112,16 @@ namespace LinkedMovement.Utils {
                 sequence.Pause();
             }
 
+            if (!isEditing && !animationParams.isTriggerable) {
+                sequence.Pause();
+                var initialDelay = UnityEngine.Random.Range(animationParams.initialStartDelayMin, animationParams.initialStartDelayMax);
+                LinkedMovement.Log($"Initial delay for {animationParams.name} is {initialDelay}");
+                DOVirtual.DelayedCall(initialDelay, () => {
+                    LinkedMovement.Log("Run initial delayed sequence " + animationParams.name);
+                    sequence.Play();
+                }, false);
+            }
+
             return sequence;
         }
 

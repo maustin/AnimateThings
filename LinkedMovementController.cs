@@ -158,11 +158,10 @@ namespace LinkedMovement {
             if (creationStep == CreationSteps.Assemble && newStep == CreationSteps.Animate) {
                 enterAnimateState();
             }
-            if (creationStep == CreationSteps.Animate && newStep == CreationSteps.Assemble) {
+            if (creationStep == CreationSteps.Animate) {
                 exitAnimateState();
             }
             if (newStep == CreationSteps.Finish) {
-                exitAnimateState();
                 finishAnimatronic();
             }
 
@@ -289,9 +288,14 @@ namespace LinkedMovement {
 
         public void clearAllSelections() {
             LinkedMovement.Log("Controller.clearAllSelections");
+
+            setCreationStep(CreationSteps.Select);
+
             animatronicName = string.Empty;
             animationParams = null;
 
+            killSampleSequence();
+            clearSelection();
             clearTargetObjects();
 
             if (originObject != null) {
@@ -320,6 +324,9 @@ namespace LinkedMovement {
             LinkedMovement.Log("Join # single targets: " + targetGOs.Count);
             targetObjects.Clear();
 
+            // TODO: This is duplicating data
+            animationParams.name = animatronicName;
+
             var pairing = new Pairing(originObject.gameObject, targetGOs, null, animatronicName);
             // TODO: Eliminate origin offsets
             pairing.setCustomData(false, default, default, animationParams);
@@ -328,7 +335,6 @@ namespace LinkedMovement {
             originObject = null;
 
             clearAllSelections();
-            clearSelection();
         }
 
         public void tryToDeletePairing(Pairing pairing) {
@@ -367,7 +373,7 @@ namespace LinkedMovement {
         }
 
         public void killSampleSequence() {
-            LinkedMovement.Log("killSequence");
+            LinkedMovement.Log("Controller.killSampleSequence");
             if (sampleSequence == null) {
                 LinkedMovement.Log("No sequence to kill");
                 return;
@@ -376,8 +382,10 @@ namespace LinkedMovement {
             sampleSequence.Kill();
             sampleSequence = null;
 
-            originObject.transform.position = animationParams.startingPosition;
-            originObject.transform.rotation = Quaternion.Euler(animationParams.startingRotation);
+            if (originObject != null && originObject.transform != null && animationParams != null) {
+                originObject.transform.position = animationParams.startingPosition;
+                originObject.transform.rotation = Quaternion.Euler(animationParams.startingRotation);
+            }
         }
 
         public void rebuildSampleSequence() {
@@ -444,6 +452,8 @@ namespace LinkedMovement {
             foreach (var targetBO in targetObjects) {
                 targetBO.transform.SetParent(originObject.transform);
             }
+
+            rebuildSampleSequence();
         }
 
         private void exitAnimateState() {

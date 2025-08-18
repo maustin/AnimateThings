@@ -25,7 +25,14 @@ namespace LinkedMovement.UI {
             this.rect.position = position;
             this.Add(content.DoGUI);
             this.Open();
-            this.onClose += (WindowLauncher launcher) => windowManager.removeWindow(launcher as LMWindow);
+            this.onClose += (WindowLauncher launcher) => {
+                windowManager.removeWindow(launcher as LMWindow);
+                // TODO: NEED a better way to do this
+                if (type == WindowManager.WindowType.CreateNewAnimatronic) {
+                    LinkedMovement.Log("New Animatronic Window closing");
+                    LinkedMovement.GetController().clearAllSelections();
+                }
+            };
         }
     }
 }
