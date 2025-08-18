@@ -82,18 +82,12 @@ namespace LinkedMovement
 
                 LinkedMovement.GetController().removeAnimatedBuildableObject(targetBO);
 
-                //targetGO.transform.localPosition = Vector3.zero;
+                //LinkedMovement.Log("Base pos: " + baseGO.transform.position.ToString());
+                //LinkedMovement.Log("PairTargetOffset: " + pairTarget.positionOffset.ToString());
+                //LinkedMovement.Log("PairBaseOffset: " + pairBase.positionOffset.ToString());
 
-                var pairTargetOffset = pairTarget.positionOffset;
-                var pairBaseOffset = pairBase.positionOffset;
-
-                LinkedMovement.Log("Base pos: " + baseGO.transform.position.ToString());
-                LinkedMovement.Log("PairTargetOffset: " + pairTargetOffset.ToString());
-                LinkedMovement.Log("PairBaseOffset: " + pairBaseOffset.ToString());
-
-                //targetGO.transform.position = baseGO.transform.position + pairTargetOffset + pairBaseOffset;
-                LinkedMovement.Log($"World x: {targetGO.transform.position.x}, y: {targetGO.transform.position.y}, z: {targetGO.transform.position.z}");
-                LinkedMovement.Log($"Local x: {targetGO.transform.localPosition.x}, y: {targetGO.transform.localPosition.y}, z: {targetGO.transform.localPosition.z}");
+                //LinkedMovement.Log($"World x: {targetGO.transform.position.x}, y: {targetGO.transform.position.y}, z: {targetGO.transform.position.z}");
+                //LinkedMovement.Log($"Local x: {targetGO.transform.localPosition.x}, y: {targetGO.transform.localPosition.y}, z: {targetGO.transform.localPosition.z}");
                 LMUtils.AttachTargetToBase(baseGO.transform, targetGO.transform);
             }
 
@@ -175,27 +169,6 @@ namespace LinkedMovement
 
             pairBase.pairName = newPairingName;
         }
-
-        //public void updatePairingBaseOffset(Vector3 newPositionOffset) {
-        //    LinkedMovement.Log("Pairing.updatePairingBaseOffset");
-        //    var baseBO = LMUtils.GetBuildableObjectFromGameObject(baseGO);
-
-        //    var baseAnimator = baseBO.GetComponent<Animator>();
-        //    baseAnimator.Rebind();
-        //    baseAnimator.Update(0f);
-
-        //    var pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
-        //    pairBase.setPositionOffset(newPositionOffset);
-
-        //    foreach (var targetGO in targetGOs) {
-        //        var targetBO = LMUtils.GetBuildableObjectFromGameObject(targetGO);
-        //        if (targetBO == null) continue;
-
-        //        LinkedMovement.Log("Pairing.updatePairingBaseOffset update target position");
-
-        //        targetBO.transform.position = baseGO.transform.position + newPositionOffset;
-        //    }
-        //}
 
         public void destroy() {
             LinkedMovement.Log("Pairing.Destroy Pairing: " + getPairingName());

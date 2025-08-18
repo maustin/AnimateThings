@@ -12,40 +12,10 @@ namespace LinkedMovement.Utils {
         static private IEnumerator CurrentHightlightCoroutine;
 
         static public void AttachTargetToBase(Transform baseObject, Transform targetObject) {
-            LinkedMovement.Log("Find attach parent between " + baseObject.name + " and " + targetObject.name);
+            LinkedMovement.Log("LMUtils.AttachTargetToBase, parent: " + baseObject.name + ", target: " + targetObject.name);
             var baseTransform = baseObject;
-            //bool foundPlatform = false;
-
-            //var baseChildrenCount = baseTransform.childCount;
-            //for (var i = 0; i < baseChildrenCount; i++) {
-            //    var child = baseTransform.GetChild(i);
-            //    var childName = child.gameObject.name;
-            //    if (childName.Contains("[Platform]")) {
-            //        foundPlatform = true;
-            //        baseTransform = child;
-            //        //LinkedMovement.Log("Using Platform");
-            //        break;
-            //    }
-            //}
-            //// TODO: Not sure about this case
-            //if (!foundPlatform && baseChildrenCount > 0) {
-            //    // Take child at 0
-            //    baseTransform = baseTransform.GetChild(0);
-            //    //LinkedMovement.Log("Using child 0");
-            //}
-
             targetObject.SetParent(baseTransform);
         }
-
-        //static public List<BlueprintFile> FindDecoBlueprints(IList<BlueprintFile> blueprints) {
-        //    var list = new List<BlueprintFile>();
-        //    foreach (var blueprint in blueprints) {
-        //        if (blueprint.getCategoryTags().Contains("Deco")) {
-        //            list.Add(blueprint);
-        //        }
-        //    }
-        //    return list;
-        //}
 
         static public void UpdateMouseColliders(BuildableObject bo) {
             if (bo.mouseColliders != null) {
@@ -144,51 +114,6 @@ namespace LinkedMovement.Utils {
 
             return sequence;
         }
-
-        //static public Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams) {
-        //    LinkedMovement.Log("LMUtils.GetAnimationSequence");
-        //    // TODO: Much to do (e.g. match AnimateSubContent)
-
-        //    Sequence sequence = DOTween.Sequence();
-        //    var toTween = DOTween.To(() => transform.position, x => transform.position = x, animationParams.startingPosition + animationParams.targetPosition, animationParams.toDuration);
-        //    // ease
-        //    // delay
-        //    var fromTween = DOTween.To(() => transform.position, x => transform.position = x, animationParams.startingPosition, animationParams.fromDuration);
-        //    // ease
-        //    // delay
-        //    sequence.Append(toTween);
-        //    sequence.Append(fromTween);
-
-        //    if (animationParams.isTriggerable) {
-        //        sequence.SetLoops(0);
-        //        sequence.Pause();
-        //    } else {
-        //        sequence.SetLoops(-1);
-        //    }
-
-        //    return sequence;
-        //}
-
-        //private void rebuildSequence(bool isSaving = false) {
-        //    LinkedMovement.Log("rebuildSequence");
-        //    killSequence();
-
-        //    sequence = DOTween.Sequence();
-        //    var toTween = DOTween.To(() => baseBO.transform.position, x => baseBO.transform.position = x, animationParams.startingPosition + animationParams.targetPosition, animationParams.toDuration);
-        //    //toTween.SetEase()
-        //    // delay
-        //    var fromTween = DOTween.To(() => baseBO.transform.position, x => baseBO.transform.position = x, animationParams.startingPosition, animationParams.fromDuration);
-        //    //fromTween.SetEase()
-        //    // delay
-        //    sequence.Append(toTween);
-        //    sequence.Append(fromTween);
-        //    if (isSaving && animationParams.isTriggerable) {
-        //        sequence.SetLoops(0);
-        //        sequence.Pause();
-        //    } else {
-        //        sequence.SetLoops(-1);
-        //    }
-        //}
 
         private static void OnHighlightedObjectKilled(SerializedMonoBehaviour smb) {
             CurrentHighlightedObject.OnKilled -= new SerializedMonoBehaviour.OnKilledHandler(OnHighlightedObjectKilled);

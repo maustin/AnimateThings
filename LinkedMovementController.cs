@@ -31,10 +31,6 @@ namespace LinkedMovement {
         // TODO: Getter setter useful here?
         public LMAnimationParams animationParams;
         public List<BuildableObject> targetObjects { get; private set; }
-        //public Dictionary<BuildableObject, Vector3> targetOriginTransformPositions { get; private set; }
-
-        //private Dictionary<BuildableObject, Vector3> animationOriginalPositions;
-        //private Dictionary<BuildableObject, Quaternion> animationOriginalRotations;
 
         public BuildableObject originObject { get; private set; }
         public Vector3 originPosition {
@@ -53,20 +49,7 @@ namespace LinkedMovement {
                 }
             }
         }
-        //private Vector3 _originPositionOffset;
-        //public Vector3 originPositionOffset {
-        //    get {
-        //        if (_originPositionOffset == null) {
-        //            throw new System.Exception("NO ORIGIN POSITION OFFSET!");
-        //        } else {
-        //            return _originPositionOffset;
-        //        }
-        //    }
-        //    set {
-        //        setOriginOffsetPosition(value);
-        //    }
-        //}
-
+        
         public string animatronicName = string.Empty;
 
         public Sequence sampleSequence;
@@ -84,46 +67,10 @@ namespace LinkedMovement {
 
         private List<Pairing> pairings = new List<Pairing>();
 
-        //public Vector3 basePositionOffset { get; private set; }
-        //public void setBasePositionOffset(Vector3 value) {
-        //    basePositionOffset = value;
-        //    tryUpdateTargetsTransform();
-        //}
-        //public Vector3 baseRotationOffset { get; private set; }
-        //public void setBaseRotationOffset(Vector3 value) {
-        //    baseRotationOffset = value;
-        //    tryUpdateTargetsTransform();
-        //}
-
-        //public string pairName = "";
-
-        private void tryUpdateTargetsTransform() {
-            // TODO
-            //if (baseObject == null) {
-            //    // Nothing to attach to!
-            //    LinkedMovement.Log("LMController tryUpdateTargetsTransform no base!");
-            //    return;
-            //}
-
-            //// Try to update blueprint if present
-            ////LinkedMovement.Log("LMController tryUpdateTargetsTransform");
-            ////tryToCreateBlueprintBuilder();
-
-            //// Set transforms for single targets if present
-            //foreach (var targetBO in targetObjects) {
-            //    LinkedMovement.Log("LMController tryUpdateTargetsTransform for target " + targetBO.name);
-
-            //    targetBO.transform.position = baseObject.transform.position + new Vector3(basePositionOffset.x, basePositionOffset.y, basePositionOffset.z);
-            //    targetBO.transform.SetParent(baseObject.transform);
-            //}
-        }
-
         private void Awake() {
             LinkedMovement.Log("LinkedMovementController Awake");
             targetObjects = new List<BuildableObject>();
-            //animationOriginalPositions = new Dictionary<BuildableObject, Vector3>();
-            //animationOriginalRotations = new Dictionary<BuildableObject, Quaternion>();
-
+            
             animatedBuildableObjects = new List<BuildableObject>();
 
             windowManager = new WindowManager();
@@ -156,7 +103,6 @@ namespace LinkedMovement {
         }
 
         private void Update() {
-            //LinkedMovement.Log("Controller update");
             if (UIUtility.isInputFieldFocused() || GameController.Instance.isGameInputLocked() || GameController.Instance.isQuittingGame) {
                 return;
             }
@@ -174,7 +120,7 @@ namespace LinkedMovement {
             }
 
             var mouseTool = GameController.Instance.getActiveMouseTool();
-            // TODO: Log? What is dis?
+            // TODO: Log? What is dis? (Is handler when game menu is open?)
             if (mouseTool == null) return;
 
             foreach (var bo in animatedBuildableObjects) {
@@ -203,43 +149,12 @@ namespace LinkedMovement {
 
             selectionHandlerEnabled = false;
 
-            // Select -> Assemble
-            //if (creationStep == CreationSteps.Select && newStep == CreationSteps.Assemble) {
-            //    // TODO
-            //    // If origin exists and targets have changed, add new targets to origin
-            //    // Don't think necessary as attachment will now happen when moving to Animate state
-            //}
-
-            //if (newStep == CreationSteps.Select) {
-            //    //
-            //} else if (newStep == CreationSteps.Assemble) {
-            //    // TODO
-            //} else if (newStep == CreationSteps.Animate) {
-            //    //
-            //}
-
             if (animatronicName == string.Empty) {
                 // TODO: Get #?
                 animatronicName = "New Animatronic";
             }
 
-            // TODO: Lock checks to specific state changes?
-            //if (animatronicName == string.Empty) {
-            //    LinkedMovement.Log("DO THING!");
-            //    // TODO: Get #?
-            //    animatronicName = "New Animatronic";
-
-            //    //var position = targetObjects[0].transform.position;
-            //    //LinkedMovement.Log("Target pos: " + position.ToString());
-            //    //Deco d2 = ScriptableSingleton<AssetManager>.Instance.instantiatePrefab<Deco>("98f0269770ff44247b38607fdb2cf837", position, Quaternion.identity);
-            //    //if (d2 != null) {
-            //    //    LinkedMovement.Log("Instantiated base!!!");
-            //    //} else {
-            //    //    LinkedMovement.Log("No instantiate base");
-            //    //}
-            //}
-
-            // TODO: State machiney
+            // TODO: State machiney?
             if (creationStep == CreationSteps.Assemble && newStep == CreationSteps.Animate) {
                 enterAnimateState();
             }
@@ -336,8 +251,6 @@ namespace LinkedMovement {
             var highlightHandle = HighlightOverlayController.Instance.add(renderers, -1, Color.yellow);
             highlightHandles.Add(bo, highlightHandle);
 
-            //tryUpdateTargetsTransform();
-
             LinkedMovement.Log("Selected BO position:");
             LinkedMovement.Log("World: " + bo.gameObject.transform.position.ToString());
             LinkedMovement.Log("Local: " + bo.gameObject.transform.localPosition.ToString());
@@ -363,55 +276,7 @@ namespace LinkedMovement {
             }
 
             targetObjects.Remove(bo);
-
-            tryUpdateTargetsTransform();
         }
-
-        //public void setSelectedBuildableObject(BuildableObject bo) {
-        //    if (bo == null)
-        //        return;
-            
-        //    if (isSettingBase) {
-        //        // TODO: Add popup asking if non-animating base should add animation
-        //        clearBaseObject();
-        //        baseObject = bo;
-        //        var baseAnimator = bo.GetComponent<Animator>();
-        //        if (baseAnimator == null)
-        //        {
-        //            //windowManager.showInfoWindow("Selected base object has no animation.");
-        //            // TODO:
-        //            //windowManager.showCreateAnimationWindow();
-        //            return;
-        //        }
-
-        //        //clearBaseObject();
-        //        //baseObject = bo;
-        //        setupBaseObject();
-        //    }
-        //    else if (isSettingTarget) {
-        //        targetObjects.Add(bo);
-        //        var p = bo.transform.position;
-        //        var tarPosition = new Vector3(p.x, p.y, p.z);
-        //        targetOriginTransformPositions.Add(bo, tarPosition);
-        //    } else {
-        //        LinkedMovement.Log("setSelectedBuildableObject while NOT SELECTING");
-        //        return;
-        //    }
-
-        //    tryUpdateTargetsTransform();
-
-        //    LinkedMovement.Log("Selected BO position:");
-        //    LinkedMovement.Log("World: " + bo.gameObject.transform.position.ToString());
-        //    LinkedMovement.Log("Local: " + bo.gameObject.transform.localPosition.ToString());
-        //}
-
-        //public void endSelection() {
-        //    LinkedMovement.Log("Controller endSelection");
-
-        //    var options = selectionHandler.Options;
-        //    options.Mode = Selection.Mode.None;
-        //    disableSelectionHandler();
-        //}
 
         public void clearTargetObjects() {
             LinkedMovement.Log("Controller.clearTargetObjects");
@@ -445,31 +310,8 @@ namespace LinkedMovement {
         public void joinObjects() {
             LinkedMovement.Log("Controller.joinObjects");
 
-            // "Officially" create the origin
+            // "Officially" create the origin object
             originObject.Initialize();
-
-            //if (selectedBlueprint != null) {
-            //    LinkedMovement.Log("Create blueprint");
-
-            //    catchCreatedObjects = true;
-            //    blueprintCreatedObjects.Clear();
-            //    selectedBlueprintBuilder.OnBuildTriggered += (Builder.OnBuildTriggeredHandler)(() => {
-            //        LinkedMovement.Log("OnBuildTriggered");
-            //        catchCreatedObjects = false;
-                    
-            //        LinkedMovement.Log("Got # created objects: " + blueprintCreatedObjects.Count);
-
-            //        var pairing = new Pairing(baseObject.gameObject, blueprintCreatedObjects, null, pairName);
-            //        pairing.setCustomData(true, basePositionOffset, baseRotationOffset, animationParams);
-            //        pairing.connect();
-
-            //        clearAllSelections();
-            //        clearSelection();
-            //    });
-            //    MethodInfo methodInfo = selectedBlueprintBuilder.GetType().GetMethod("buildObjects", BindingFlags.NonPublic | BindingFlags.Instance);
-            //    methodInfo.Invoke(selectedBlueprintBuilder, null);
-            //    return;
-            //}
 
             List<GameObject> targetGOs = new List<GameObject>();
             foreach (var bo in targetObjects) {
@@ -481,10 +323,6 @@ namespace LinkedMovement {
             var pairing = new Pairing(originObject.gameObject, targetGOs, null, animatronicName);
             // TODO: Eliminate origin offsets
             pairing.setCustomData(false, default, default, animationParams);
-            //pairing.setCustomData(false, animationParams.startingPosition, animationParams.startingRotation, animationParams);
-
-            //var pairing = new Pairing(baseObject.gameObject, targetGOs, null, pairName);
-            //pairing.setCustomData(false, basePositionOffset, baseRotationOffset, animationParams);
             pairing.connect();
 
             originObject = null;
@@ -542,7 +380,6 @@ namespace LinkedMovement {
             originObject.transform.rotation = Quaternion.Euler(animationParams.startingRotation);
         }
 
-        // TODO: Need to move sequence creation to utils
         public void rebuildSampleSequence() {
             LinkedMovement.Log("rebuildSequence");
             killSampleSequence();
@@ -553,46 +390,6 @@ namespace LinkedMovement {
             }
 
             sampleSequence = LMUtils.BuildAnimationSequence(originObject.transform, animationParams, true);
-
-            //// Parse easings
-            //Ease toEase;
-            //Ease fromEase;
-
-            //if (Enum.TryParse(animationParams.toEase, out toEase)) {
-            //    LinkedMovement.Log($"Sucessfully parsed toEase {animationParams.toEase}");
-            //} else {
-            //    LinkedMovement.Log($"Failed to parse toEase {animationParams.toEase}");
-            //    toEase = Ease.InOutQuad;
-            //}
-
-            //if (Enum.TryParse(animationParams.fromEase, out fromEase)) {
-            //    LinkedMovement.Log($"Sucessfully parsed fromEase {animationParams.fromEase}");
-            //} else {
-            //    LinkedMovement.Log($"Failed to parse fromEase {animationParams.fromEase}");
-            //    fromEase = Ease.InOutQuad;
-            //}
-
-            //sampleSequence = DOTween.Sequence();
-
-            //var toPositionTween = DOTween.To(() => originObject.transform.position, value => originObject.transform.position = value, animationParams.startingPosition + animationParams.targetPosition, animationParams.toDuration).SetEase(toEase);
-            //var toRotationTween = DOTween.To(() => originObject.transform.rotation, value => originObject.transform.rotation = value, animationParams.targetRotation, animationParams.toDuration).SetOptions(false).SetEase(toEase);
-
-            //var fromPositionTween = DOTween.To(() => originObject.transform.position, value => originObject.transform.position = value, animationParams.startingPosition, animationParams.fromDuration).SetEase(fromEase);
-            //var fromRotationTween = DOTween.To(() => originObject.transform.rotation, value => originObject.transform.rotation = value, -animationParams.targetRotation, animationParams.fromDuration).SetOptions(false).SetRelative(true).SetEase(fromEase);
-
-            //sampleSequence.Append(toPositionTween);
-            //sampleSequence.Join(toRotationTween);
-
-            //sampleSequence.AppendInterval(animationParams.fromDelay);
-
-            //sampleSequence.Append(fromPositionTween);
-            //sampleSequence.Join(fromRotationTween);
-
-            //var restartDelay = animationParams.isTriggerable ? 0 : animationParams.restartDelay;
-            //sampleSequence.AppendInterval(restartDelay);
-
-            //// TODO: Ability to set loops for triggered?
-            //sampleSequence.SetLoops(-1);
         }
 
         private void enableSelectionHandler() {
@@ -662,40 +459,5 @@ namespace LinkedMovement {
             joinObjects();
         }
 
-        //private void resetBaseObject() {
-        //    if (baseObject == null) return;
-
-        //    LinkedMovement.Log("resetBaseObject");
-
-        //    // There should always be an Animator on selected base objects
-        //    var baseAnimator = baseObject.GetComponent<Animator>();
-        //    if (baseAnimator == null) return;
-        //    baseAnimator.Rebind();
-        //    baseAnimator.Update(0f);
-
-        //    if (!baseIsTriggerable) {
-        //        baseAnimator.StartPlayback();
-        //        baseAnimator.speed = 1f;
-        //        baseIsTriggerable = false;
-        //    }
-        //}
-
-        //private void setupBaseObject() {
-        //    LinkedMovement.Log("setupBaseObject");
-
-        //    var baseAnimator = baseObject.GetComponent<Animator>();
-        //    baseAnimator.Rebind();
-        //    baseAnimator.Update(0f);
-        //    baseAnimator.StopPlayback();
-
-        //    var modTriggerable = baseObject.GetComponent<ModAnimationTrigger>();
-        //    if (modTriggerable != null) {
-        //        LinkedMovement.Log("Is triggerable");
-        //        baseIsTriggerable = true;
-        //    } else {
-        //        LinkedMovement.Log("Not triggerable, stop animation");
-        //        baseAnimator.speed = 0f;
-        //    }
-        //}
     }
 }
