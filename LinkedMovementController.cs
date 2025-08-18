@@ -239,13 +239,15 @@ namespace LinkedMovement {
             //    //}
             //}
 
+            // TODO: State machiney
             if (creationStep == CreationSteps.Assemble && newStep == CreationSteps.Animate) {
                 enterAnimateState();
             }
             if (creationStep == CreationSteps.Animate && newStep == CreationSteps.Assemble) {
                 exitAnimateState();
             }
-            if (creationStep == CreationSteps.Finish) {
+            if (newStep == CreationSteps.Finish) {
+                exitAnimateState();
                 finishAnimatronic();
             }
 
@@ -334,7 +336,7 @@ namespace LinkedMovement {
             var highlightHandle = HighlightOverlayController.Instance.add(renderers, -1, Color.yellow);
             highlightHandles.Add(bo, highlightHandle);
 
-            tryUpdateTargetsTransform();
+            //tryUpdateTargetsTransform();
 
             LinkedMovement.Log("Selected BO position:");
             LinkedMovement.Log("World: " + bo.gameObject.transform.position.ToString());
@@ -463,7 +465,10 @@ namespace LinkedMovement {
 
             // TODO
             var pairing = new Pairing(originObject.gameObject, targetGOs, null, animatronicName);
-            pairing.setCustomData(false, animationParams.startingPosition, animationParams.startingRotation, animationParams);
+            // TODO: Eliminate origin offsets
+            pairing.setCustomData(false, default, default, animationParams);
+            //pairing.setCustomData(false, animationParams.startingPosition, animationParams.startingRotation, animationParams);
+
             //var pairing = new Pairing(baseObject.gameObject, targetGOs, null, pairName);
             //pairing.setCustomData(false, basePositionOffset, baseRotationOffset, animationParams);
             pairing.connect();
@@ -521,7 +526,8 @@ namespace LinkedMovement {
             originObject.transform.rotation = Quaternion.Euler(animationParams.startingRotation);
         }
 
-        public void rebuildSampleSequence(bool isSaving = false) {
+        // TODO: Need to move sequence creation to utils
+        public void rebuildSampleSequence() {
             LinkedMovement.Log("rebuildSequence");
             killSampleSequence();
 
@@ -530,45 +536,47 @@ namespace LinkedMovement {
                 return;
             }
 
-            // Parse easings
-            Ease toEase;
-            Ease fromEase;
+            sampleSequence = LMUtils.BuildAnimationSequence(originObject.transform, animationParams, true);
 
-            if (Enum.TryParse(animationParams.toEase, out toEase)) {
-                LinkedMovement.Log($"Sucessfully parsed toEase {animationParams.toEase}");
-            } else {
-                LinkedMovement.Log($"Failed to parse toEase {animationParams.toEase}");
-                toEase = Ease.InOutQuad;
-            }
+            //// Parse easings
+            //Ease toEase;
+            //Ease fromEase;
 
-            if (Enum.TryParse(animationParams.fromEase, out fromEase)) {
-                LinkedMovement.Log($"Sucessfully parsed fromEase {animationParams.fromEase}");
-            } else {
-                LinkedMovement.Log($"Failed to parse fromEase {animationParams.fromEase}");
-                fromEase = Ease.InOutQuad;
-            }
+            //if (Enum.TryParse(animationParams.toEase, out toEase)) {
+            //    LinkedMovement.Log($"Sucessfully parsed toEase {animationParams.toEase}");
+            //} else {
+            //    LinkedMovement.Log($"Failed to parse toEase {animationParams.toEase}");
+            //    toEase = Ease.InOutQuad;
+            //}
 
-            sampleSequence = DOTween.Sequence();
+            //if (Enum.TryParse(animationParams.fromEase, out fromEase)) {
+            //    LinkedMovement.Log($"Sucessfully parsed fromEase {animationParams.fromEase}");
+            //} else {
+            //    LinkedMovement.Log($"Failed to parse fromEase {animationParams.fromEase}");
+            //    fromEase = Ease.InOutQuad;
+            //}
 
-            var toPositionTween = DOTween.To(() => originObject.transform.position, value => originObject.transform.position = value, animationParams.startingPosition + animationParams.targetPosition, animationParams.toDuration).SetEase(toEase);
-            var toRotationTween = DOTween.To(() => originObject.transform.rotation, value => originObject.transform.rotation = value, animationParams.targetRotation, animationParams.toDuration).SetOptions(false).SetEase(toEase);
+            //sampleSequence = DOTween.Sequence();
 
-            var fromPositionTween = DOTween.To(() => originObject.transform.position, value => originObject.transform.position = value, animationParams.startingPosition, animationParams.fromDuration).SetEase(fromEase);
-            var fromRotationTween = DOTween.To(() => originObject.transform.rotation, value => originObject.transform.rotation = value, -animationParams.targetRotation, animationParams.fromDuration).SetOptions(false).SetRelative(true).SetEase(fromEase);
+            //var toPositionTween = DOTween.To(() => originObject.transform.position, value => originObject.transform.position = value, animationParams.startingPosition + animationParams.targetPosition, animationParams.toDuration).SetEase(toEase);
+            //var toRotationTween = DOTween.To(() => originObject.transform.rotation, value => originObject.transform.rotation = value, animationParams.targetRotation, animationParams.toDuration).SetOptions(false).SetEase(toEase);
 
-            sampleSequence.Append(toPositionTween);
-            sampleSequence.Join(toRotationTween);
+            //var fromPositionTween = DOTween.To(() => originObject.transform.position, value => originObject.transform.position = value, animationParams.startingPosition, animationParams.fromDuration).SetEase(fromEase);
+            //var fromRotationTween = DOTween.To(() => originObject.transform.rotation, value => originObject.transform.rotation = value, -animationParams.targetRotation, animationParams.fromDuration).SetOptions(false).SetRelative(true).SetEase(fromEase);
 
-            sampleSequence.AppendInterval(animationParams.fromDelay);
+            //sampleSequence.Append(toPositionTween);
+            //sampleSequence.Join(toRotationTween);
 
-            sampleSequence.Append(fromPositionTween);
-            sampleSequence.Join(fromRotationTween);
+            //sampleSequence.AppendInterval(animationParams.fromDelay);
 
-            var restartDelay = animationParams.isTriggerable ? 0 : animationParams.restartDelay;
-            sampleSequence.AppendInterval(restartDelay);
+            //sampleSequence.Append(fromPositionTween);
+            //sampleSequence.Join(fromRotationTween);
 
-            // TODO: Ability to set loops for triggered?
-            sampleSequence.SetLoops(-1);
+            //var restartDelay = animationParams.isTriggerable ? 0 : animationParams.restartDelay;
+            //sampleSequence.AppendInterval(restartDelay);
+
+            //// TODO: Ability to set loops for triggered?
+            //sampleSequence.SetLoops(-1);
         }
 
         private void enableSelectionHandler() {
@@ -585,6 +593,7 @@ namespace LinkedMovement {
             selectionHandler.DeselectAll();
         }
 
+        // TODO: Move to utils
         private Vector3 findTargetsCenterPosition() {
             var startingPos = targetObjects[0].transform.position;
             var minX = startingPos.x;
@@ -633,8 +642,8 @@ namespace LinkedMovement {
         }
 
         private void finishAnimatronic() {
+            LinkedMovement.Log("Finish Animatronic");
             joinObjects();
-            windowManager.removeWindowOfType(WindowManager.WindowType.CreateNewAnimatronic);
         }
 
         //private void resetBaseObject() {

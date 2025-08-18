@@ -11,7 +11,6 @@ namespace LinkedMovement
         public List<GameObject> targetGOs = new List<GameObject>();
         public string pairingId;
         public string pairingName;
-        // TODO: Show original blueprint name
 
         private bool connected = false;
 

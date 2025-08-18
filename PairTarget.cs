@@ -34,7 +34,7 @@ namespace LinkedMovement
         }
 
         public PairTarget(string pId, Vector3 positionOffset) {
-            LinkedMovement.Log("PairTarget constructor w/ params");
+            LinkedMovement.Log("PairTarget constructor w/ params, offset: " + positionOffset.ToString());
             pairId = pId;
             this.positionOffset = positionOffset;
         }
