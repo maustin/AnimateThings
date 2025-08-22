@@ -1,5 +1,6 @@
-﻿using DG.Tweening;
+﻿//using DG.Tweening;
 using LinkedMovement.Utils;
+using PrimeTween;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,9 +26,13 @@ namespace LinkedMovement {
 
         public EffectRunner.ExecutionHandle execute(EffectEntry effectEntry) {
             LinkedMovement.Log("LMTrigger.execute");
-            if (sequence != null) {
-                LinkedMovement.Log("Kill existing sequence");
-                sequence.Kill();
+            //if (sequence != null) {
+            //    LinkedMovement.Log("Kill existing sequence");
+            //    sequence.Kill();
+            //}
+            if (sequence.isAlive) {
+                sequence.SetRemainingCycles(false);
+                sequence.Complete();
             }
 
             EffectRunner.ExecutionHandle andExecute = new EffectRunner.ExecutionHandle((MonoBehaviour)this, this.playEffect());
@@ -73,15 +78,15 @@ namespace LinkedMovement {
         private IEnumerator playEffect() {
             LinkedMovement.Log("LMTrigger.playEffect");
             sequence = LMUtils.BuildAnimationSequence(gameObject.transform, animationParams);
-            sequence.Play();
+            //sequence.Play();
             yield return null;
         }
 
         private void onCompleteHandler(EffectRunner.ExecutionHandle handle, bool successful) {
             LinkedMovement.Log("LMTrigger.onCompleteHandler");
-            if (sequence != null) {
-                sequence = null;
-            }
+            //if (sequence != null) {
+            //    sequence = null;
+            //}
         }
     }
 }

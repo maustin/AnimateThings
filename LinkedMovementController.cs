@@ -1,7 +1,8 @@
-﻿using DG.Tweening;
+﻿//using DG.Tweening;
 using LinkedMovement.UI;
 using LinkedMovement.Utils;
 using Parkitect.UI;
+using PrimeTween;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -86,7 +87,8 @@ namespace LinkedMovement {
         private void OnDisable() {
             LinkedMovement.Log("LinkedMovementController OnDisable");
             disableSelectionHandler();
-            DOTween.KillAll();
+            //DOTween.KillAll();
+            // TODO: Do all Sequences need to be tracked here so they can be killed?
         }
 
         private void OnDestroy() {
@@ -402,20 +404,24 @@ namespace LinkedMovement {
 
         public void killSampleSequence() {
             LinkedMovement.Log("Controller.killSampleSequence");
-            if (sampleSequence == null) {
-                LinkedMovement.Log("No sequence to kill");
-                return;
-            }
+            //if (sampleSequence == null) {
+            //    LinkedMovement.Log("No sequence to kill");
+            //    return;
+            //}
 
             // TODO: Try/catch to handle sequence already destroyed
-            sampleSequence.Kill();
-            sampleSequence = null;
-
-            if (originObject != null && originObject.transform != null && animationParams != null && LMUtils.IsGeneratedOrigin(originObject)) {
-                LinkedMovement.Log("RESET ORIGIN");
-                originObject.transform.position = animationParams.startingPosition;
-                originObject.transform.rotation = Quaternion.Euler(animationParams.startingRotation);
+            //sampleSequence.Kill();
+            //sampleSequence = null;
+            if (sampleSequence.isAlive) {
+                sampleSequence.SetRemainingCycles(false);
+                sampleSequence.Complete();
             }
+
+            //if (originObject != null && originObject.transform != null && animationParams != null && LMUtils.IsGeneratedOrigin(originObject)) {
+            //    LinkedMovement.Log("RESET ORIGIN");
+            //    originObject.transform.position = animationParams.startingPosition;
+            //    originObject.transform.rotation = Quaternion.Euler(animationParams.startingRotation);
+            //}
         }
 
         public void rebuildSampleSequence() {

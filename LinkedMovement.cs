@@ -1,6 +1,7 @@
-﻿using DG.Tweening;
+﻿//using DG.Tweening;
 using HarmonyLib;
 using Parkitect.Mods.AssetPacks;
+using PrimeTween;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -68,8 +69,8 @@ namespace LinkedMovement {
             registerHotkeys();
             Log("Done register hotkeys");
 
-            Log("Loading DOTween");
-            DOTween.Init(true, false, LogBehaviour.Verbose);
+            //Log("Loading DOTween");
+            //DOTween.Init(true, false, LogBehaviour.Verbose);
 
             Log("Attempt to load assets");
 
@@ -120,7 +121,8 @@ namespace LinkedMovement {
 
             Log("Assets load complete");
 
-            DOTween.Init(true, true, LogBehaviour.Verbose);
+            //DOTween.Init(true, true, LogBehaviour.Verbose);
+            PrimeTweenConfig.ManualInitialize();
 
             Log("Startup complete");
         }
