@@ -96,12 +96,12 @@ namespace PrimeTween {
             Instance.ApplyStartValues(updateType.enumValue);
         }
 
-        //#if PRIME_TWEEN_EXPERIMENTAL
-        //public
-        //#else
-        //internal
-        //#endif
-        public static void ManualInitialize() {
+#if PRIME_TWEEN_EXPERIMENTAL
+        public
+#else
+        internal
+#endif
+        static void ManualInitialize() {
             if (!PrimeTweenManager.HasInstance) {
                 PrimeTweenManager.CreateInstanceAndDontDestroy();
             } else {

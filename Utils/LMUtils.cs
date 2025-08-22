@@ -1,5 +1,4 @@
 ﻿// ATTRIB: TransformAnarchy
-//using DG.Tweening;
 using PrimeTween;
 using System;
 using System.Collections;
@@ -57,27 +56,47 @@ namespace LinkedMovement.Utils {
             LinkedMovement.Log("LMUtils.BuildAnimationSequence NEW");
 
             var hasParent = transform.parent != null;
-            Tween toPositionTween;
-            Tween fromPositionTween;
 
-            if (hasParent) {
-                toPositionTween = Tween.LocalPosition(transform, new Vector3(0, 1, 0), .25f);
-                fromPositionTween = Tween.LocalPosition(transform, new Vector3(0, 0, 0), .25f);
+            // TODO: If ifEditing, reset the base animations
+
+            // Parse easings
+            Ease toEase;
+            Ease fromEase;
+
+            if (Enum.TryParse(animationParams.toEase, out toEase)) {
+                LinkedMovement.Log($"Sucessfully parsed toEase {animationParams.toEase}");
             } else {
-                toPositionTween = Tween.Position(transform, animationParams.startingPosition + animationParams.targetPosition, animationParams.toDuration);
-                fromPositionTween = Tween.Position(transform, animationParams.startingPosition, animationParams.fromDuration);
+                LinkedMovement.Log($"Failed to parse toEase {animationParams.toEase}");
+                toEase = Ease.InOutQuad;
             }
 
+            if (Enum.TryParse(animationParams.fromEase, out fromEase)) {
+                LinkedMovement.Log($"Sucessfully parsed fromEase {animationParams.fromEase}");
+            } else {
+                LinkedMovement.Log($"Failed to parse fromEase {animationParams.fromEase}");
+                fromEase = Ease.InOutQuad;
+            }
+
+            Tween toPositionTween;
+            Tween toRotationTween;
+            Tween fromPositionTween;
+            Tween fromRotationTween;
+
+            toPositionTween = Tween.LocalPositionAdditive(transform, animationParams.targetPosition, animationParams.toDuration, toEase);
+            toRotationTween = Tween.LocalRotationAdditive(transform, animationParams.targetRotation, animationParams.toDuration, toEase);
+
+            fromPositionTween = Tween.LocalPositionAdditive(transform, -animationParams.targetPosition, animationParams.fromDuration, fromEase);
+            fromRotationTween = Tween.LocalRotationAdditive(transform, -animationParams.targetRotation, animationParams.fromDuration, fromEase);
+
             Sequence sequence = Sequence.Create(cycles: -1, CycleMode.Restart)
-                //.ChainDelay(1f)
-                .Chain(toPositionTween)
-                //.ChainDelay(1f)
+                .Group(toPositionTween)
+                .Group(toRotationTween)
                 .ChainDelay(animationParams.fromDelay)
-                .Chain(fromPositionTween)
-                //.ChainDelay(1f)
+                .Group(fromPositionTween)
+                .Group(fromRotationTween)
                 .ChainDelay(animationParams.restartDelay)
                 ;
-            
+
             return sequence;
         }
         //public static Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams, bool isEditing = false) {

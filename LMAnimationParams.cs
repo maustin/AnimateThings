@@ -39,6 +39,7 @@ namespace LinkedMovement {
             LinkedMovement.Log("LMAnimationParams base constructor");
         }
 
+        // TODO: Can we do away with starting values now that tweens are all relative?
         public LMAnimationParams(Vector3 startingPosition, Vector3 startingRotation) {
             LinkedMovement.Log("LMAnimationParams constructor with starting position and rotation");
             this.startingPosition = startingPosition;

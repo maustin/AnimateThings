@@ -1,5 +1,4 @@
-﻿//using DG.Tweening;
-using LinkedMovement.UI;
+﻿using LinkedMovement.UI;
 using LinkedMovement.Utils;
 using Parkitect.UI;
 using PrimeTween;
@@ -456,7 +455,6 @@ namespace LinkedMovement {
 
             if (animationParams == null) {
                 animationParams = new LMAnimationParams(originObject.transform.position, originObject.transform.rotation.eulerAngles);
-                //animationParams = new LMAnimationParams(originObject.transform.localPosition, originObject.transform.rotation.eulerAngles);
             }
 
             // set targets parent

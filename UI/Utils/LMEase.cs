@@ -31,8 +31,8 @@
         InBounce,
         OutBounce,
         InOutBounce,
-        InFlash,
-        OutFlash,
-        InOutFlash,
+        //InFlash,
+        //OutFlash,
+        //InOutFlash,
     }
 }
