@@ -188,7 +188,9 @@ namespace LinkedMovement {
         }
 
         public Pairing findPairingByBaseGameObject(GameObject gameObject) {
+            LinkedMovement.Log("Controller.findPairingByBaseGameObject, from id: " + gameObject.name);
             foreach (var pairing in pairings) {
+                LinkedMovement.Log("Checking pairing name: " + pairing.pairingName + ", id: " + pairing.pairingId + ", go id: " + pairing.baseGO.name);
                 if (pairing.baseGO == gameObject) return pairing;
             }
             return null;
@@ -417,24 +419,11 @@ namespace LinkedMovement {
 
         public void killSampleSequence() {
             LinkedMovement.Log("Controller.killSampleSequence");
-            //if (sampleSequence == null) {
-            //    LinkedMovement.Log("No sequence to kill");
-            //    return;
-            //}
-
-            // TODO: Try/catch to handle sequence already destroyed
-            //sampleSequence.Kill();
-            //sampleSequence = null;
+            
             if (sampleSequence.isAlive) {
                 sampleSequence.SetRemainingCycles(false);
                 sampleSequence.Complete();
             }
-
-            //if (originObject != null && originObject.transform != null && animationParams != null && LMUtils.IsGeneratedOrigin(originObject)) {
-            //    LinkedMovement.Log("RESET ORIGIN");
-            //    originObject.transform.position = animationParams.startingPosition;
-            //    originObject.transform.rotation = Quaternion.Euler(animationParams.startingRotation);
-            //}
         }
 
         public void rebuildSampleSequence() {
@@ -446,9 +435,6 @@ namespace LinkedMovement {
                 return;
             }
 
-            //if (originObject.transform.parent != null && originObject.transform.parent.gameObject != null) {
-            //    LMUtils.RestartAssociatedAnimations(originObject.transform.parent.gameObject);
-            //}
             restartAssociated();
 
             sampleSequence = LMUtils.BuildAnimationSequence(originObject.transform, animationParams, true);

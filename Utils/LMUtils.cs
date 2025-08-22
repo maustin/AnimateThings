@@ -67,14 +67,15 @@ namespace LinkedMovement.Utils {
                 pairBase.sequence.progress = 0f;
             }
 
-            foreach (var targetGO in pairing.targetGOs) {
-                RestartAssociatedAnimations(targetGO);
+            // Check up
+            if (gameObject.transform.parent != null && gameObject.transform.parent.gameObject != null) {
+                RestartAssociatedAnimations(gameObject.transform.parent.gameObject);
             }
         }
 
         public static Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams, bool isEditing = false) {
             LinkedMovement.Log("LMUtils.BuildAnimationSequence");
-            LinkedMovement.Log(animationParams.ToString());
+            //LinkedMovement.Log(animationParams.ToString());
 
             // TODO: Need to prevent adding multiple pairings on the same objects
             // E.g. an object can only be the base of a single Pairing

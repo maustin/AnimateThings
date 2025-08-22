@@ -83,12 +83,6 @@ namespace LinkedMovement
 
                 LinkedMovement.GetController().removeAnimatedBuildableObject(targetBO);
 
-                //LinkedMovement.Log("Base pos: " + baseGO.transform.position.ToString());
-                //LinkedMovement.Log("PairTargetOffset: " + pairTarget.positionOffset.ToString());
-                //LinkedMovement.Log("PairBaseOffset: " + pairBase.positionOffset.ToString());
-
-                //LinkedMovement.Log($"World x: {targetGO.transform.position.x}, y: {targetGO.transform.position.y}, z: {targetGO.transform.position.z}");
-                //LinkedMovement.Log($"Local x: {targetGO.transform.localPosition.x}, y: {targetGO.transform.localPosition.y}, z: {targetGO.transform.localPosition.z}");
                 LMUtils.AttachTargetToBase(baseGO.transform, targetGO.transform);
             }
 
@@ -166,9 +160,6 @@ namespace LinkedMovement
 
         public void updatePairingName(string newPairingName) {
             pairingName = newPairingName;
-
-            //var baseBO = LMUtils.GetBuildableObjectFromGameObject(baseGO);
-            //PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
 
             pairBase.pairName = newPairingName;
         }
