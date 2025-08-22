@@ -57,7 +57,7 @@ namespace LinkedMovement
                 if (baseAnimParams.isTriggerable) {
                     baseBO.gameObject.AddComponent<LMTrigger>().animationParams = baseAnimParams;
                 } else {
-                    pairBase.sequence = LMUtils.BuildAnimationSequence(baseBO.transform, baseAnimParams);
+                    pairBase.sequence = LMUtils.BuildAnimationSequence(baseBO.transform, baseAnimParams, false);
                 }
             }
 

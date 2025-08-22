@@ -122,7 +122,7 @@ namespace LinkedMovement {
             }
 
             var mouseTool = GameController.Instance.getActiveMouseTool();
-            // TODO: What is dis? (Think is handler when game menu is open)
+            // TODO: What is dis?
             if (mouseTool == null) return;
 
             foreach (var bo in animatedBuildableObjects) {
@@ -217,7 +217,7 @@ namespace LinkedMovement {
                 LMUtils.RemoveObjectHighlight(originObject);
                 LinkedMovement.Log("Destroy existing origin: " + originObject.getName());
                 // Only destroy the origin if it was generated
-                if (!LMUtils.IsGeneratedOrigin(originObject))
+                if (LMUtils.IsGeneratedOrigin(originObject))
                     originObject.Kill();
                 originObject = null;
             }
@@ -412,6 +412,7 @@ namespace LinkedMovement {
             sampleSequence = null;
 
             if (originObject != null && originObject.transform != null && animationParams != null && LMUtils.IsGeneratedOrigin(originObject)) {
+                LinkedMovement.Log("RESET ORIGIN");
                 originObject.transform.position = animationParams.startingPosition;
                 originObject.transform.rotation = Quaternion.Euler(animationParams.startingRotation);
             }
@@ -449,8 +450,9 @@ namespace LinkedMovement {
 
             if (animationParams == null) {
                 animationParams = new LMAnimationParams(originObject.transform.position, originObject.transform.rotation.eulerAngles);
+                //animationParams = new LMAnimationParams(originObject.transform.localPosition, originObject.transform.rotation.eulerAngles);
             }
-            
+
             // set targets parent
             foreach (var targetBO in targetObjects) {
                 targetBO.transform.SetParent(originObject.transform);

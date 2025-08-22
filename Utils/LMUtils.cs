@@ -9,6 +9,7 @@ namespace LinkedMovement.Utils {
     // TODO: Lots of UI stuff. Split or move to UI.Utils?
     static class LMUtils {
         private static Dictionary<BuildableObject, HighlightOverlayController.HighlightHandle> HighlightHandles;
+        //private static List<Sequence> sequences = new List<Sequence>();
 
         public static bool IsGeneratedOrigin(BuildableObject bo) {
             return bo != null && bo.getName() == "LMOriginBase";
@@ -53,6 +54,7 @@ namespace LinkedMovement.Utils {
 
         public static Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams, bool isEditing = false) {
             LinkedMovement.Log("LMUtils.BuildAnimationSequence");
+            
             // Parse easings
             Ease toEase;
             Ease fromEase;
@@ -71,24 +73,87 @@ namespace LinkedMovement.Utils {
                 fromEase = Ease.InOutQuad;
             }
 
+            var restartDelay = animationParams.isTriggerable ? 0 : animationParams.restartDelay;
+
+            //LinkedMovement.Log("!!! start anim pos: " + animationParams.startingPosition.ToString());
+            //LinkedMovement.Log("!!! targt anim pos: " + animationParams.targetPosition.ToString());
+            //LinkedMovement.Log("!!! start pos: " + transform.position.ToString());
+            //LinkedMovement.Log("!!! start lps: " + transform.localPosition.ToString());
+
+            var hasParent = transform.parent != null;
+            Tweener toPositionTween;
+            Tweener fromPositionTween;
+
             Sequence sequence = DOTween.Sequence();
 
-            var toPositionTween = DOTween.To(() => transform.position, value => transform.position = value, animationParams.startingPosition + animationParams.targetPosition, animationParams.toDuration).SetEase(toEase);
-            var toRotationTween = DOTween.To(() => transform.rotation, value => transform.rotation = value, animationParams.targetRotation, animationParams.toDuration).SetOptions(false).SetRelative(true).SetEase(toEase);
+            //if (sequences.Contains(sequence)) {
+            //    LinkedMovement.Log("!!!! HAS SEQUENCE!");
+            //} else {
+            //    LinkedMovement.Log("!!!! doesn't have sequence");
+            //    sequences.Add(sequence);
+            //}
 
-            var fromPositionTween = DOTween.To(() => transform.position, value => transform.position = value, animationParams.startingPosition, animationParams.fromDuration).SetEase(fromEase);
-            var fromRotationTween = DOTween.To(() => transform.rotation, value => transform.rotation = value, -animationParams.targetRotation, animationParams.fromDuration).SetOptions(false).SetRelative(true).SetEase(fromEase);
+            //transform.DOLocalMove(new Vector3(0, 0, -2), 1);
+
+            if (hasParent) {
+                LinkedMovement.Log("!!! has parent");
+
+                //toPositionTween = DOTween.To(() => transform);
+
+                //toPositionTween = transform.DOLocalMove(new Vector3(0, 1, 0), 1);//.SetRelative(true);
+                //fromPositionTween = transform.DOLocalMove(new Vector3(0, 0, 0), 1);//.SetRelative(true);
+
+                //toPositionTween = transform.DOLocalMove(animationParams.targetPosition, 1).SetRelative(true);
+                //fromPositionTween = transform.DOLocalMove(-animationParams.targetPosition, 1).SetRelative(true);
+
+                toPositionTween = DOTweenShims.DOLocalMove(transform, new Vector3(0, 0, -1), 1);
+
+                //toPositionTween = DOTweenShims.DOLocalMove(transform, animationParams.targetPosition, 1).SetRelative(true);
+                //fromPositionTween = DOTweenShims.DOLocalMove(transform, -animationParams.targetPosition, 1).SetRelative(true);
+
+                //sequence.Insert(0, toPositionTween);
+                //sequence.Insert(1, fromPositionTween);
+            } else {
+                LinkedMovement.Log("!!! NO parent");
+                toPositionTween = DOTween.To(() => transform.position, value => transform.position = value, animationParams.startingPosition + animationParams.targetPosition, animationParams.toDuration).SetEase(toEase);
+                //fromPositionTween = DOTween.To(() => transform.position, value => transform.position = value, animationParams.startingPosition, animationParams.fromDuration).SetEase(fromEase);
+
+                //sequence.Append(toPositionTween);
+                //sequence.Append(fromPositionTween);
+            }
+
+            //var toPositionTween = DOTweenShims.DOLocalMove(transform, animationParams.targetPosition, 1);//.SetRelative(true);
+            //var fromPositionTween = DOTweenShims.DOLocalMove(transform, animationParams.startingPosition, 1);//.SetRelative(true);
 
             sequence.Append(toPositionTween);
-            sequence.Join(toRotationTween);
+            //sequence.AppendInterval(1);
+            //sequence.Append(fromPositionTween);
+            //sequence.AppendInterval(1);
 
-            sequence.AppendInterval(animationParams.fromDelay);
+            //Sequence sequence = DOTween.Sequence()
+            //    .Append(transform.DOLocalMove(new Vector3(0, 0, -1), 1)).SetRelative(true)
+            //    .AppendInterval(1)
+            //    .Append(transform.DOLocalMove(new Vector3(0, 0, 1), 1)).SetRelative(true)
+            //    .AppendInterval(1);
 
-            sequence.Append(fromPositionTween);
-            sequence.Join(fromRotationTween);
+            //Sequence sequence = DOTween.Sequence();
 
-            var restartDelay = animationParams.isTriggerable ? 0 : animationParams.restartDelay;
-            sequence.AppendInterval(restartDelay);
+            //var toPositionTween = DOTween.To(() => transform.position, value => transform.position = value, animationParams.startingPosition + animationParams.targetPosition, animationParams.toDuration).SetEase(toEase);
+            //var toRotationTween = DOTween.To(() => transform.rotation, value => transform.rotation = value, animationParams.targetRotation, animationParams.toDuration).SetOptions(false).SetRelative(true).SetEase(toEase);
+
+            //var fromPositionTween = DOTween.To(() => transform.position, value => transform.position = value, animationParams.startingPosition, animationParams.fromDuration).SetEase(fromEase);
+            //var fromRotationTween = DOTween.To(() => transform.rotation, value => transform.rotation = value, -animationParams.targetRotation, animationParams.fromDuration).SetOptions(false).SetRelative(true).SetEase(fromEase);
+
+            //sequence.Append(toPositionTween);
+            //sequence.Join(toRotationTween);
+
+            //sequence.AppendInterval(animationParams.fromDelay);
+
+            //sequence.Append(fromPositionTween);
+            //sequence.Join(fromRotationTween);
+
+            //sequence.AppendInterval(restartDelay);
+
 
             // TODO: Ability to set loops for triggered?
             if (isEditing || !animationParams.isTriggerable) {
@@ -99,6 +164,7 @@ namespace LinkedMovement.Utils {
             }
 
             if (!isEditing && !animationParams.isTriggerable) {
+                LinkedMovement.Log("Not editing and not triggerable");
                 sequence.Pause();
                 var initialDelay = UnityEngine.Random.Range(animationParams.initialStartDelayMin, animationParams.initialStartDelayMax);
                 LinkedMovement.Log($"Initial delay for {animationParams.name} is {initialDelay}");
@@ -107,6 +173,8 @@ namespace LinkedMovement.Utils {
                     sequence.Play();
                 }, false);
             }
+
+            sequence.SetUpdate(UpdateType.Late, false);
 
             return sequence;
         }

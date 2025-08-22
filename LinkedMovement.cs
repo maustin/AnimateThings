@@ -119,6 +119,9 @@ namespace LinkedMovement {
             }
 
             Log("Assets load complete");
+
+            DOTween.Init(true, true, LogBehaviour.Verbose);
+
             Log("Startup complete");
         }
 
