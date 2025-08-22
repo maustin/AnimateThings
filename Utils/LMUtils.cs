@@ -6,10 +6,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace LinkedMovement.Utils {
-    // TODO: Lots of UI stuff. Split or move to UI.Utils?
+    // TODO: Lots of UI stuff. Consider splitting UI stuff out to, like, UI.Utils
     static class LMUtils {
         private static Dictionary<BuildableObject, HighlightOverlayController.HighlightHandle> HighlightHandles;
-        //private static List<Sequence> sequences = new List<Sequence>();
 
         public static bool IsGeneratedOrigin(BuildableObject bo) {
             return bo != null && bo.getName() == "LMOriginBase";
@@ -52,12 +51,38 @@ namespace LinkedMovement.Utils {
             return pairTarget;
         }
 
+        public static void RestartAssociatedAnimations(GameObject gameObject) {
+            LinkedMovement.Log("LMUtils.RestartAssociatedAnimations for " + gameObject.name);
+
+            var pairing = LinkedMovement.GetController().findPairingByBaseGameObject(gameObject);
+            if (pairing == null) {
+                LinkedMovement.Log("Failed to find existing Pairing");
+                return;
+            }
+            LinkedMovement.Log("Found pairing name: " + pairing.pairingName + ", id: " + pairing.pairingId);
+
+            var pairBase = pairing.pairBase;
+            if (pairBase.sequence.isAlive) {
+                LinkedMovement.Log("Reset progress!");
+                pairBase.sequence.progress = 0f;
+            }
+
+            foreach (var targetGO in pairing.targetGOs) {
+                RestartAssociatedAnimations(targetGO);
+            }
+        }
+
         public static Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams, bool isEditing = false) {
-            LinkedMovement.Log("LMUtils.BuildAnimationSequence NEW");
+            LinkedMovement.Log("LMUtils.BuildAnimationSequence");
+            //LinkedMovement.Log(animationParams.ToString());
 
-            var hasParent = transform.parent != null;
+            //var hasParent = transform.parent != null;
 
-            // TODO: If ifEditing, reset the base animations
+            // TODO: Need to prevent adding multiple pairings on the same objects
+            // E.g. an object can only be the base of a single Pairing
+            //if (isEditing && transform.parent != null && transform.parent.gameObject != null)
+            //    RestartAssociatedAnimations(transform.parent.gameObject);
+                //RestartAssociatedAnimations(transform.gameObject);
 
             // Parse easings
             Ease toEase;
@@ -88,14 +113,27 @@ namespace LinkedMovement.Utils {
             fromPositionTween = Tween.LocalPositionAdditive(transform, -animationParams.targetPosition, animationParams.fromDuration, fromEase);
             fromRotationTween = Tween.LocalRotationAdditive(transform, -animationParams.targetRotation, animationParams.fromDuration, fromEase);
 
-            Sequence sequence = Sequence.Create(cycles: -1, CycleMode.Restart)
-                .Group(toPositionTween)
-                .Group(toRotationTween)
+            Sequence sequence = Sequence.Create(cycles: -1, cycleMode: CycleMode.Restart)
+                .ChainDelay(0)
+                .Chain(Sequence.Create()
+                    .Group(toPositionTween)
+                    .Group(toRotationTween))
                 .ChainDelay(animationParams.fromDelay)
-                .Group(fromPositionTween)
-                .Group(fromRotationTween)
+                .Chain(Sequence.Create()
+                    .Group(fromPositionTween)
+                    .Group(fromRotationTween))
                 .ChainDelay(animationParams.restartDelay)
                 ;
+
+            //Sequence sequence = Sequence.Create(cycles: -1, CycleMode.Restart)
+            //    .ChainDelay(0)
+            //    .Group(toPositionTween)
+            //    .Group(toRotationTween)
+            //    .ChainDelay(animationParams.fromDelay)
+            //    .Group(fromPositionTween)
+            //    .Group(fromRotationTween)
+            //    .ChainDelay(animationParams.restartDelay)
+            //    ;
 
             return sequence;
         }

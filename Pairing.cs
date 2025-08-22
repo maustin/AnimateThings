@@ -11,6 +11,7 @@ namespace LinkedMovement
         public List<GameObject> targetGOs = new List<GameObject>();
         public string pairingId;
         public string pairingName;
+        public PairBase pairBase;
 
         private bool connected = false;
 
@@ -48,7 +49,7 @@ namespace LinkedMovement
 
             LinkedMovement.GetController().removeAnimatedBuildableObject(baseBO);
 
-            PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
+            pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
 
             var baseAnimParams = pairBase.animParams;
             LinkedMovement.Log("Has Sequence Animation: " + (baseAnimParams != null));
@@ -57,7 +58,7 @@ namespace LinkedMovement
                 if (baseAnimParams.isTriggerable) {
                     baseBO.gameObject.AddComponent<LMTrigger>().animationParams = baseAnimParams;
                 } else {
-                    pairBase.sequence = LMUtils.BuildAnimationSequence(baseBO.transform, baseAnimParams, false);
+                    pairBase.sequence = LMUtils.BuildAnimationSequence(baseBO.transform, baseAnimParams);
                 }
             }
 
@@ -95,8 +96,7 @@ namespace LinkedMovement
         }
 
         public void update() {
-            if (!connected) return;
-            // TODO: Skip if sequence and not animating
+            if (!connected || !pairBase.sequence.isAlive || pairBase.sequence.isPaused) return;
             
             // TODO: Might be resource intensive. See when we can skip.
 
@@ -167,8 +167,8 @@ namespace LinkedMovement
         public void updatePairingName(string newPairingName) {
             pairingName = newPairingName;
 
-            var baseBO = LMUtils.GetBuildableObjectFromGameObject(baseGO);
-            PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
+            //var baseBO = LMUtils.GetBuildableObjectFromGameObject(baseGO);
+            //PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
 
             pairBase.pairName = newPairingName;
         }

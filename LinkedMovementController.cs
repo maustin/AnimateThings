@@ -187,20 +187,31 @@ namespace LinkedMovement {
             return null;
         }
 
+        public Pairing findPairingByBaseGameObject(GameObject gameObject) {
+            foreach (var pairing in pairings) {
+                if (pairing.baseGO == gameObject) return pairing;
+            }
+            return null;
+        }
+
         public void addPairing(Pairing pairing) {
+            LinkedMovement.Log("Controller.addPairing " + pairing.pairingId);
             pairings.Add(pairing);
         }
 
         public bool removePairing(Pairing pairing) {
+            LinkedMovement.Log("Controller.removePairing " + pairing.pairingId);
             return pairings.Remove(pairing);
         }
 
         public bool hasPairing(Pairing pairing) {
-            return pairings.Contains(pairing);
+            var hasPairing = pairings.Contains(pairing);
+            LinkedMovement.Log("Controller.hasPairing? " + hasPairing + ", id: " + pairing.pairingId);
+            return hasPairing;
         }
 
         public void generateOrigin() {
-            LinkedMovement.Log("generateOrigin");
+            LinkedMovement.Log("Controller.generateOrigin");
 
             removeOrigin();
 
@@ -423,7 +434,7 @@ namespace LinkedMovement {
             //}
         }
 
-        public void rebuildSampleSequence() {
+        public void rebuildSampleSequence(bool doRestart = false) {
             LinkedMovement.Log("rebuildSequence");
             killSampleSequence();
 
@@ -432,7 +443,19 @@ namespace LinkedMovement {
                 return;
             }
 
+            //if (originObject.transform.parent != null && originObject.transform.parent.gameObject != null) {
+            //    LMUtils.RestartAssociatedAnimations(originObject.transform.parent.gameObject);
+            //}
+            if (doRestart)
+                restartAssociated();
+
             sampleSequence = LMUtils.BuildAnimationSequence(originObject.transform, animationParams, true);
+        }
+
+        private void restartAssociated() {
+            if (originObject.transform.parent != null && originObject.transform.parent.gameObject != null) {
+                LMUtils.RestartAssociatedAnimations(originObject.transform.parent.gameObject);
+            }
         }
 
         private void enableSelectionHandler() {
@@ -457,12 +480,14 @@ namespace LinkedMovement {
                 animationParams = new LMAnimationParams(originObject.transform.position, originObject.transform.rotation.eulerAngles);
             }
 
+            restartAssociated();
+
             // set targets parent
             foreach (var targetBO in targetObjects) {
                 targetBO.transform.SetParent(originObject.transform);
             }
 
-            rebuildSampleSequence();
+            rebuildSampleSequence(false);
         }
 
         private void exitAnimateState() {

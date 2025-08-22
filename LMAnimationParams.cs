@@ -1,5 +1,6 @@
 ﻿using LinkedMovement.UI.Utils;
 using LinkedMovement.Utils;
+using System.Text;
 using UnityEngine;
 
 namespace LinkedMovement {
@@ -44,6 +45,26 @@ namespace LinkedMovement {
             LinkedMovement.Log("LMAnimationParams constructor with starting position and rotation");
             this.startingPosition = startingPosition;
             this.startingRotation = startingRotation;
+        }
+
+        public override string ToString() {
+            var sb = new StringBuilder("LMAnimationParams\n");
+            sb.AppendLine("name: " + name);
+            sb.AppendLine("startingPosition: " + startingPosition.ToString());
+            sb.AppendLine("startingRotation: " + startingRotation.ToString());
+            sb.AppendLine("targetPosition: " + targetPosition.ToString());
+            sb.AppendLine("targetRotation: " + targetRotation.ToString());
+            sb.AppendLine("isTriggerable: " + isTriggerable.ToString());
+            sb.AppendLine("toDuration: " + toDuration.ToString());
+            sb.AppendLine("toEase: " + toEase);
+            sb.AppendLine("fromDelay: " + fromDelay.ToString());
+            sb.AppendLine("fromDuration: " + fromDuration.ToString());
+            sb.AppendLine("fromEase: " + fromEase);
+            sb.AppendLine("restartDelay: " + restartDelay.ToString());
+            sb.AppendLine("useInitialStartDelay: " + useInitialStartDelay.ToString());
+            sb.AppendLine("initialStartDelayMin: " + initialStartDelayMin.ToString());
+            sb.AppendLine("initialStartDelayMax: " + initialStartDelayMax.ToString());
+            return sb.ToString();
         }
     }
 }
