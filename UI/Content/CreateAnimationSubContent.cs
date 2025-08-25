@@ -50,7 +50,7 @@ namespace LinkedMovement.UI.Content {
                 }
 
                 using (Scope.GuiEnabled(false)) {
-                    GUILayout.Label("Origin Rotation: " + animationParams.startingRotation.ToString());
+                    GUILayout.Label("Origin Local Rotation: " + animationParams.startingRotation.ToString());
                 }
                 using (Scope.Horizontal()) {
                     GUILayout.Label("Target Rotation Offset");

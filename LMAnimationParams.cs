@@ -40,7 +40,9 @@ namespace LinkedMovement {
             LinkedMovement.Log("LMAnimationParams base constructor");
         }
 
-        // TODO: Can we do away with starting values now that tweens are all relative?
+        // TODO: Worth changing "startingRotation" to "startingLocalRotation"?
+        // startingRotation is the local origin rotation
+        // startingPosition is the global origin position (currently unused)
         public LMAnimationParams(Vector3 startingPosition, Vector3 startingRotation) {
             LinkedMovement.Log("LMAnimationParams constructor with starting position and rotation");
             this.startingPosition = startingPosition;

@@ -69,9 +69,6 @@ namespace LinkedMovement {
             registerHotkeys();
             Log("Done register hotkeys");
 
-            //Log("Loading DOTween");
-            //DOTween.Init(true, false, LogBehaviour.Verbose);
-
             Log("Attempt to load assets");
 
             var currentModDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -121,8 +118,9 @@ namespace LinkedMovement {
 
             Log("Assets load complete");
 
-            //DOTween.Init(true, true, LogBehaviour.Verbose);
+            Log("Initialize PrimeTween");
             PrimeTweenConfig.ManualInitialize();
+            PrimeTweenConfig.warnZeroDuration = false;
 
             Log("Startup complete");
         }

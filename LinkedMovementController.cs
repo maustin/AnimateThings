@@ -421,9 +421,10 @@ namespace LinkedMovement {
             LinkedMovement.Log("Controller.killSampleSequence");
             
             if (sampleSequence.isAlive) {
-                sampleSequence.SetRemainingCycles(false);
+                //sampleSequence.SetRemainingCycles(false);
                 sampleSequence.Complete();
             }
+            
         }
 
         public void rebuildSampleSequence() {
@@ -466,7 +467,7 @@ namespace LinkedMovement {
             LinkedMovement.Log("Enter Animate State");
 
             if (animationParams == null) {
-                animationParams = new LMAnimationParams(originObject.transform.position, originObject.transform.rotation.eulerAngles);
+                animationParams = new LMAnimationParams(originObject.transform.position, originObject.transform.localEulerAngles);
             }
 
             // Restart parent sequences so target is attached when parent is at starting location

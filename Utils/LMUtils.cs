@@ -75,7 +75,6 @@ namespace LinkedMovement.Utils {
 
         public static Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams, bool isEditing = false) {
             LinkedMovement.Log("LMUtils.BuildAnimationSequence");
-            //LinkedMovement.Log(animationParams.ToString());
 
             // TODO: Need to prevent adding multiple pairings on the same objects
             // E.g. an object can only be the base of a single Pairing
@@ -104,10 +103,10 @@ namespace LinkedMovement.Utils {
             Tween fromRotationTween;
 
             toPositionTween = Tween.LocalPositionAdditive(transform, animationParams.targetPosition, animationParams.toDuration, toEase);
-            toRotationTween = Tween.LocalRotationAdditive(transform, animationParams.targetRotation, animationParams.toDuration, toEase);
+            toRotationTween = Tween.LocalEulerAngles(transform, animationParams.startingRotation, animationParams.startingRotation + animationParams.targetRotation, animationParams.toDuration, toEase);
 
             fromPositionTween = Tween.LocalPositionAdditive(transform, -animationParams.targetPosition, animationParams.fromDuration, fromEase);
-            fromRotationTween = Tween.LocalRotationAdditive(transform, -animationParams.targetRotation, animationParams.fromDuration, fromEase);
+            fromRotationTween = Tween.LocalEulerAngles(transform, animationParams.startingRotation + animationParams.targetRotation, animationParams.startingRotation, animationParams.fromDuration, fromEase);
 
             Sequence sequence = Sequence.Create(cycles: -1, cycleMode: CycleMode.Restart)
                 .ChainDelay(0)
