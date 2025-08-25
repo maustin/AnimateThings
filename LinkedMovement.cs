@@ -67,6 +67,7 @@ namespace LinkedMovement {
             registerHotkeys();
             Log("Done register hotkeys");
 
+            // TODO: Remove. Currently unnecessary as we're using built-in object for generated origin object.
             //Log("Attempt to load assets");
             //var currentModDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             //Log("Mod directory: " + currentModDirectory);
