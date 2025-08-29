@@ -465,4 +465,7 @@
     <Folder Include="UI\InGame\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>COPY "$(TargetDir)$(TargetFileName)" "$(USERPROFILE)\Documents\Parkitect\Mods\$(ProjectName)\00$(TargetFileName)"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
