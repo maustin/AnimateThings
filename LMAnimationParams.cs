@@ -57,21 +57,12 @@ namespace LinkedMovement {
             LinkedMovement.Log("LMAnimationParams base constructor");
         }
 
-        // TODO: Worth changing "startingRotation" to "startingLocalRotation"?
-        // startingRotation is the local origin rotation
-        // startingPosition is the global origin position (currently unused)
-        //public LMAnimationParams(Vector3 startingPosition, Vector3 startingRotation) {
-        //    LinkedMovement.Log("LMAnimationParams constructor with starting values");
-        //    this.startingPosition = startingPosition;
-        //    this.startingRotation = startingRotation;
-        //}
-
         public void setOriginalValues(Transform originTransform) {
             LinkedMovement.Log("LMAnimationParams constructor with params");
             originalRotation = originTransform.eulerAngles;
             originalLocalRotation = originTransform.localEulerAngles;
-            LinkedMovement.Log("originalRotation: " + originalRotation.ToString());
-            LinkedMovement.Log("originalLocalRotation: " + originalLocalRotation.ToString());
+            //LinkedMovement.Log("originalRotation: " + originalRotation.ToString());
+            //LinkedMovement.Log("originalLocalRotation: " + originalLocalRotation.ToString());
         }
 
         public void setStartingValues(Transform originTransform, bool originIsGenerated) {
@@ -82,12 +73,12 @@ namespace LinkedMovement {
             startingRotation = originTransform.eulerAngles;
             startingLocalRotation = originTransform.localEulerAngles;
 
-            LinkedMovement.Log("startingPosition: " + startingPosition.ToString());
-            LinkedMovement.Log("startingLocalPosition: " + startingLocalPosition.ToString());
-            LinkedMovement.Log("startingRotation: " + startingRotation.ToString());
-            LinkedMovement.Log("startingLocalRotation: " + startingLocalRotation.ToString());
-            LinkedMovement.Log("originalRotation: " + originalRotation.ToString());
-            LinkedMovement.Log("originalLocalRotation: " + originalLocalRotation.ToString());
+            //LinkedMovement.Log("startingPosition: " + startingPosition.ToString());
+            //LinkedMovement.Log("startingLocalPosition: " + startingLocalPosition.ToString());
+            //LinkedMovement.Log("startingRotation: " + startingRotation.ToString());
+            //LinkedMovement.Log("startingLocalRotation: " + startingLocalRotation.ToString());
+            //LinkedMovement.Log("originalRotation: " + originalRotation.ToString());
+            //LinkedMovement.Log("originalLocalRotation: " + originalLocalRotation.ToString());
         }
 
         // TODO: Do we need to ensure this only runs once?
@@ -100,8 +91,6 @@ namespace LinkedMovement {
             LinkedMovement.Log("Original targetPosition: " + targetPosition.ToString());
             LinkedMovement.Log("New targetPosition: " + rotatedPositionTarget.ToString());
             targetPosition = rotatedPositionTarget;
-            //Vector3 rotationOffset = animationParams.startingLocalRotation - animationParams.originalLocalRotation;
-            //Vector3 rotatedPositionTarget = Quaternion.Euler(rotationOffset) * animationParams.targetPosition;
         }
 
         public override string ToString() {

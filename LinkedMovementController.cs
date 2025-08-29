@@ -397,9 +397,6 @@ namespace LinkedMovement {
             clearAllSelections();
         }
 
-        // TODO: WIP: Working on targeting objects to object already animating
-        // Possible need to *not* reset origin position when not generated?
-
         public void tryToDeletePairing(Pairing pairing) {
             LinkedMovement.Log("tryToDeletePairing " + pairing.getPairingName());
 
@@ -439,7 +436,6 @@ namespace LinkedMovement {
             LinkedMovement.Log("Controller.killSampleSequence");
             
             if (sampleSequence.isAlive) {
-                //sampleSequence.SetRemainingCycles(false);
                 sampleSequence.Complete();
             }
             

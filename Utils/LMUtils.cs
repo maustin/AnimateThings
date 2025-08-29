@@ -2,6 +2,7 @@
 using PrimeTween;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace LinkedMovement.Utils {
@@ -27,7 +28,6 @@ namespace LinkedMovement.Utils {
         }
 
         public static bool IsGeneratedOrigin(BuildableObject bo) {
-            //return bo != null && bo.getName() == "LMOriginBase";
             return bo != null && bo.getName().Contains("LMOriginBase");
         }
 
@@ -39,13 +39,53 @@ namespace LinkedMovement.Utils {
                 PairTarget pairTarget = LMUtils.GetPairTargetFromSerializedMonoBehaviour(so);
                 if (pairTarget != null) {
                     if (pairTarget.pairId == pairBase.pairId) {
-                        //LinkedMovement.Log("Same pairId!");
                         targets.Add(so);
                     }
                 }
             }
             LinkedMovement.Log($"Found {targets.Count.ToString()} targets");
             return targets;
+        }
+
+        public static void TryToBuildPairingFromBuiltObjects(List<BuildableObject> builtObjectInstances) {
+            foreach (var buildableObject in builtObjectInstances) {
+                TryToBuildPairingFromBuildableObject(buildableObject, builtObjectInstances);
+            }
+        }
+
+        private static void TryToBuildPairingFromBuildableObject(BuildableObject possibleOriginBO, List<BuildableObject> builtObjectInstances) {
+            PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(possibleOriginBO);
+            if (pairBase == null) return;
+
+            LinkedMovement.Log("TryToBuildPairingFromBuildableObject");
+            BuildableObject originObject = possibleOriginBO;
+
+            List<BuildableObject> targets = new List<BuildableObject>();
+            List<PairTarget> pairTargets = new List<PairTarget>();
+
+            foreach (var bo in builtObjectInstances) {
+                var pairTarget = LMUtils.GetPairTargetFromSerializedMonoBehaviour(bo);
+                if (pairTarget != null && pairTarget.pairId == pairBase.pairId) {
+                    targets.Add(bo);
+                    pairTargets.Add(pairTarget);
+                }
+            }
+
+            if (targets.Count > 0) {
+                LinkedMovement.Log("Create Pairing " + pairBase.pairName);
+                pairBase.animParams.setStartingValues(originObject.transform, LMUtils.IsGeneratedOrigin(originObject));
+                pairBase.animParams.calculateRotationOffset();
+                // create new pairing ID so we don't collide with existing pairings
+                var newPairingId = Guid.NewGuid().ToString();
+                pairBase.pairId = newPairingId;
+                foreach (var pairTarget in pairTargets) {
+                    pairTarget.pairId = newPairingId;
+                }
+                var targetGameObjects = targets.Select(t => t.gameObject).ToList();
+
+                var pairing = new Pairing(originObject.gameObject, targetGameObjects, newPairingId, pairBase.pairName);
+                pairing.connect();
+            }
         }
 
         public static void AttachTargetToBase(Transform baseObject, Transform targetObject) {
@@ -146,38 +186,26 @@ namespace LinkedMovement.Utils {
                 }
             }
 
-            //Vector3 rotationOffset = animationParams.startingLocalRotation - animationParams.originalLocalRotation;
-            //Vector3 rotatedPositionTarget = Quaternion.Euler(rotationOffset) * animationParams.targetPosition;
-
             // TODO: Thinking triggerable can have restartDelay as a cool-down period
             //var restartDelay = animationParams.isTriggerable ? 0 : animationParams.restartDelay;
 
             var toPositionTween = Tween.LocalPositionAdditive(transform, animationParams.targetPosition, animationParams.toDuration, toEase);
-            //var toPositionTween = Tween.LocalPosition(transform, animationParams.startingLocalPosition + animationParams.targetPosition, animationParams.toDuration, toEase);
-            //var toPositionTween = Tween.Position(transform, animationParams.startingPosition + rotatedPositionTarget, animationParams.toDuration, toEase);
-            //var toRotationTween = Tween.LocalEulerAngles(transform, animationParams.startingRotation, animationParams.startingRotation + animationParams.targetRotation, animationParams.toDuration, toEase);
             var toRotationTween = Tween.LocalRotationAdditive(transform, animationParams.targetRotation, animationParams.toDuration, toEase);
 
             var fromPositionTween = Tween.LocalPositionAdditive(transform, -animationParams.targetPosition, animationParams.fromDuration, fromEase);
-            //var fromPositionTween = Tween.LocalPosition(transform, animationParams.startingLocalPosition, animationParams.fromDuration, fromEase);
-            //var fromPositionTween = Tween.Position(transform, animationParams.startingPosition, animationParams.fromDuration, fromEase);
-            //var fromRotationTween = Tween.LocalEulerAngles(transform, animationParams.startingRotation + animationParams.targetRotation, animationParams.startingRotation, animationParams.fromDuration, fromEase);
             var fromRotationTween = Tween.LocalRotationAdditive(transform, -animationParams.targetRotation, animationParams.fromDuration, fromEase);
 
             Sequence sequence = Sequence.Create(cycles: loops, cycleMode: CycleMode.Restart)
                 .Chain(Sequence.Create()
-                    //.Group(toRotationTween)
                     .Group(toPositionTween)
                     .Group(toRotationTween)
                     )
                 .ChainDelay(animationParams.fromDelay)
                 .Chain(Sequence.Create()
-                    //.Group(fromRotationTween)
                     .Group(fromPositionTween)
                     .Group(fromRotationTween)
                     )
                 .ChainDelay(animationParams.restartDelay)
-                //.ChainDelay(1f);
                 ;
 
             if (startingDelay > 0f) {

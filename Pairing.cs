@@ -87,21 +87,10 @@ namespace LinkedMovement
                 //}
 
                 var targetBO = LMUtils.GetBuildableObjectFromGameObject(targetGO);
-                //PairTarget pairTarget = LMUtils.GetPairTargetFromSerializedMonoBehaviour(targetBO);
 
                 LinkedMovement.GetController().removeAnimatedBuildableObject(targetBO);
 
-                LinkedMovement.Log("Target pre-parent position: " + targetBO.transform.position.ToString());
-                LinkedMovement.Log("Target pre-parent local position: " + targetBO.transform.localPosition.ToString());
-                LinkedMovement.Log("Target pre-parent rotation: " + targetBO.transform.eulerAngles.ToString());
-                LinkedMovement.Log("Target pre-parent local rotation: " + targetBO.transform.localEulerAngles.ToString());
-
                 LMUtils.AttachTargetToBase(baseGO.transform, targetGO.transform);
-
-                LinkedMovement.Log("Target post-parent position: " + targetBO.transform.position.ToString());
-                LinkedMovement.Log("Target post-parent local position: " + targetBO.transform.localPosition.ToString());
-                LinkedMovement.Log("Target post-parent rotation: " + targetBO.transform.eulerAngles.ToString());
-                LinkedMovement.Log("Target post-parent local rotation: " + targetBO.transform.localEulerAngles.ToString());
             }
 
             connected = true;
@@ -130,12 +119,7 @@ namespace LinkedMovement
 
             foreach (GameObject targetGO in targetGOs) {
                 var offset = Vector3.zero;
-                //if (useTargetPositionOffset) {
-                //    offset = targetGO.transform.position;
-                //}
                 
-                LinkedMovement.Log("offset: " + offset.ToString());
-
                 var targetBO = LMUtils.GetBuildableObjectFromGameObject(targetGO);
                 targetBO.addCustomData(getPairTarget(offset));
             }
@@ -160,6 +144,7 @@ namespace LinkedMovement
             return pairBase;
         }
 
+        // TODO: Can we eliminate offset?
         public PairTarget getPairTarget(Vector3 offset) {
             LinkedMovement.Log("Pairing getPairTarget");
             return new PairTarget(pairingId, offset);
