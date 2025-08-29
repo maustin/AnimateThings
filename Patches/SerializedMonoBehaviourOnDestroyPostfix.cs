@@ -20,6 +20,7 @@ class SerializedMonoBehaviourOnDestroyPostfix {
     static void OnDestroy(SerializedMonoBehaviour __instance) {
         var bo = __instance as BuildableObject;
         if (bo == null) return;
+        if (bo.isPreview) return;
 
         LinkedMovement.LinkedMovement.GetController().removeAnimatedBuildableObject(bo);
 
