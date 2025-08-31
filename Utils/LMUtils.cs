@@ -1,4 +1,5 @@
 ﻿// ATTRIB: TransformAnarchy
+using LinkedMovement.Animation;
 using PrimeTween;
 using System;
 using System.Collections.Generic;
@@ -141,9 +142,63 @@ namespace LinkedMovement.Utils {
                 pairBase.sequence.progress = 0f;
             }
 
+            // TODO: Keep?
+            var animationParams = pairBase.animParams;
+            LMUtils.ResetTransformLocals(gameObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
+
             // Check up
             if (gameObject.transform.parent != null && gameObject.transform.parent.gameObject != null) {
                 RestartAssociatedAnimations(gameObject.transform.parent.gameObject);
+            }
+        }
+
+        public static void ResetTransformLocals(Transform transform, Vector3 localPosition, Vector3 localRotation, Vector3 localScale) {
+            transform.localPosition = localPosition;
+            transform.localEulerAngles = localRotation;
+            transform.localScale = localScale;
+        }
+
+        private static Ease ParseStringToEase(string ease) {
+            Ease parsedEase;
+
+            if (Enum.TryParse(ease, out parsedEase)) {
+                // OK
+            } else {
+                // Default
+                parsedEase = Ease.InOutQuad;
+            }
+
+            return parsedEase;
+        }
+
+        private static void BuildAnimationStep(Transform transform, Sequence sequence, LMAnimationStep animationStep) {
+            LinkedMovement.Log("BuildAnimationStep");
+
+            if (animationStep.startDelay > 0f) {
+                sequence.ChainDelay(animationStep.startDelay);
+            }
+
+            Ease ease = ParseStringToEase(animationStep.ease);
+            bool hasPositionChange = !animationStep.targetPosition.Equals(Vector3.zero);
+            bool hasRotationChange = !animationStep.targetRotation.Equals(Vector3.zero);
+            bool hasScaleChange = !animationStep.targetScale.Equals(Vector3.one);
+
+            if (hasPositionChange || hasRotationChange || hasScaleChange) {
+                var subSequence = Sequence.Create();
+                if (hasPositionChange) {
+                    subSequence.Group(Tween.LocalPositionAdditive(transform, animationStep.targetPosition, animationStep.duration, ease));
+                }
+                if (hasRotationChange) {
+                    subSequence.Group(Tween.LocalRotationAdditive(transform, animationStep.targetRotation, animationStep.duration, ease));
+                }
+                if (hasScaleChange) {
+                    // TODO
+                }
+                sequence.Chain(subSequence);
+            }
+
+            if (animationStep.endDelay > 0f) {
+                sequence.ChainDelay(animationStep.endDelay);
             }
         }
 
@@ -153,24 +208,6 @@ namespace LinkedMovement.Utils {
 
             // TODO: Need to prevent adding multiple pairings on the same objects
             // E.g. an object can only be the base of a single Pairing
-
-            // Parse easings
-            Ease toEase;
-            Ease fromEase;
-
-            if (Enum.TryParse(animationParams.toEase, out toEase)) {
-                LinkedMovement.Log($"Sucessfully parsed toEase {animationParams.toEase}");
-            } else {
-                LinkedMovement.Log($"Failed to parse toEase {animationParams.toEase}");
-                toEase = Ease.InOutQuad;
-            }
-
-            if (Enum.TryParse(animationParams.fromEase, out fromEase)) {
-                LinkedMovement.Log($"Sucessfully parsed fromEase {animationParams.fromEase}");
-            } else {
-                LinkedMovement.Log($"Failed to parse fromEase {animationParams.fromEase}");
-                fromEase = Ease.InOutQuad;
-            }
 
             int loops = -1;
             float startingDelay = 0f;
@@ -189,24 +226,28 @@ namespace LinkedMovement.Utils {
             // TODO: Thinking triggerable can have restartDelay as a cool-down period
             //var restartDelay = animationParams.isTriggerable ? 0 : animationParams.restartDelay;
 
-            var toPositionTween = Tween.LocalPositionAdditive(transform, animationParams.targetPosition, animationParams.toDuration, toEase);
-            var toRotationTween = Tween.LocalRotationAdditive(transform, animationParams.targetRotation, animationParams.toDuration, toEase);
+            //var toPositionTween = Tween.LocalPositionAdditive(transform, animationParams.targetPosition, animationParams.toDuration, toEase);
+            //var toRotationTween = Tween.LocalRotationAdditive(transform, animationParams.targetRotation, animationParams.toDuration, toEase);
 
-            var fromPositionTween = Tween.LocalPositionAdditive(transform, -animationParams.targetPosition, animationParams.fromDuration, fromEase);
-            var fromRotationTween = Tween.LocalRotationAdditive(transform, -animationParams.targetRotation, animationParams.fromDuration, fromEase);
+            //var fromPositionTween = Tween.LocalPositionAdditive(transform, -animationParams.targetPosition, animationParams.fromDuration, fromEase);
+            //var fromRotationTween = Tween.LocalRotationAdditive(transform, -animationParams.targetRotation, animationParams.fromDuration, fromEase);
 
-            Sequence sequence = Sequence.Create(cycles: loops, cycleMode: CycleMode.Restart)
-                .Chain(Sequence.Create()
-                    .Group(toPositionTween)
-                    .Group(toRotationTween)
-                    )
-                .ChainDelay(animationParams.fromDelay)
-                .Chain(Sequence.Create()
-                    .Group(fromPositionTween)
-                    .Group(fromRotationTween)
-                    )
-                .ChainDelay(animationParams.restartDelay)
-                ;
+            Sequence sequence = Sequence.Create(cycles: loops, cycleMode: CycleMode.Restart);
+                //.Chain(Sequence.Create()
+                //    .Group(toPositionTween)
+                //    .Group(toRotationTween)
+                //    )
+                //.ChainDelay(animationParams.fromDelay)
+                //.Chain(Sequence.Create()
+                //    .Group(fromPositionTween)
+                //    .Group(fromRotationTween)
+                //    )
+                //.ChainDelay(animationParams.restartDelay)
+                //;
+
+            foreach (var animationStep in animationParams.animationSteps) {
+                BuildAnimationStep(transform, sequence, animationStep);
+            }
 
             if (startingDelay > 0f) {
                 sequence.isPaused = true;

@@ -34,8 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="LMAnimationParams.cs" />
-    <Compile Include="LMTrigger.cs" />
+    <Compile Include="Animation\LMAnimationParams.cs" />
+    <Compile Include="Animation\LMAnimationStep.cs" />
+    <Compile Include="Animation\LMTrigger.cs" />
     <Compile Include="Patches\BuilderUpdatePrefix.cs" />
     <Compile Include="Patches\SerializedMonoBehaviourInitializePostfix.cs" />
     <Compile Include="Patches\SerializedMonoBehaviourOnDestroyPostfix.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="UI\Content\CreateAnimatronicContent.cs" />
     <Compile Include="UI\Content\CreateAnimatronicSelectSubContent.cs" />
     <Compile Include="UI\Content\CreateBaseSubContent.cs" />
+    <Compile Include="UI\Content\EditAnimationStepSubContent.cs" />
     <Compile Include="UI\Content\ExistingAnimatronicsContent.cs" />
     <Compile Include="UI\Content\ModeDeterminationContent.cs" />
     <Compile Include="UI\Content\InfoContent.cs" />

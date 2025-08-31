@@ -1,0 +1,117 @@
+﻿using LinkedMovement.Animation;
+using LinkedMovement.UI.Components;
+using LinkedMovement.UI.Utils;
+using RapidGUI;
+using System;
+using UnityEngine;
+using static UnityEngine.GUILayout;
+
+namespace LinkedMovement.UI.Content {
+    internal class EditAnimationStepSubContent : IDoGUI {
+        private LinkedMovementController controller;
+        private LMAnimationStep animationStep;
+
+        // TODO: Possible open/closed states
+
+        public EditAnimationStepSubContent(LMAnimationStep animationStep) {
+            controller = LinkedMovement.GetController();
+            this.animationStep = animationStep;
+        }
+
+        public void DoGUI() {
+            using (Scope.Vertical()) {
+                using (Scope.Horizontal()) {
+                    HorizontalLine.DrawHorizontalLine(Color.yellow);
+                    if (Button("U", Width(20f))) {
+                        LinkedMovement.Log("Move AnimationStep UP");
+                        // TODO
+                    }
+                    if (Button("D", Width(20f))) {
+                        LinkedMovement.Log("Move AnimationStep DOWN");
+                        // TODO
+                    }
+                }
+
+                using (Scope.Horizontal()) {
+                    Space(5f);
+                    GUILayout.Label("Start delay");
+                    var newStartDelay = RGUI.Field(animationStep.startDelay);
+                    if (animationStep.startDelay != newStartDelay) {
+                        animationStep.startDelay = newStartDelay;
+                        controller.rebuildSampleSequence();
+                    }
+                }
+
+                using (Scope.Horizontal()) {
+                    Space(5f);
+                    GUILayout.Label("Duration");
+                    var newDuration = RGUI.Field(animationStep.duration);
+                    if (animationStep.duration != newDuration) {
+                        animationStep.duration = newDuration;
+                        controller.rebuildSampleSequence();
+                    }
+                }
+
+                using (Scope.Horizontal()) {
+                    Space(5f);
+                    GUILayout.Label("Ease");
+                    var newEase = RGUI.SelectionPopup(animationStep.ease, LMEase.Names);
+                    if (animationStep.ease != newEase) {
+                        animationStep.ease = newEase;
+                        controller.rebuildSampleSequence();
+                    }
+                }
+
+                using (Scope.Horizontal()) {
+                    Space(5f);
+                    GUILayout.Label("Position change");
+                    var newPosition = RGUI.Field(animationStep.targetPosition);
+                    if (!animationStep.targetPosition.Equals(newPosition)) {
+                        animationStep.targetPosition = newPosition;
+                        controller.rebuildSampleSequence();
+                    }
+                }
+
+                using (Scope.Horizontal()) {
+                    Space(5f);
+                    GUILayout.Label("Rotation change");
+                    var newRotation = RGUI.Field(animationStep.targetRotation);
+                    if (!animationStep.targetRotation.Equals(newRotation)) {
+                        animationStep.targetRotation = newRotation;
+                        controller.rebuildSampleSequence();
+                    }
+                }
+
+                using (Scope.Horizontal()) {
+                    Space(5f);
+                    GUILayout.Label("Scale change");
+                    var newScale = RGUI.Field(animationStep.targetScale);
+                    if (!animationStep.targetScale.Equals(newScale)) {
+                        animationStep.targetScale = newScale;
+                        controller.rebuildSampleSequence();
+                    }
+                }
+
+                using (Scope.Horizontal()) {
+                    Space(5f);
+                    GUILayout.Label("End delay");
+                    var newEndDelay = RGUI.Field(animationStep.endDelay);
+                    if (animationStep.endDelay != newEndDelay) {
+                        animationStep.endDelay = newEndDelay;
+                        controller.rebuildSampleSequence();
+                    }
+                }
+
+                using (Scope.Horizontal()) {
+                    GUILayout.FlexibleSpace();
+                    if (Button("Delete Step")) {
+                        LinkedMovement.Log("Delete animation step");
+                        // TODO
+                    }
+                }
+            }
+
+            Space(5f);
+        }
+    }
+}

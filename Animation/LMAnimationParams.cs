@@ -1,6 +1,8 @@
-﻿using LinkedMovement.UI.Utils;
+﻿using LinkedMovement.Animation;
+using LinkedMovement.UI.Utils;
 using LinkedMovement.Utils;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
@@ -14,8 +16,10 @@ namespace LinkedMovement {
         public Vector3 startingRotation = Vector3.zero;
         [NonSerialized]
         public Vector3 startingLocalRotation = Vector3.zero;
-        //[Serialized]
-        //public float staringScale = 1f;
+        //[NonSerialized]
+        //public Vector3 startingScale = Vector3.one;
+        [NonSerialized]
+        public Vector3 startingLocalScale = Vector3.one;
 
         [Serialized]
         public Vector3 originalRotation = Vector3.zero;
@@ -26,32 +30,19 @@ namespace LinkedMovement {
         public string name = string.Empty;
         [Serialized]
         public bool generatedOrigin = false;
-        [Serialized]
-        public Vector3 targetPosition = Vector3.zero;
-        [Serialized]
-        public Vector3 targetRotation = Vector3.zero;
-        //[Serialized]
-        //public float targetScale = 1f;
+        
         [Serialized]
         public bool isTriggerable = false;
-        [Serialized]
-        public float toDuration = 1f;
-        [Serialized]
-        public string toEase = LMEase.InOutQuad.ToString();
-        [Serialized]
-        public float fromDelay = 0f;
-        [Serialized]
-        public float fromDuration = 1f;
-        [Serialized]
-        public string fromEase = LMEase.InOutQuad.ToString();
-        [Serialized]
-        public float restartDelay = 0f;
+        
         [Serialized]
         public bool useInitialStartDelay = false;
         [Serialized]
         public float initialStartDelayMin = 0f;
         [Serialized]
         public float initialStartDelayMax = 0f;
+
+        [Serialized]
+        public List<LMAnimationStep> animationSteps = new List<LMAnimationStep>();
 
         public LMAnimationParams() {
             LinkedMovement.Log("LMAnimationParams base constructor");
@@ -72,6 +63,7 @@ namespace LinkedMovement {
             startingLocalPosition = originTransform.localPosition;
             startingRotation = originTransform.eulerAngles;
             startingLocalRotation = originTransform.localEulerAngles;
+            startingLocalScale = originTransform.localScale;
 
             //LinkedMovement.Log("startingPosition: " + startingPosition.ToString());
             //LinkedMovement.Log("startingLocalPosition: " + startingLocalPosition.ToString());
@@ -83,14 +75,16 @@ namespace LinkedMovement {
 
         // TODO: Do we need to ensure this only runs once?
         public void calculateRotationOffset() {
+            // TODO!
+
             // When object is built rotated, we need to adjust the target position
             LinkedMovement.Log("calculateRotatationOffset");
-            Vector3 rotationOffset = startingLocalRotation - originalLocalRotation;
-            LinkedMovement.Log("rotationOffset: " + rotationOffset.ToString());
-            Vector3 rotatedPositionTarget = Quaternion.Euler(rotationOffset) * targetPosition;
-            LinkedMovement.Log("Original targetPosition: " + targetPosition.ToString());
-            LinkedMovement.Log("New targetPosition: " + rotatedPositionTarget.ToString());
-            targetPosition = rotatedPositionTarget;
+            //Vector3 rotationOffset = startingLocalRotation - originalLocalRotation;
+            //LinkedMovement.Log("rotationOffset: " + rotationOffset.ToString());
+            //Vector3 rotatedPositionTarget = Quaternion.Euler(rotationOffset) * targetPosition;
+            //LinkedMovement.Log("Original targetPosition: " + targetPosition.ToString());
+            //LinkedMovement.Log("New targetPosition: " + rotatedPositionTarget.ToString());
+            //targetPosition = rotatedPositionTarget;
         }
 
         public override string ToString() {
@@ -98,15 +92,15 @@ namespace LinkedMovement {
             sb.AppendLine("name: " + name);
             sb.AppendLine("startingPosition: " + startingPosition.ToString());
             sb.AppendLine("startingRotation: " + startingRotation.ToString());
-            sb.AppendLine("targetPosition: " + targetPosition.ToString());
-            sb.AppendLine("targetRotation: " + targetRotation.ToString());
-            sb.AppendLine("isTriggerable: " + isTriggerable.ToString());
-            sb.AppendLine("toDuration: " + toDuration.ToString());
-            sb.AppendLine("toEase: " + toEase);
-            sb.AppendLine("fromDelay: " + fromDelay.ToString());
-            sb.AppendLine("fromDuration: " + fromDuration.ToString());
-            sb.AppendLine("fromEase: " + fromEase);
-            sb.AppendLine("restartDelay: " + restartDelay.ToString());
+            //sb.AppendLine("targetPosition: " + targetPosition.ToString());
+            //sb.AppendLine("targetRotation: " + targetRotation.ToString());
+            //sb.AppendLine("isTriggerable: " + isTriggerable.ToString());
+            //sb.AppendLine("toDuration: " + toDuration.ToString());
+            //sb.AppendLine("toEase: " + toEase);
+            //sb.AppendLine("fromDelay: " + fromDelay.ToString());
+            //sb.AppendLine("fromDuration: " + fromDuration.ToString());
+            //sb.AppendLine("fromEase: " + fromEase);
+            //sb.AppendLine("restartDelay: " + restartDelay.ToString());
             sb.AppendLine("useInitialStartDelay: " + useInitialStartDelay.ToString());
             sb.AppendLine("initialStartDelayMin: " + initialStartDelayMin.ToString());
             sb.AppendLine("initialStartDelayMax: " + initialStartDelayMax.ToString());

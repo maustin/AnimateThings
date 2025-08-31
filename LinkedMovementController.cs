@@ -191,6 +191,7 @@ namespace LinkedMovement {
             // TODO
         }
 
+        // TODO
         public void confirmDeletePairing(Pairing pairing) {
             pendingPairingForDeletion = pairing;
             // TODO: Window
@@ -458,9 +459,14 @@ namespace LinkedMovement {
             LinkedMovement.Log("Controller.killSampleSequence");
             
             if (sampleSequence.isAlive) {
+                sampleSequence.SetRemainingCycles(false);
                 sampleSequence.Complete();
             }
             
+            if (originObject == null || animationParams == null) {
+                return;
+            }
+            LMUtils.ResetTransformLocals(originObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
         }
 
         public void rebuildSampleSequence() {
