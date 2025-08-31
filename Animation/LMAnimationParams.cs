@@ -119,8 +119,6 @@ namespace LinkedMovement {
         }
 
         public bool moveAnimationStepDown(LMAnimationStep step) {
-            //if (isStepLast(step))
-            //    return false;
             var index = animationSteps.IndexOf(step);
             if (index == animationSteps.Count - 1) {
                 return false;

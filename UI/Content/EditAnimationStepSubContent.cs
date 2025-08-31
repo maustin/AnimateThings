@@ -23,7 +23,7 @@ namespace LinkedMovement.UI.Content {
         public void DoGUI() {
             using (Scope.Vertical()) {
                 using (Scope.Horizontal()) {
-                    HorizontalLine.DrawHorizontalLine(Color.yellow);
+                    HorizontalLine.DrawHorizontalLine(Color.grey);
                     if (Button("↑", Width(25f))) {
                         LinkedMovement.Log("Move AnimationStep UP");
                         var didChange = animationParams.moveAnimationStepUp(animationStep);
@@ -113,13 +113,6 @@ namespace LinkedMovement.UI.Content {
                     }
                 }
 
-                //using (Scope.Horizontal()) {
-                //    GUILayout.FlexibleSpace();
-                //    if (Button("Delete Step")) {
-                //        LinkedMovement.Log("Delete animation step");
-                //        // TODO
-                //    }
-                //}
             }
 
             Space(5f);
