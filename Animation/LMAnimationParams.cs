@@ -42,6 +42,9 @@ namespace LinkedMovement {
         [Serialized]
         public List<LMAnimationStep> animationSteps = new List<LMAnimationStep>();
 
+        [NonSerialized]
+        public long timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
         public LMAnimationParams() {
             LinkedMovement.Log("LMAnimationParams base constructor");
         }
@@ -85,6 +88,47 @@ namespace LinkedMovement {
                 LinkedMovement.Log("New targetPosition: " + rotatedPositionTarget.ToString());
                 step.targetPosition = rotatedPositionTarget;
             }
+        }
+
+        public bool isStepFirst(LMAnimationStep step) {
+            return animationSteps.IndexOf(step) == 0;
+        }
+
+        public bool isStepLast(LMAnimationStep step) {
+            return animationSteps.IndexOf(step) == animationSteps.Count - 1;
+        }
+
+        public void addNewAnimationStep() {
+            animationSteps.Add(new LMAnimationStep());
+            timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        }
+
+        public void deleteAnimationStep(LMAnimationStep step) {
+            animationSteps.Remove(step);
+            timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        }
+
+        public bool moveAnimationStepUp(LMAnimationStep step) {
+            if (isStepFirst(step))
+                return false;
+            
+            animationSteps.Remove(step);
+            animationSteps.Insert(0, step);
+            timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            return true;
+        }
+
+        public bool moveAnimationStepDown(LMAnimationStep step) {
+            //if (isStepLast(step))
+            //    return false;
+            var index = animationSteps.IndexOf(step);
+            if (index == animationSteps.Count - 1) {
+                return false;
+            }
+            animationSteps.Remove(step);
+            animationSteps.Insert(++index, step);
+            timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            return true;
         }
 
         public override string ToString() {

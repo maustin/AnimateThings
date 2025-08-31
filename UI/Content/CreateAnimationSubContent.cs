@@ -11,10 +11,10 @@ namespace LinkedMovement.UI.Content {
         private LMAnimationParams animationParams;
         private Vector2 targetsScrollPosition;
         private List<EditAnimationStepSubContent> animationStepContents;
+        private long lastAnimationStepsUpdate = 0;
 
         public CreateAnimationSubContent() {
             controller = LinkedMovement.GetController();
-            //rebuildStepContents();
         }
 
         public void DoGUI() {
@@ -22,9 +22,10 @@ namespace LinkedMovement.UI.Content {
 
             animationParams = controller.animationParams;
 
-            if (animationStepContents == null) {
-                rebuildStepContents();
-            }
+            //if (animationStepContents == null || animationStepContents.Count != animationParams.animationSteps.Count) {
+            //    rebuildStepContents();
+            //}
+            rebuildStepContents();
 
             using (Scope.Vertical()) {
                 GUILayout.Label("Animate", RGUIStyle.popupTitle);
@@ -68,10 +69,8 @@ namespace LinkedMovement.UI.Content {
 
                 GUILayout.Label("Animation Steps");
 
-                // TODO: Add step
                 if (Button("Add Step")) {
-                    animationParams.animationSteps.Add(new Animation.LMAnimationStep());
-                    rebuildStepContents();
+                    animationParams.addNewAnimationStep();
                 }
 
                 targetsScrollPosition = BeginScrollView(targetsScrollPosition, Height(400f));
@@ -189,11 +188,15 @@ namespace LinkedMovement.UI.Content {
         }
 
         private void rebuildStepContents() {
-            animationStepContents = new List<EditAnimationStepSubContent>();
+            if (animationParams.timeOfLastStepsUpdate > lastAnimationStepsUpdate) {
+                animationStepContents = new List<EditAnimationStepSubContent>();
 
-            // TODO: Make LINQy?
-            foreach (var animationStep in animationParams.animationSteps) {
-                animationStepContents.Add(new EditAnimationStepSubContent(animationStep));
+                // TODO: Make LINQy?
+                foreach (var animationStep in animationParams.animationSteps) {
+                    animationStepContents.Add(new EditAnimationStepSubContent(animationParams, animationStep));
+                }
+
+                lastAnimationStepsUpdate = animationParams.timeOfLastStepsUpdate;
             }
         }
     }

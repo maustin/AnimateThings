@@ -9,12 +9,14 @@ using static UnityEngine.GUILayout;
 namespace LinkedMovement.UI.Content {
     internal class EditAnimationStepSubContent : IDoGUI {
         private LinkedMovementController controller;
+        private LMAnimationParams animationParams;
         private LMAnimationStep animationStep;
 
         // TODO: Possible open/closed states
 
-        public EditAnimationStepSubContent(LMAnimationStep animationStep) {
+        public EditAnimationStepSubContent(LMAnimationParams animationParams, LMAnimationStep animationStep) {
             controller = LinkedMovement.GetController();
+            this.animationParams = animationParams;
             this.animationStep = animationStep;
         }
 
@@ -22,13 +24,22 @@ namespace LinkedMovement.UI.Content {
             using (Scope.Vertical()) {
                 using (Scope.Horizontal()) {
                     HorizontalLine.DrawHorizontalLine(Color.yellow);
-                    if (Button("U", Width(20f))) {
+                    if (Button("↑", Width(25f))) {
                         LinkedMovement.Log("Move AnimationStep UP");
-                        // TODO
+                        var didChange = animationParams.moveAnimationStepUp(animationStep);
+                        if (didChange)
+                            controller.rebuildSampleSequence();
                     }
-                    if (Button("D", Width(20f))) {
+                    if (Button("↓", Width(25f))) {
                         LinkedMovement.Log("Move AnimationStep DOWN");
-                        // TODO
+                        var didChange = animationParams.moveAnimationStepDown(animationStep);
+                        if (didChange)
+                            controller.rebuildSampleSequence();
+                    }
+                    if (Button("✕", Width(25f))) {
+                        LinkedMovement.Log("Delete AnimationStep");
+                        animationParams.deleteAnimationStep(animationStep);
+                        controller.rebuildSampleSequence();
                     }
                 }
 
@@ -102,13 +113,13 @@ namespace LinkedMovement.UI.Content {
                     }
                 }
 
-                using (Scope.Horizontal()) {
-                    GUILayout.FlexibleSpace();
-                    if (Button("Delete Step")) {
-                        LinkedMovement.Log("Delete animation step");
-                        // TODO
-                    }
-                }
+                //using (Scope.Horizontal()) {
+                //    GUILayout.FlexibleSpace();
+                //    if (Button("Delete Step")) {
+                //        LinkedMovement.Log("Delete animation step");
+                //        // TODO
+                //    }
+                //}
             }
 
             Space(5f);
