@@ -297,5 +297,15 @@ namespace LinkedMovement.Utils {
             if (HighlightHandles == null)
                 HighlightHandles = new Dictionary<BuildableObject, HighlightOverlayController.HighlightHandle>();
         }
+
+        public static float GetSequenceDuration(LMAnimationParams animationParams) {
+            var duration = 0f;
+            foreach (var step in animationParams.animationSteps) {
+                duration += step.startDelay;
+                duration += step.duration;
+                duration += step.endDelay;
+            }
+            return duration;
+        }
     }
 }

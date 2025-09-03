@@ -24,12 +24,13 @@ namespace LinkedMovement {
         public SerializedMonoBehaviour getEffectBehaviour() => this.effectBehaviour;
 
         public EffectRunner.ExecutionHandle execute(EffectEntry effectEntry) {
-            LinkedMovement.Log("LMTrigger.execute");
+            LinkedMovement.Log($"LMTrigger.execute sequence name: {animationParams.name}, id: {animationParams.getId()}");
             //if (sequence != null) {
             //    LinkedMovement.Log("Kill existing sequence");
             //    sequence.Kill();
             //}
             if (sequence.isAlive) {
+                LinkedMovement.Log("Sequence is already running, reset");
                 sequence.SetRemainingCycles(false);
                 sequence.Complete();
             }
@@ -65,7 +66,7 @@ namespace LinkedMovement {
         }
 
         public void initializeOnFirstAssignment(EffectEntry effectEntry) {
-            //
+            effectEntry.setDuration(LMUtils.GetSequenceDuration(animationParams));
         }
 
         public string getName(EffectEntry effectEntry) => effectBehaviour.getName();
@@ -75,14 +76,14 @@ namespace LinkedMovement {
         }
 
         private IEnumerator playEffect() {
-            LinkedMovement.Log("LMTrigger.playEffect");
+            LinkedMovement.Log($"LMTrigger.playEffect sequence name: {animationParams.name}, id: {animationParams.getId()}");
             sequence = LMUtils.BuildAnimationSequence(gameObject.transform, animationParams);
             //sequence.isPaused = false;
             yield return null;
         }
 
         private void onCompleteHandler(EffectRunner.ExecutionHandle handle, bool successful) {
-            LinkedMovement.Log("LMTrigger.onCompleteHandler");
+            LinkedMovement.Log($"LMTrigger.onCompleteHandler sequence name: {animationParams.name}, id: {animationParams.getId()}");
             //if (sequence != null) {
             //    sequence = null;
             //}
