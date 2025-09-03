@@ -24,11 +24,7 @@ namespace LinkedMovement {
         public SerializedMonoBehaviour getEffectBehaviour() => this.effectBehaviour;
 
         public EffectRunner.ExecutionHandle execute(EffectEntry effectEntry) {
-            LinkedMovement.Log($"LMTrigger.execute sequence name: {animationParams.name}, id: {animationParams.getId()}");
-            //if (sequence != null) {
-            //    LinkedMovement.Log("Kill existing sequence");
-            //    sequence.Kill();
-            //}
+            LinkedMovement.Log($"LMTrigger.execute sequence name: {animationParams.name}");
             if (sequence.isAlive) {
                 LinkedMovement.Log("Sequence is already running, reset");
                 sequence.SetRemainingCycles(false);
@@ -69,24 +65,28 @@ namespace LinkedMovement {
             effectEntry.setDuration(LMUtils.GetSequenceDuration(animationParams));
         }
 
-        public string getName(EffectEntry effectEntry) => effectBehaviour.getName();
+        public string getName(EffectEntry effectEntry) => animationParams.name;
 
         public Sprite getSprite(EffectEntry effectEntry) {
+            // TODO: Could we have a custom icon?
             return ScriptableSingleton<UIAssetManager>.Instance.effectIconGeneric;
         }
 
         private IEnumerator playEffect() {
-            LinkedMovement.Log($"LMTrigger.playEffect sequence name: {animationParams.name}, id: {animationParams.getId()}");
+            LinkedMovement.Log($"LMTrigger.playEffect sequence name: {animationParams.name}");
             sequence = LMUtils.BuildAnimationSequence(gameObject.transform, animationParams);
-            //sequence.isPaused = false;
+            sequence.OnComplete(() => {
+                LinkedMovement.Log($"Completed triggered sequence name: {animationParams.name}");
+                // TODO: Is this the best solution?
+                LMUtils.ResetTransformLocals(transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
+            });
             yield return null;
         }
 
         private void onCompleteHandler(EffectRunner.ExecutionHandle handle, bool successful) {
-            LinkedMovement.Log($"LMTrigger.onCompleteHandler sequence name: {animationParams.name}, id: {animationParams.getId()}");
-            //if (sequence != null) {
-            //    sequence = null;
-            //}
+            LinkedMovement.Log($"LMTrigger.onCompleteHandler sequence name: {animationParams.name}");
+            // This fires when the effect thinks it's complete, not when the sequence is actually complete.
+            // At the moment, the sequence will not respect Pause or Stop states from the Effects Controller.
         }
     }
 }

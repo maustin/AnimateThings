@@ -201,6 +201,7 @@ namespace LinkedMovement.Utils {
             if (animationStep.endDelay > 0f) {
                 sequence.ChainDelay(animationStep.endDelay);
             }
+
         }
 
         public static Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams, bool isEditing = false) {
@@ -307,5 +308,6 @@ namespace LinkedMovement.Utils {
             }
             return duration;
         }
+
     }
 }
