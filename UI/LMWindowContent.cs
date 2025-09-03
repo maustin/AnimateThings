@@ -11,8 +11,7 @@ namespace LinkedMovement.UI {
 
         virtual public void DoGUI() {
             using (Scope.Vertical()) {
-                string t = (title != null && title.Length > 0) ? " - " + title : "";
-                GUILayout.Label("Animatronitect" + t, RGUIStyle.popupTitle);
+                GUILayout.Label(title, RGUIStyle.popupTitle);
                 Space(10f);
             }
         }

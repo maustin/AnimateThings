@@ -35,16 +35,19 @@ namespace LinkedMovement.UI {
                     title = "Existing Animatronics";
                     width = 400;
                     fixedHeight = 500;
-                    position = getWindowPositionCenter(width, (int)(fixedHeight * 0.5));
+                    position = getWindowPositionCenter(width, fixedHeight);
                     content = new ExistingAnimatronicsContent();
                     break;
                 case WindowManager.WindowType.EditAnimatronic:
-                    title = "Edit Animatronic";
-                    width = 400;
-                    position = getWindowPositionCenter(width, 300);
+                    var pairing = data as Pairing;
+                    // TODO: Throw if pairing null
+                    title = "Edit Animatronic: " + pairing.getPairingName();
+                    width = 450;
+                    fixedHeight = 500;
+                    position = getWindowPositionCenter(width, fixedHeight);
                     alwaysRender = true;
                     allowMultiple = true;
-                    //content = 
+                    content = new EditAnimatronicContent(pairing);
                     break;
                 case WindowManager.WindowType.EditAnimation:
                     title = "Edit Animation";
@@ -83,7 +86,7 @@ namespace LinkedMovement.UI {
                 return null;
             }
 
-            title = title.Length == 0 ? "Animatronitect" : "Animatronitect : " + title;
+            title = title.Length == 0 ? "Animatronitect" : title;
 
             var lmWindow = new LMWindow(type, title, content, alwaysRender, width);
             lmWindow.Configure(position, fixedHeight, windowManager);

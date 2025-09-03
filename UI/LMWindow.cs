@@ -12,6 +12,7 @@ namespace LinkedMovement.UI {
             this.type = type;
             this.content = content;
             this.alwaysRender = alwaysRender;
+            this.content.title = title;
         }
 
         public void Configure(Vector2 position, int fixedHeight, WindowManager windowManager) {
