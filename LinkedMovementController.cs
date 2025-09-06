@@ -215,13 +215,17 @@ namespace LinkedMovement {
             LinkedMovement.Log("Controller.discardChanges");
             if (targetPairing != null) {
                 killSampleSequence();
-                restartAssociated(true);
-                //LMUtils.ResetTransformLocals(originObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
+                restartAssociated();
                 LinkedMovement.Log("Reconnect targetPairing");
                 targetPairing.connect();
-                //targetPairing = null;
+                targetPairing = null;
                 LMUtils.SetChunkedMeshEnalbedIfPresent(originObject, true);
                 originObject = null;
+
+                foreach (var target in targetObjects) {
+                    LMUtils.SetChunkedMeshEnalbedIfPresent(target, true);
+                }
+                targetObjects.Clear();
             }
 
             resetController();
@@ -539,13 +543,13 @@ namespace LinkedMovement {
             sampleSequence = LMUtils.BuildAnimationSequence(originObject.transform, animationParams, true);
         }
 
-        private void restartAssociated(bool skipCurrentTarget = false) {
+        private void restartAssociated() {
             LinkedMovement.Log("Controller.restartAssociated");
             //if (originObject.transform.parent != null && originObject.transform.parent.gameObject != null) {
             //    LMUtils.RestartAssociatedAnimations(originObject.transform.parent.gameObject);
             //}
             if (originObject.gameObject != null) {
-                LMUtils.RestartAssociatedAnimations(originObject.gameObject, skipCurrentTarget);
+                LMUtils.RestartAssociatedAnimations(originObject.gameObject);
             }
         }
 

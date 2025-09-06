@@ -75,7 +75,7 @@ namespace LinkedMovement.Utils {
 
             if (targets.Count > 0) {
                 LinkedMovement.Log("Create Pairing " + pairBase.pairName);
-                pairBase.animParams.setStartingValues(originObject.transform); //, LMUtils.IsGeneratedOrigin(originObject));
+                pairBase.animParams.setStartingValues(originObject.transform);
                 pairBase.animParams.calculateRotationOffset();
                 // create new pairing ID so we don't collide with existing pairings
                 var newPairingId = Guid.NewGuid().ToString();
@@ -140,7 +140,7 @@ namespace LinkedMovement.Utils {
             return buildableObjects;
         }
 
-        public static void RestartAssociatedAnimations(GameObject gameObject, bool skipCurrentTarget = false) {
+        public static void RestartAssociatedAnimations(GameObject gameObject) {
             // Root restart
             LinkedMovement.Log("LMUtils.RestartAssociatedAnimations for " + gameObject.name);
             bool isRootResetCall = false;
@@ -162,9 +162,6 @@ namespace LinkedMovement.Utils {
                     if (pairing.pairBase.sequence.isAlive) {
                         LinkedMovement.Log("Reset sequence progress!");
                         pairing.pairBase.sequence.progress = 0f;
-
-                        //var animationParams = pairing.pairBase.animParams;
-                        //ResetTransformLocals(gameObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
                     } else {
                         LinkedMovement.Log("Sequence not alive");
                     }
@@ -172,9 +169,6 @@ namespace LinkedMovement.Utils {
                 } else {
                     LinkedMovement.Log("No Pairing exists");
                 }
-
-                //var animationParams = pairing.pairBase.animParams;
-                //ResetTransformLocals(gameObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
 
                 LinkedMovement.Log("Check children for " + gameObject.name);
                 for (int i = 0; i < gameObject.transform.childCount; i++) {
@@ -251,7 +245,6 @@ namespace LinkedMovement.Utils {
             return parsedEase;
         }
 
-        //private static void BuildAnimationStep(Transform transform, Sequence sequence, LMAnimationParams animationParams, LMAnimationStep animationStep, ref Vector3 lastPostionTarget, ref Vector3 lastRotationTarget) {
         private static void BuildAnimationStep(Transform transform, Sequence sequence, LMAnimationParams animationParams, LMAnimationStep animationStep, ref Vector3 lastRotationTarget) {
             LinkedMovement.Log($"BuildAnimationStep {animationStep.name} for sequence {animationParams.name}");
             LinkedMovement.Log(animationStep.ToString());
@@ -264,27 +257,17 @@ namespace LinkedMovement.Utils {
             if (hasPositionChange || hasRotationChange || hasScaleChange) {
                 LinkedMovement.Log("Has change");
                 if (hasPositionChange) {
-                    //var newPositionTarget = lastPostionTarget + animationStep.targetPosition;
-                    //LinkedMovement.Log("Position change: " + newPositionTarget.ToString());
-                    //sequence.Group(Tween.LocalPosition(transform, lastPostionTarget, newPositionTarget, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
-                    //lastPostionTarget = newPositionTarget;
-                    //LinkedMovement.Log("Position change: " + animationStep.targetPosition.ToString());
-                    //LinkedMovement.Log("Origin local position: " + transform.localPosition.ToString());
                     sequence.Group(Tween.LocalPositionAdditive(transform, animationStep.targetPosition, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
-                    //sequence.Group(Tween.LocalPositionAdditive(transform, animationStep.targetPosition, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay).OnComplete(() => {
-                    //    LinkedMovement.Log("!!! completed position move for step " + animationStep.name);
-                    //    LinkedMovement.Log("Origin finished local position: " + transform.localPosition.ToString());
-                    //}));
                 }
                 if (hasRotationChange) {
                     var newRotationTarget = lastRotationTarget + animationStep.targetRotation;
-                    LinkedMovement.Log("Rotation change: " + newRotationTarget.ToString());
+                    //LinkedMovement.Log("Rotation change: " + newRotationTarget.ToString());
                     sequence.Group(Tween.LocalEulerAngles(transform, lastRotationTarget, newRotationTarget, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
                     lastRotationTarget = newRotationTarget;
                 }
                 if (hasScaleChange) {
                     var newScaleTarget = new Vector3(animationStep.targetScale.x * animationParams.startingLocalScale.x, animationStep.targetScale.y * animationParams.startingLocalScale.y, animationStep.targetScale.z * animationParams.startingLocalScale.z);
-                    LinkedMovement.Log("Scale change: " + newScaleTarget.ToString());
+                    //LinkedMovement.Log("Scale change: " + newScaleTarget.ToString());
                     sequence.Group(Tween.ScaleAdditive(transform, newScaleTarget, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
                 }
                 sequence.ChainDelay(0f);
@@ -319,11 +302,9 @@ namespace LinkedMovement.Utils {
 
             Sequence sequence = Sequence.Create(cycles: loops, cycleMode: CycleMode.Restart);
 
-            //var lastPositionTarget = animationParams.startingLocalPosition;
             var lastRotationTarget = animationParams.startingLocalRotation;
             foreach (var animationStep in animationParams.animationSteps) {
                 BuildAnimationStep(transform, sequence, animationParams, animationStep, ref lastRotationTarget);
-                //BuildAnimationStep(transform, sequence, animationParams, animationStep, ref lastPositionTarget, ref lastRotationTarget);
             }
 
             if (startingDelay > 0f) {
