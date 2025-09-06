@@ -40,7 +40,7 @@ namespace LinkedMovement.Animation {
         }
 
         public override string ToString() {
-            var sb = new StringBuilder("LMAnimationParams\n");
+            var sb = new StringBuilder("LMAnimationStep\n");
             sb.AppendLine("name: " + name);
             sb.AppendLine("duration: " + duration.ToString());
             sb.AppendLine("ease: " + ease);

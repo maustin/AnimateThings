@@ -273,16 +273,17 @@ namespace LinkedMovement {
             removeOrigin();
 
             var originPosition = LMUtils.FindBuildObjectsCenterPosition(targetObjects);
-            //originObject = ScriptableSingleton<AssetManager>.Instance.instantiatePrefab<Deco>("98f0269770ff44247b38607fdb2cf837", originPosition, Quaternion.identity);
+            originObject = ScriptableSingleton<AssetManager>.Instance.instantiatePrefab<Deco>("98f0269770ff44247b38607fdb2cf837", originPosition, Quaternion.identity);
             // Use built-in prefab for base. Otherwise trying to use mod object will fail in non-mod (e.g. scenario) env.
-            originObject = ScriptableSingleton<AssetManager>.Instance.instantiatePrefab<Deco>(Prefabs.ScenicCube, originPosition, Quaternion.identity);
+            //originObject = ScriptableSingleton<AssetManager>.Instance.instantiatePrefab<Deco>(Prefabs.ScenicCube, originPosition, Quaternion.identity);
             if (originObject == null) {
                 throw new Exception("FAILED TO CREATE ORIGIN OBJECT");
             }
             originObject.setDisplayName("LMOriginBase");
             originObject.setCanBeDestroyedByPlayer(false);
+            // TODO: Configurable generated origin color?
             originObject.GetComponent<CustomColors>().setColor(new Color(1f, 0f, 1f), 0);
-            originObject.GetComponent<CustomSize>().setValue(0.1f);
+            //originObject.GetComponent<CustomSize>().setValue(0.1f);
             Destroy(originObject.GetComponent<ChunkedMesh>());
 
             LMUtils.AddObjectHighlight(originObject, Color.red);

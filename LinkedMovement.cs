@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
-//using Parkitect.Mods.AssetPacks;
+using Parkitect.Mods.AssetPacks;
 using PrimeTween;
+using System;
+using System.Reflection;
 using UnityEngine;
 
 namespace LinkedMovement {
@@ -64,51 +66,52 @@ namespace LinkedMovement {
             Log("Done register hotkeys");
 
             // TODO: Remove. Currently unnecessary as we're using built-in object for generated origin object.
-            //Log("Attempt to load assets");
-            //var currentModDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            //Log("Mod directory: " + currentModDirectory);
-            //var assetProjectPath = System.IO.Path.Combine(currentModDirectory, "assets\\LinkedMovement.assetProject");
-            //Log("assetProject: " + assetProjectPath);
+            Log("Attempt to load assets");
+            var currentModDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            Log("Mod directory: " + currentModDirectory);
+            var assetProjectPath = System.IO.Path.Combine(currentModDirectory, "assets\\LinkedMovement.assetProject");
+            Log("assetProject: " + assetProjectPath);
 
-            //var assembly = Assembly.Load("Parkitect");
-            //var type = assembly.GetType("Parkitect.Mods.AssetPacks.AssetPackMod");
+            var assembly = Assembly.Load("Parkitect");
+            var type = assembly.GetType("Parkitect.Mods.AssetPacks.AssetPackMod");
 
-            //if (type == null) {
-            //    Log("failed to get type");
-            //} else {
-            //    Log("got type");
+            if (type == null) {
+                Log("failed to get type");
+            } else {
+                Log("got type");
 
-            //    Type[] parameterTypes = new Type[] {typeof(string)};
-            //    var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, parameterTypes, null);
-            //    if (ctor == null) {
-            //        Log("failed to get constructor");
-            //    } else {
-            //        Log("got constructor");
-            //        var instance = ctor.Invoke(new object[] { assetProjectPath }) as AbstractMod;
-            //        if (ModManager.Instance.hasMod(instance.getIdentifier(), instance.getVersionIdentifier())) {
-            //            Log("already loaded assets");
-            //        } else {
-            //            var folderPath = System.IO.Path.GetDirectoryName(assetProjectPath);
-            //            var orderPriority = instance.getOrderPriority();
-            //            Log($"folder path: {folderPath}, order: {orderPriority}");
-            //            var modEntry = ModManager.Instance.addMod(instance, folderPath, AbstractGameContent.ContentSource.USER_CREATED, orderPriority);
-            //            if (modEntry != null) {
-            //                Log("Added mod, enabling");
-            //                Log("Is enabled: " + modEntry.isEnabled);
-            //                Log("Is active: " + modEntry.isActive());
-            //                var existingModEntry = ScriptableSingleton<AssetManager>.Instance.modContext;
+                Type[] parameterTypes = new Type[] { typeof(string) };
+                var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, parameterTypes, null);
+                if (ctor == null) {
+                    Log("failed to get constructor");
+                } else {
+                    Log("got constructor");
+                    var instance = ctor.Invoke(new object[] { assetProjectPath }) as AbstractMod;
+                    if (ModManager.Instance.hasMod(instance.getIdentifier(), instance.getVersionIdentifier())) {
+                        Log("already loaded assets");
+                    } else {
+                        var folderPath = System.IO.Path.GetDirectoryName(assetProjectPath);
+                        var orderPriority = instance.getOrderPriority();
+                        Log($"folder path: {folderPath}, order: {orderPriority}");
+                        var modEntry = ModManager.Instance.addMod(instance, folderPath, AbstractGameContent.ContentSource.USER_CREATED, orderPriority);
+                        if (modEntry != null) {
+                            Log("Added mod, enabling");
+                            Log("Is enabled: " + modEntry.isEnabled);
+                            Log("Is active: " + modEntry.isActive());
+                            var existingModEntry = ScriptableSingleton<AssetManager>.Instance.modContext;
 
-            //                modEntry.setActive(true);
+                            modEntry.setActive(true);
 
-            //                ScriptableSingleton<AssetManager>.Instance.modContext = existingModEntry;
-            //                ScriptableSingleton<InputManager>.Instance.modContext = existingModEntry;
-            //            } else {
-            //                Log("Failed to add mod");
-            //            }
-            //        }
-            //    }
-            //}
-            //Log("Assets load complete");
+                            ScriptableSingleton<AssetManager>.Instance.modContext = existingModEntry;
+                            ScriptableSingleton<InputManager>.Instance.modContext = existingModEntry;
+                        } else {
+                            Log("Failed to add mod");
+                        }
+                    }
+                }
+            }
+            Log("Assets load complete");
+            // TODO: Disable LM UI and only show error if unable to load assets
 
             Log("Initialize PrimeTween");
             PrimeTweenConfig.ManualInitialize();

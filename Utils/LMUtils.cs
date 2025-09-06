@@ -238,7 +238,7 @@ namespace LinkedMovement.Utils {
         }
 
         private static void BuildAnimationStep(Transform transform, Sequence sequence, LMAnimationParams animationParams, LMAnimationStep animationStep, ref Vector3 lastRotationTarget) {
-            LinkedMovement.Log("BuildAnimationStep");
+            LinkedMovement.Log($"BuildAnimationStep {animationStep.name} for sequence {animationParams.name}");
             LinkedMovement.Log(animationStep.ToString());
 
             Ease ease = ParseStringToEase(animationStep.ease);
@@ -257,8 +257,8 @@ namespace LinkedMovement.Utils {
                     lastRotationTarget = newRotationTarget;
                 }
                 if (hasScaleChange) {
-                    var targetScale = new Vector3(animationStep.targetScale.x * animationParams.startingLocalScale.x, animationStep.targetScale.y * animationParams.startingLocalScale.y, animationStep.targetScale.z * animationParams.startingLocalScale.z);
-                    sequence.Group(Tween.ScaleAdditive(transform, targetScale, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
+                    var newScaleTarget = new Vector3(animationStep.targetScale.x * animationParams.startingLocalScale.x, animationStep.targetScale.y * animationParams.startingLocalScale.y, animationStep.targetScale.z * animationParams.startingLocalScale.z);
+                    sequence.Group(Tween.ScaleAdditive(transform, newScaleTarget, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
                 }
                 sequence.ChainDelay(0f);
             } else {
