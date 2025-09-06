@@ -135,106 +135,85 @@ namespace LinkedMovement.Utils {
             return buildableObjects;
         }
 
+        //public static void RestartAssociatedAnimations(GameObject gameObject) {
+        //    // Root restart
+        //    LinkedMovement.Log("LMUtils.RestartAssociatedAnimations for " + gameObject.name);
+        //    bool isRootResetCall = false;
+        //    if (baseGameObjectsReset == null) {
+        //        isRootResetCall = true;
+        //        baseGameObjectsReset = new HashSet<GameObject>();
+        //    }
+
+        //    var baseGameObjectsHasBeenVisited = baseGameObjectsReset.Contains(gameObject);
+        //    if (baseGameObjectsHasBeenVisited) {
+        //        LinkedMovement.Log("Already visited GameObject " + gameObject.name);
+        //    } else {
+        //        LinkedMovement.Log("Check GameObject " + gameObject.name);
+        //        baseGameObjectsReset.Add(gameObject);
+
+        //        var pairing = LinkedMovement.GetController().findPairingByBaseGameObject(gameObject);
+        //        if (pairing != null) {
+        //            LinkedMovement.Log($"Found pairing name: ${pairing.pairingName}, id: {pairing.pairingId}");
+        //            if (pairing.pairBase.sequence.isAlive) {
+        //                LinkedMovement.Log("Reset sequence progress!");
+        //                pairing.pairBase.sequence.progress = 0f;
+
+        //                var animationParams = pairing.pairBase.animParams;
+        //                ResetTransformLocals(gameObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
+        //            }
+        //        }
+
+        //        LinkedMovement.Log("Check children for " + gameObject.name);
+        //        for (int i = 0; i < gameObject.transform.childCount; i++) {
+        //            var childTransform = gameObject.transform.GetChild(i);
+        //            if (childTransform != null) {
+        //                var childGO = childTransform.gameObject;
+        //                if (childGO != null) {
+        //                    LinkedMovement.Log($"Restart associated for child {i.ToString()}, name {childGO.name}");
+        //                    RestartAssociatedAnimations(childGO);
+        //                }
+        //            }
+        //        }
+        //        //
+        //        LinkedMovement.Log("Check parent for " + gameObject.name);
+        //        if (gameObject.transform.parent != null && gameObject.transform.parent.gameObject != null) {
+        //            var parentGO = gameObject.transform.parent.gameObject;
+        //            LinkedMovement.Log("Restart associated for parent " + parentGO.name);
+        //            RestartAssociatedAnimations(parentGO);
+        //        }
+        //        //
+        //    }
+
+        //    if (isRootResetCall) {
+        //        baseGameObjectsReset.Clear();
+        //        baseGameObjectsReset = null;
+        //    }
+        //}
+
         public static void RestartAssociatedAnimations(GameObject gameObject) {
-            // Root restart
             LinkedMovement.Log("LMUtils.RestartAssociatedAnimations for " + gameObject.name);
-            bool isRootResetCall = false;
-            if (baseGameObjectsReset == null) {
-                isRootResetCall = true;
-                baseGameObjectsReset = new HashSet<GameObject>();
+
+            var pairing = LinkedMovement.GetController().findPairingByBaseGameObject(gameObject);
+            if (pairing == null) {
+                LinkedMovement.Log("Failed to find existing Pairing");
+                return;
             }
-            
-            var baseGameObjectsHasBeenVisited = baseGameObjectsReset.Contains(gameObject);
-            if (baseGameObjectsHasBeenVisited) {
-                LinkedMovement.Log("Already visited GameObject " + gameObject.name);
-            } else {
-                LinkedMovement.Log("Check GameObject " + gameObject.name);
-                baseGameObjectsReset.Add(gameObject);
+            LinkedMovement.Log("Found pairing name: " + pairing.pairingName + ", id: " + pairing.pairingId);
 
-                var pairing = LinkedMovement.GetController().findPairingByBaseGameObject(gameObject);
-                if (pairing != null) {
-                    LinkedMovement.Log($"Found pairing name: ${pairing.pairingName}, id: {pairing.pairingId}");
-                    if (pairing.pairBase.sequence.isAlive) {
-                        LinkedMovement.Log("Reset sequence progress!");
-                        pairing.pairBase.sequence.progress = 0f;
-
-                        var animationParams = pairing.pairBase.animParams;
-                        ResetTransformLocals(gameObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
-                    }
-                }
-
-                LinkedMovement.Log("Check children for " + gameObject.name);
-                for (int i = 0; i < gameObject.transform.childCount; i++) {
-                    var childTransform = gameObject.transform.GetChild(i);
-                    if (childTransform != null) {
-                        var childGO = childTransform.gameObject;
-                        if (childGO != null) {
-                            LinkedMovement.Log($"Restart associated for child {i.ToString()}, name {childGO.name}");
-                            RestartAssociatedAnimations(childGO);
-                        }
-                    }
-                }
-                //
-                LinkedMovement.Log("Check parent for " + gameObject.name);
-                if (gameObject.transform.parent != null && gameObject.transform.parent.gameObject != null) {
-                    var parentGO = gameObject.transform.parent.gameObject;
-                    LinkedMovement.Log("Restart associated for parent " + parentGO.name);
-                    RestartAssociatedAnimations(parentGO);
-                }
-                //
+            var pairBase = pairing.pairBase;
+            if (pairBase.sequence.isAlive) {
+                LinkedMovement.Log("Reset progress!");
+                pairBase.sequence.progress = 0f;
             }
-            
-            if (isRootResetCall) {
-                baseGameObjectsReset.Clear();
-                baseGameObjectsReset = null;
+
+            var animationParams = pairBase.animParams;
+            LMUtils.ResetTransformLocals(gameObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
+
+            // Check up
+            if (gameObject.transform.parent != null && gameObject.transform.parent.gameObject != null) {
+                RestartAssociatedAnimations(gameObject.transform.parent.gameObject);
             }
         }
-
-        //public static void RestartAssociatedAnimationss(GameObject gameObject) {
-        //    LinkedMovement.Log("LMUtils.RestartAssociatedAnimations for " + gameObject.name);
-        //    bool isRootRestart = false;
-        //    if (pairingsReset == null) {
-        //        isRootRestart = true;
-        //        pairingsReset = new HashSet<Pairing>();
-        //    }
-
-        //    var pairing = LinkedMovement.GetController().findPairingByBaseGameObject(gameObject);
-        //    if (pairing != null) {
-        //        LinkedMovement.Log($"Found pairing name: ${pairing.pairingName}, id: {pairing.pairingId}");
-        //        var didResetPairing = pairingsReset.Contains(pairing);
-        //        if (!didResetPairing) {
-        //            var pairBase = pairing.pairBase;
-        //            if (pairing.isConnected() && pairBase.sequence.isAlive) {
-        //                LinkedMovement.Log("Reset progress!");
-        //                pairBase.sequence.progress = 0f;
-
-        //                var animationParams = pairBase.animParams;
-        //                LMUtils.ResetTransformLocals(gameObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
-        //            }
-        //            pairingsReset.Add(pairing);
-        //            // Check up
-        //            // Check down
-        //        } else {
-        //            LinkedMovement.Log($"Already reset pairing name: ${pairing.pairingName}, id: {pairing.pairingId}");
-        //        }
-        //    }
-
-        //    // Check up
-        //    if (gameObject.transform.parent != null && gameObject.transform.parent.gameObject != null) {
-        //        RestartAssociatedAnimations(gameObject.transform.parent.gameObject);
-        //    }
-        //    // TODO: Possibly need to check down as well but track visited nodes so we don't inifinite loop
-        //    for (int i = 0; i < gameObject.transform.childCount; i++) {
-        //        var childTransform = gameObject.transform.GetChild(i);
-        //        if (childTransform != null) {
-        //            var childGO = childTransform.gameObject;
-        //            if (childGO != null) {
-
-        //            }
-        //        }
-        //    }
-        //    //foreach (var child in gameObject.transform.GetChild(0).gameObject)
-        //}
 
         public static void ResetTransformLocals(Transform transform, Vector3 localPosition, Vector3 localRotation, Vector3 localScale) {
             LinkedMovement.Log("LMUtils.ResetTransformLocals");

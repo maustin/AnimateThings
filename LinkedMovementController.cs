@@ -530,12 +530,12 @@ namespace LinkedMovement {
 
         private void restartAssociated() {
             LinkedMovement.Log("Controller.restartAssociated");
-            //if (originObject.transform.parent != null && originObject.transform.parent.gameObject != null) {
-            //    LMUtils.RestartAssociatedAnimations(originObject.transform.parent.gameObject);
-            //}
-            if (originObject.gameObject != null) {
-                LMUtils.RestartAssociatedAnimations(originObject.gameObject);
+            if (originObject.transform.parent != null && originObject.transform.parent.gameObject != null) {
+                LMUtils.RestartAssociatedAnimations(originObject.transform.parent.gameObject);
             }
+            //if (originObject.gameObject != null) {
+            //    LMUtils.RestartAssociatedAnimations(originObject.gameObject);
+            //}
         }
 
         private void enableSelectionHandler() {
