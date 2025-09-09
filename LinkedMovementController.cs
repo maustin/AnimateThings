@@ -381,9 +381,10 @@ namespace LinkedMovement {
 
             // TODO: STATE MACHINE! Don't like this.
             if (targetPairing != null) {
+                LinkedMovement.Log("Has target Pairing, reset sequences and attach");
                 killSampleSequence();
-                LMUtils.AttachTargetToBase(originObject.transform, bo.transform);
                 rebuildSampleSequence();
+                LMUtils.AttachTargetToBase(originObject.transform, bo.transform);
             }
         }
 
@@ -403,15 +404,14 @@ namespace LinkedMovement {
             LMUtils.RemoveObjectHighlight(bo);
 
             killSampleSequence();
-
-            bo.transform.parent = null;
-            
-            targetObjects.Remove(bo);
-
             // TODO: STATE MACHINE! Don't like this.
             if (targetPairing != null) {
                 rebuildSampleSequence();
             }
+
+            bo.transform.parent = null;
+            
+            targetObjects.Remove(bo);
         }
 
         public void clearTargetObjects() {
