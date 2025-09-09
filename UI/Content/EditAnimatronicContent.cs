@@ -9,7 +9,6 @@ namespace LinkedMovement.UI.Content {
         private IDoGUI selectSubContent;
         private IDoGUI animateSubContent;
 
-        private Pairing pairing;
         // These are the temporary params
         private LMAnimationParams animationParams;
         private bool selectUIOpen = false;
@@ -17,7 +16,6 @@ namespace LinkedMovement.UI.Content {
 
         public EditAnimatronicContent(Pairing pairing) {
             controller = LinkedMovement.GetController();
-            this.pairing = pairing;
 
             controller.setTargetPairing(pairing);
             animationParams = controller.animationParams;
