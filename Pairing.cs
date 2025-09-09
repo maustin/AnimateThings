@@ -8,11 +8,24 @@ namespace LinkedMovement
     public class Pairing {
         public GameObject baseGO;
         public List<GameObject> targetGOs = new List<GameObject>();
-        public string pairingId;
-        public string pairingName;
         public PairBase pairBase;
 
+        // TODO: Can pairingId and pairingName pull from PairBase?
+        public string pairingId;
+        public string pairingName;
+
         private bool connected = false;
+
+        public static PairBase CreatePairBase(string pairingId, string pairingName, Vector3 positionOffset, Vector3 rotationOffset, LMAnimationParams animationParams) {
+            LinkedMovement.Log("Pairing.CreatePairBase");
+            return new PairBase(pairingId, pairingName, positionOffset, rotationOffset, animationParams);
+        }
+
+        // TODO: Can we eliminate offset?
+        public static PairTarget CreatePairTarget(string pairingId, Vector3 offset) {
+            LinkedMovement.Log("Pairing.CreatePairTarget");
+            return new PairTarget(pairingId, offset);
+        }
 
         public Pairing() {
             LinkedMovement.Log("Pairing DEFAULT CONTSTRUCTOR");
@@ -29,10 +42,10 @@ namespace LinkedMovement
             }
             LinkedMovement.Log("Pairing ID: " + pairingId);
 
-            setup(baseGO, targetGOs, name);
+            setupPairing(baseGO, targetGOs, name);
         }
 
-        public void setup(GameObject baseGO, List<GameObject> targetGOs, string name = "") {
+        public void setupPairing(GameObject baseGO, List<GameObject> targetGOs, string name = "") {
             this.baseGO = baseGO;
             this.targetGOs = new List<GameObject>(targetGOs);
             pairingName = name;
@@ -40,10 +53,22 @@ namespace LinkedMovement
             LinkedMovement.GetController().addPairing(this);
         }
 
-        public bool isConnected() { return connected; }
+        public void updatePairing(LMAnimationParams animationParams, List<BuildableObject> newTargetObjects) {
+            LinkedMovement.Log($"Pairing.updatePairing {pairingId}");
+            updatePairingName(animationParams.name);
+            pairBase.animParams = animationParams;
+
+            LMUtils.RemovePairTargetFromUnusedTargets(targetGOs, newTargetObjects);
+
+            targetGOs = new List<GameObject>();
+            foreach (var bo in newTargetObjects) {
+                targetGOs.Add(bo.gameObject);
+            }
+            setCustomData(false, default, default, animationParams);
+        }
 
         public void connect() {
-            LinkedMovement.Log("Pairing connect, # targets: " + targetGOs.Count);
+            LinkedMovement.Log("Pairing.connect, # targets: " + targetGOs.Count);
 
             if (baseGO == null) {
                 LinkedMovement.Log("connect MISSING BASE GO!");
@@ -102,7 +127,7 @@ namespace LinkedMovement
         }
 
         public void disconnect() {
-            LinkedMovement.Log("Disconnect pairing " + pairingName);
+            LinkedMovement.Log("Pairing.disconnect pairing " + pairingName);
             if (pairBase.sequence.isAlive) {
                 LinkedMovement.Log("Pairing is alive, stop and reset local");
                 pairBase.sequence.Stop();
@@ -112,11 +137,11 @@ namespace LinkedMovement
             connected = false;
         }
 
-        public void update() {
+        // TODO: Probably resource intensive. See when we can skip.
+        // Can we determine if the objects are off-screen and skip?
+        public void frameUpdate() {
             if (!connected || !pairBase.sequence.isAlive || pairBase.sequence.isPaused) return;
             
-            // TODO: Might be resource intensive. See when we can skip.
-
             var bo = LMUtils.GetBuildableObjectFromGameObject(baseGO);
             LMUtils.UpdateMouseColliders(bo);
 
@@ -128,42 +153,25 @@ namespace LinkedMovement
 
         // TODO: eliminate useTargetPositionOffset
         public void setCustomData(bool useTargetPositionOffset = false, Vector3 basePositionOffset = new Vector3(), Vector3 baseRotationOffset = new Vector3(), LMAnimationParams animationParams = null) {
+            LinkedMovement.Log("Pairing.setCustomData");
             var baseBO = LMUtils.GetBuildableObjectFromGameObject(baseGO);
-            baseBO.addCustomData(getPairBase(basePositionOffset, baseRotationOffset, animationParams));
+            var pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
+            if (pairBase == null) {
+                baseBO.addCustomData(CreatePairBase(pairingId, pairingName, basePositionOffset, baseRotationOffset, animationParams));
+            }
 
             LinkedMovement.Log("setCustomData basePositionOffset: " + basePositionOffset.ToString());
 
             foreach (GameObject targetGO in targetGOs) {
+                // TODO: Remove
                 var offset = Vector3.zero;
                 
                 var targetBO = LMUtils.GetBuildableObjectFromGameObject(targetGO);
-                targetBO.addCustomData(getPairTarget(offset));
+                var pairTarget = LMUtils.GetPairTargetFromSerializedMonoBehaviour(targetBO);
+                if (pairTarget == null) {
+                    targetBO.addCustomData(CreatePairTarget(pairingId, offset));
+                }
             }
-        }
-
-        public PairBase getPairBase(Vector3 positionOffset, Vector3 rotationOffset, LMAnimationParams animationParams) {
-            LinkedMovement.Log("Pairing getPairBase");
-            return new PairBase(pairingId, pairingName, positionOffset, rotationOffset, animationParams);
-        }
-
-        // TODO: Better name? Should this be a static? Theoretically this should never be null.
-        public PairBase getExistingPairBase() {
-            LinkedMovement.Log("Pairing getExistingPairBase");
-            if (baseGO == null) {
-                LinkedMovement.Log("ERROR: getExistingPairBase has no existing baseGO");
-                return null;
-            }
-
-            var baseBO = LMUtils.GetBuildableObjectFromGameObject(baseGO);
-            PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
-
-            return pairBase;
-        }
-
-        // TODO: Can we eliminate offset?
-        public PairTarget getPairTarget(Vector3 offset) {
-            LinkedMovement.Log("Pairing getPairTarget");
-            return new PairTarget(pairingId, offset);
         }
 
         public void removePairTarget(GameObject targetGO) {
@@ -179,12 +187,11 @@ namespace LinkedMovement
 
         public void updatePairingName(string newPairingName) {
             pairingName = newPairingName;
-
             pairBase.pairName = newPairingName;
         }
 
         public void destroy() {
-            LinkedMovement.Log("Pairing.Destroy Pairing: " + getPairingName());
+            LinkedMovement.Log("Pairing.destroy Pairing: " + getPairingName());
 
             // Guess the easiest is to just delete the base and let the various handlers do the rest
             if (baseGO != null) {

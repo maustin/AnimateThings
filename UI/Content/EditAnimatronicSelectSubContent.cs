@@ -36,7 +36,8 @@ namespace LinkedMovement.UI.Content {
                     }
                 }
 
-                var targetObjects = LMUtils.GetBuildableObjectsFromGameObjects(pairing.targetGOs);
+                //var targetObjects = LMUtils.GetBuildableObjectsFromGameObjects(pairing.targetGOs);
+                var targetObjects = controller.targetObjects;
                 targetsScrollPosition = BeginScrollView(targetsScrollPosition, Height(300f));
                 foreach (var targetObject in targetObjects) {
                     using (Scope.Horizontal()) {

@@ -21,6 +21,9 @@ namespace LinkedMovement.Utils {
             LinkedMovement.Log("End list");
         }
 
+        // Built-in objects have a ChunkedMesh component. This component can prevent visual updates
+        // while we're modifying animations that affect their GameObject.
+        // Disable when creating and modifying. Re-enable when finished.
         public static void SetChunkedMeshEnalbedIfPresent(BuildableObject bo, bool enalbed) {
             var chunker = bo.GetComponent<ChunkedMesh>();
             if (chunker != null) {
@@ -399,6 +402,29 @@ namespace LinkedMovement.Utils {
             if (parentPairing != null) {
                 depth++;
                 CountPairingParent(parentPairing, ref depth);
+            }
+        }
+
+        public static void RemovePairTargetFromUnusedTargets(List<GameObject> oldTargetGOs, List<BuildableObject> newTargetObjects) {
+            LinkedMovement.Log("LMUtils.RemovePairTargetFromUnusedTargets");
+            foreach (var oldTargetGO in oldTargetGOs) {
+                var oldTargetObject = LMUtils.GetBuildableObjectFromGameObject(oldTargetGO);
+                if (!newTargetObjects.Contains(oldTargetObject)) {
+                    LinkedMovement.Log("Try to remove PairTarget from " + oldTargetObject.name);
+                    var didRemove = oldTargetObject.removeCustomData<PairTarget>();
+                    LinkedMovement.Log("Did remove: " + didRemove.ToString());
+                }
+            }
+        }
+
+        // BuildableObjects in the old list that are not in the new list need to have their parent reset
+        public static void RemoveParentFromUnusedTargets(List<BuildableObject> oldTargetObjects, List<BuildableObject> newTargetObjects) {
+            LinkedMovement.Log("LMUtils.RemoveParentFromUnusedTargets");
+            foreach (var oldTargetObject in oldTargetObjects) {
+                if (!newTargetObjects.Contains(oldTargetObject)) {
+                    LinkedMovement.Log("Remove parent for " + oldTargetObject.gameObject.name);
+                    oldTargetObject.transform.SetParent(null);
+                }
             }
         }
 

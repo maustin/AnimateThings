@@ -138,7 +138,7 @@ namespace LinkedMovement {
             //}
 
             foreach (var pairing in pairings) {
-                pairing.update();
+                pairing.frameUpdate();
             }
         }
 
@@ -217,6 +217,11 @@ namespace LinkedMovement {
             if (targetPairing != null) {
                 killSampleSequence();
                 restartAssociated();
+                
+                // Reset parents for new targets
+                var originalTargets = LMUtils.GetBuildableObjectsFromGameObjects(targetPairing.targetGOs);
+                LMUtils.RemoveParentFromUnusedTargets(targetObjects, originalTargets);
+
                 LinkedMovement.Log("Reconnect targetPairing");
                 targetPairing.connect();
                 targetPairing = null;
@@ -392,6 +397,14 @@ namespace LinkedMovement {
             targetObjects.Add(bo);
 
             LMUtils.AddObjectHighlight(bo, Color.yellow);
+
+            // TODO: STATE MACHINE! Don't like this.
+            if (targetPairing != null) {
+                killSampleSequence();
+                LMUtils.AttachTargetToBase(originObject.transform, bo.transform);
+                //bo.transform.SetParent(originObject.transform);
+                rebuildSampleSequence();
+            }
         }
 
         public void queueRemoveTargetBuildableObject(BuildableObject bo) {
@@ -408,9 +421,17 @@ namespace LinkedMovement {
 
             LMUtils.SetChunkedMeshEnalbedIfPresent(bo, true);
             LMUtils.RemoveObjectHighlight(bo);
+
+            killSampleSequence();
+
             bo.transform.parent = null;
             
             targetObjects.Remove(bo);
+
+            // TODO: STATE MACHINE! Don't like this.
+            if (targetPairing != null) {
+                rebuildSampleSequence();
+            }
         }
 
         public void clearTargetObjects() {
@@ -425,6 +446,7 @@ namespace LinkedMovement {
 
         public void resetController() {
             LinkedMovement.Log("Controller.resetController");
+            disableSelectionHandler();
 
             setCreationStep(CreationSteps.Select);
 
@@ -444,6 +466,7 @@ namespace LinkedMovement {
             clearTargetPairing();
         }
 
+        // Only use when creating a new Pairing
         private void joinObjects() {
             LinkedMovement.Log("Controller.joinObjects");
 
@@ -463,13 +486,14 @@ namespace LinkedMovement {
             // TODO: This is duplicating data
             animationParams.name = animatronicName;
 
-            Pairing pairing;
-            if (targetPairing != null) {
-                pairing = targetPairing;
-                pairing.setup(originObject.gameObject, targetGOs, animatronicName);
-            } else {
-                pairing = new Pairing(originObject.gameObject, targetGOs, null, animatronicName);
-            }
+            //Pairing pairing;
+            //if (targetPairing != null) {
+            //    pairing = targetPairing;
+            //    pairing.setup(originObject.gameObject, targetGOs, animatronicName);
+            //} else {
+            //    pairing = new Pairing(originObject.gameObject, targetGOs, null, animatronicName);
+            //}
+            var pairing = new Pairing(originObject.gameObject, targetGOs, null, animatronicName);
 
             // TODO: Eliminate origin offsets
             pairing.setCustomData(false, default, default, animationParams);
@@ -481,23 +505,25 @@ namespace LinkedMovement {
             pairing.connect();
         }
 
+        // Only use when saving changes to an existing Pairing
         public void saveChanges() {
-            // Only use when editing
             LinkedMovement.Log("Controller.saveChanges");
-            // TODO: Lots of this shared with discard. Consolidate.
             LMUtils.ResetObjectHighlights();
             killSampleSequence();
             restartAssociated();
-            targetPairing.updatePairingName(animationParams.name);
-            targetPairing.pairBase.animParams = animationParams;
+
+            targetPairing.updatePairing(animationParams, targetObjects);
             targetPairing.connect();
             targetPairing = null;
+
             LMUtils.SetChunkedMeshEnalbedIfPresent(originObject, true);
             originObject = null;
+            
             foreach (var target in targetObjects) {
                 LMUtils.SetChunkedMeshEnalbedIfPresent(target, true);
             }
             targetObjects.Clear();
+
             resetController();
         }
 
@@ -579,7 +605,7 @@ namespace LinkedMovement {
                 selectionHandlerEnabled = true;
         }
 
-        private void disableSelectionHandler() {
+        public void disableSelectionHandler() {
             if (selectionHandlerEnabled)
                 selectionHandlerEnabled = false;
         }
@@ -605,7 +631,8 @@ namespace LinkedMovement {
             LinkedMovement.Log("Attach targets");
             // set targets parent
             foreach (var targetBO in targetObjects) {
-                targetBO.transform.SetParent(originObject.transform);
+                //targetBO.transform.SetParent(originObject.transform);
+                LMUtils.AttachTargetToBase(originObject.transform, targetBO.transform);
             }
 
             rebuildSampleSequence();

@@ -37,32 +37,26 @@ namespace LinkedMovement.UI.Content {
                     var newPairingName = RGUI.Field(animationParams.name);
                     if (newPairingName != animationParams.name) {
                         animationParams.name = newPairingName;
-                        //pairing.pairingName = newPairingName;
-                        //pairing.pairBase.pairName = newPairingName;
                         title = "Edit Animatronic: " + newPairingName;
                     }
-                    //var newPairingName = RGUI.Field(pairing.pairingName);
-                    //if (newPairingName != pairing.pairingName) {
-                    //    pairing.pairingName = newPairingName;
-                    //    pairing.pairBase.pairName = newPairingName;
-                    //    title = "Edit Animatronic: " + newPairingName;
-                    //}
                 }
                 Space(5f);
 
-                //using (Scope.GuiEnabled(false)) {
-                    using (Scope.Horizontal()) {
-                        if (Button($"{(selectUIOpen ? "▼" : "►")} Targets", RGUIStyle.flatButtonLeft)) {
-                            selectUIOpen = !selectUIOpen;
-                        }
+                using (Scope.Horizontal()) {
+                    if (Button($"{(selectUIOpen ? "▼" : "►")} Targets", RGUIStyle.flatButtonLeft)) {
+                        selectUIOpen = !selectUIOpen;
+                        if (selectUIOpen) animateUIOpen = false;
+                        controller.disableSelectionHandler();
                     }
-                //}
+                }
                 if (selectUIOpen) {
                     selectSubContent.DoGUI();
                 }
                 using (Scope.Horizontal()) {
                     if (Button($"{(animateUIOpen ? "▼" : "►")} Animation", RGUIStyle.flatButtonLeft)) {
                         animateUIOpen = !animateUIOpen;
+                        if (animateUIOpen) selectUIOpen = false;
+                        controller.disableSelectionHandler();
                     }
                 }
                 if (animateUIOpen) {
