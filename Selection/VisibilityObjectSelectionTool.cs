@@ -1,4 +1,5 @@
 ﻿// ATTRIB: HideScenery
+using LinkedMovement.Utils;
 using Parkitect.UI;
 using System;
 using System.Collections.Generic;
@@ -671,11 +672,13 @@ namespace LinkedMovement.Selection {
             max.y -= 0.005f;
             bounds.max = max;
             //LinkedMovement.Log("Bounds: " + bounds.ToString());
-            var thing = MouseCollisions.Instance.boxcastAll(bounds);
-            LinkedMovement.Log("Box tool hit #: " + thing.Length.ToString());
-            foreach (MouseCollider.HitInfo hitInfo in MouseCollisions.Instance.boxcastAll(bounds)) {
+            var boxHits = MouseCollisions.Instance.boxcastAll(bounds);
+            LinkedMovement.Log("Box tool hit #: " + boxHits.Length.ToString());
+            foreach (MouseCollider.HitInfo hitInfo in boxHits) {
                 var o = hitInfo.hitObject.GetComponentInParent<BuildableObject>();
                 if (o != null) {
+                    if (LMUtils.HitTargetIsDisqualified(o)) { continue; }
+
                     if (Input.GetMouseButtonUp(0)) {
                         OnSelectedObject(SelectionOperation.Add, bounds, o);
                     }

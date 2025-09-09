@@ -16,11 +16,11 @@ namespace LinkedMovement {
         }
         private CreationSteps creationStep = CreationSteps.Select;
 
-        private enum PickingMode {
+        public enum PickingMode {
             Origin,
             Target,
         }
-        private PickingMode pickingMode;
+        public PickingMode pickingMode;
 
         // TODO: !!! This needs to be split into a couple different classes
 
@@ -266,6 +266,7 @@ namespace LinkedMovement {
 
         public void generateOrigin() {
             LinkedMovement.Log("Controller.generateOrigin");
+            disableSelectionHandler();
 
             removeOrigin();
 
@@ -290,7 +291,10 @@ namespace LinkedMovement {
             LinkedMovement.Log("Controller.removeOrigin");
             if (originObject != null) {
                 LMUtils.RemoveObjectHighlight(originObject);
-                LMUtils.SetChunkedMeshEnalbedIfPresent(originObject, true);
+                // Only re-enable chunker if the origin is not already a PairTarget
+                if (LMUtils.GetPairTargetFromSerializedMonoBehaviour(originObject) == null)
+                    LMUtils.SetChunkedMeshEnalbedIfPresent(originObject, true);
+
                 LinkedMovement.Log("Destroy existing origin: " + originObject.getName());
                 // Only destroy the origin if it was generated
                 if (LMUtils.IsGeneratedOrigin(originObject))
@@ -343,7 +347,7 @@ namespace LinkedMovement {
 
         public void handleRemoveObjectSelection(BuildableObject bo) {
             LinkedMovement.Log("Controller.handleRemoveObjectSelection");
-            LMUtils.SetChunkedMeshEnalbedIfPresent(bo, true);
+            
             if (pickingMode == PickingMode.Target)
                 removeTargetBuildableObject(bo);
         }

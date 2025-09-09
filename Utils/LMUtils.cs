@@ -431,5 +431,29 @@ namespace LinkedMovement.Utils {
             }
         }
 
+        public static bool HitTargetIsDisqualified(BuildableObject bo) {
+            var controller = LinkedMovement.GetController();
+            // Check that the hit target is not already selected
+            if (controller.originObject == bo || controller.targetObjects.Contains(bo)) {
+                // Already selected, disqualify
+                return true;
+            }
+
+            if (controller.pickingMode == LinkedMovementController.PickingMode.Origin) {
+                // Picking origin/base, check hit target is not already a PairBase
+                if (GetPairBaseFromSerializedMonoBehaviour(bo) != null) {
+                    // Already has PairBase, disqualify
+                    return true;
+                }
+            } else {
+                // Picking targets, check hit target is not already a PairTarget
+                if (GetPairTargetFromSerializedMonoBehaviour(bo) != null) {
+                    // Already has PairTarget, disqualify
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 }

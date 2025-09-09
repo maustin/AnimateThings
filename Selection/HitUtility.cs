@@ -1,4 +1,5 @@
 ﻿// ATTRIB: HideScenery
+using LinkedMovement.Utils;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -122,6 +123,10 @@ namespace LinkedMovement.Selection {
             var bo = belowMouseInfo.hitObject as BuildableObject;
             if (bo == null) {
                 //LinkedMovement.Log("GetObjectsBelowMouse not BuildableObject");
+                return;
+            }
+
+            if (LMUtils.HitTargetIsDisqualified(bo)) {
                 return;
             }
 
