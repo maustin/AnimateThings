@@ -48,7 +48,7 @@ namespace LinkedMovement {
         }
 
         public void setOriginalValues(Transform originTransform) {
-            LinkedMovement.Log("LMAnimationParams constructor with params");
+            LinkedMovement.Log("LMAnimationParams.setOriginalValues: " + originTransform.ToString());
             
             originalRotation = originTransform.eulerAngles;
             originalLocalRotation = originTransform.localEulerAngles;
@@ -60,7 +60,7 @@ namespace LinkedMovement {
 
         // TODO: originIsGenerated doesn't seem to be carrying after save/load
         public void setStartingValues(Transform originTransform) {
-            LinkedMovement.Log("LMAnimationParams setStartingValues");
+            LinkedMovement.Log("LMAnimationParams.setStartingValues: " + originTransform.ToString());
             //generatedOrigin = originIsGenerated;
             startingPosition = originTransform.position;
             startingLocalPosition = originTransform.localPosition;
@@ -75,7 +75,7 @@ namespace LinkedMovement {
         // TODO: Do we need to ensure this only runs once?
         public void calculateRotationOffset() {
             // When object is built rotated, we need to adjust the target position
-            LinkedMovement.Log("calculateRotatationOffset");
+            LinkedMovement.Log("LMAnimationParams.calculateRotatationOffset");
 
             Vector3 rotationOffset = startingLocalRotation - originalLocalRotation;
             LinkedMovement.Log("rotationOffset: " + rotationOffset.ToString());

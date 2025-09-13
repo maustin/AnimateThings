@@ -29,6 +29,7 @@ namespace LinkedMovement {
         private static bool KeybindsRegistered;
 
         public static LinkedMovementController GetController() {
+            // TODO: This needs to prevent creation of controller when not appropriate
             if (Controller == null) {
                 Log("Create Controller!");
                 GameObject go = new GameObject();
