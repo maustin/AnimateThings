@@ -52,6 +52,7 @@ namespace LinkedMovement.Utils {
             return targets;
         }
 
+        // Currently only used when building animated Blueprints
         public static void TryToBuildPairingFromBuiltObjects(List<BuildableObject> builtObjectInstances) {
             foreach (var buildableObject in builtObjectInstances) {
                 TryToBuildPairingFromBuildableObject(buildableObject, builtObjectInstances);
@@ -97,10 +98,12 @@ namespace LinkedMovement.Utils {
             LinkedMovement.Log("LMUtils.AttachTargetToBase, parent: " + baseObject.name + ", target: " + targetObject.name);
             var baseTransform = baseObject;
             if (targetObject.IsChildOf(baseTransform)) {
-                LinkedMovement.Log("ALREADY CHILDED!");
+                LinkedMovement.Log("ALREADY A CHILD!");
             } else {
-                LinkedMovement.Log("Make child");
+                LinkedMovement.Log("Making child");
+                LinkedMovement.Log($"Pre Make Child position: {targetObject.position.ToString()}, localPosition: {targetObject.localPosition.ToString()} localRotation: {targetObject.localEulerAngles.ToString()}");
                 targetObject.SetParent(baseTransform);
+                LinkedMovement.Log($"Post Make Child position: {targetObject.position.ToString()}, localPosition: {targetObject.localPosition.ToString()} localRotation: {targetObject.localEulerAngles.ToString()}");
             }
         }
 
@@ -143,90 +146,79 @@ namespace LinkedMovement.Utils {
             return buildableObjects;
         }
 
-        public static void RestartAssociatedAnimations(GameObject gameObject) {
+        public static void RestartAssociatedAnimations(List<GameObject> gameObjects) {
+            // Setup
+            LinkedMovement.Log($"LMUtils.RestartAssociatedAnimations START with {gameObjects.Count} gameObjets");
+            if (baseGameObjectsReset != null) {
+                throw new Exception("LMUtils.RestartAssociatedAnimations ALREADY RUNNING!");
+            }
+            baseGameObjectsReset = new HashSet<GameObject>();
+
+            // Do
+            foreach (GameObject go in gameObjects) {
+                RestartAssociatedAnimations(go);
+            }
+
+            // Cleanup
+            LinkedMovement.Log("RestartAssociatedAnimations END");
+            baseGameObjectsReset.Clear();
+            baseGameObjectsReset = null;
+        }
+
+        private static void RestartAssociatedAnimations(GameObject gameObject) {
             LinkedMovement.Log("LMUtils.RestartAssociatedAnimations for " + gameObject.name);
-            bool isRootResetCall = false;
-            if (baseGameObjectsReset == null) {
-                isRootResetCall = true;
-                baseGameObjectsReset = new HashSet<GameObject>();
-            }
-
-            var baseGameObjectsHasBeenVisited = baseGameObjectsReset.Contains(gameObject);
-            if (baseGameObjectsHasBeenVisited) {
+            
+            var gameObjectHasBeenVisited = baseGameObjectsReset.Contains(gameObject);
+            if (gameObjectHasBeenVisited) {
                 LinkedMovement.Log("Already visited GameObject " + gameObject.name);
-            } else {
-                LinkedMovement.Log("Check GameObject " + gameObject.name);
-                baseGameObjectsReset.Add(gameObject);
-
-                var pairing = LinkedMovement.GetController().findPairingByBaseGameObject(gameObject);
-                if (pairing != null) {
-                    LinkedMovement.Log($"Found pairing name: {pairing.pairingName}, id: {pairing.pairingId}");
-                    if (pairing.pairBase.sequence.isAlive) {
-                        LinkedMovement.Log("Reset sequence progress!");
-                        pairing.pairBase.sequence.progress = 0f;
-                    } else {
-                        LinkedMovement.Log("Sequence not alive");
-                    }
-
-                } else {
-                    LinkedMovement.Log("No Pairing exists");
-                }
-
-                LinkedMovement.Log("Check children for " + gameObject.name);
-                for (int i = 0; i < gameObject.transform.childCount; i++) {
-                    var childTransform = gameObject.transform.GetChild(i);
-                    if (childTransform != null) {
-                        var childGO = childTransform.gameObject;
-                        if (childGO != null) {
-                            LinkedMovement.Log($"Restart associated child for {gameObject.name}, index {i.ToString()}, name {childGO.name}");
-                            RestartAssociatedAnimations(childGO);
-                        }
-                    }
-                }
-
-                LinkedMovement.Log("Check parent for " + gameObject.name);
-                if (gameObject.transform.parent != null && gameObject.transform.parent.gameObject != null) {
-                    var parentGO = gameObject.transform.parent.gameObject;
-                    LinkedMovement.Log($"Restart associated parent for {gameObject.name}, parent: {parentGO.name}");
-                    RestartAssociatedAnimations(parentGO);
-                }
-
+                return;
             }
 
-            if (isRootResetCall) {
-                baseGameObjectsReset.Clear();
-                baseGameObjectsReset = null;
+            LinkedMovement.Log("Check GameObject " + gameObject.name);
+            baseGameObjectsReset.Add(gameObject);
+
+            var pairing = LinkedMovement.GetController().findPairingByBaseGameObject(gameObject);
+            if (pairing != null) {
+                LinkedMovement.Log($"Found pairing name: {pairing.pairingName}, id: {pairing.pairingId}");
+                if (pairing.pairBase.sequence.isAlive) {
+                    LinkedMovement.Log("Reset sequence progress!");
+                    pairing.pairBase.sequence.progress = 0f;
+                    //pairing.pairBase.sequence.Stop();
+                    //pairing.pairBase.animParams.calculateRotationOffset();
+                    //pairing.pairBase.sequence = LMUtils.BuildAnimationSequence(pairing.baseGO.transform, pairing.pairBase.animParams);
+                } else {
+                    LinkedMovement.Log("Sequence not alive");
+                }
+            } else {
+                LinkedMovement.Log("No Pairing exists");
+            }
+
+            LinkedMovement.Log("Check children for " + gameObject.name);
+            for (int i = 0; i < gameObject.transform.childCount; i++) {
+                var childTransform = gameObject.transform.GetChild(i);
+                if (childTransform != null) {
+                    var childGO = childTransform.gameObject;
+                    if (childGO != null) {
+                        LinkedMovement.Log($"Try restart associated child for {gameObject.name}, index {i.ToString()}, name {childGO.name}");
+                        RestartAssociatedAnimations(childGO);
+                    }
+                }
+            }
+
+            LinkedMovement.Log("Check parent for " + gameObject.name);
+            if (gameObject.transform.parent != null && gameObject.transform.parent.gameObject != null) {
+                var parentGO = gameObject.transform.parent.gameObject;
+                LinkedMovement.Log($"Try restart associated parent for {gameObject.name}, parent: {parentGO.name}");
+                RestartAssociatedAnimations(parentGO);
+            } else {
+                LinkedMovement.Log("No parent");
             }
         }
 
-        //public static void RestartAssociatedAnimations(GameObject gameObject) {
-        //    LinkedMovement.Log("LMUtils.RestartAssociatedAnimations for " + gameObject.name);
-
-        //    var pairing = LinkedMovement.GetController().findPairingByBaseGameObject(gameObject);
-        //    if (pairing == null) {
-        //        LinkedMovement.Log("Failed to find existing Pairing");
-        //        return;
-        //    }
-        //    LinkedMovement.Log("Found pairing name: " + pairing.pairingName + ", id: " + pairing.pairingId);
-
-        //    var pairBase = pairing.pairBase;
-        //    if (pairBase.sequence.isAlive) {
-        //        LinkedMovement.Log("Reset progress!");
-        //        pairBase.sequence.progress = 0f;
-        //    }
-
-        //    var animationParams = pairBase.animParams;
-        //    LMUtils.ResetTransformLocals(gameObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
-
-        //    // Check up
-        //    if (gameObject.transform.parent != null && gameObject.transform.parent.gameObject != null) {
-        //        RestartAssociatedAnimations(gameObject.transform.parent.gameObject);
-        //    }
-        //}
-
         public static void ResetTransformLocals(Transform transform, Vector3 localPosition, Vector3 localRotation, Vector3 localScale) {
             LinkedMovement.Log("LMUtils.ResetTransformLocals");
-            LinkedMovement.Log($"position: {localPosition.ToString()}, rotation: {localRotation.ToString()}, scale: {localScale.ToString()}");
+            LinkedMovement.Log($"FROM position: {transform.localPosition.ToString()}, rotation: {transform.localEulerAngles.ToString()}, scale: {transform.localScale.ToString()}");
+            LinkedMovement.Log($"TO position: {localPosition.ToString()}, rotation: {localRotation.ToString()}, scale: {localScale.ToString()}");
 
             transform.localPosition = localPosition;
             transform.localEulerAngles = localRotation;
@@ -247,8 +239,8 @@ namespace LinkedMovement.Utils {
             return parsedEase;
         }
 
-        private static void BuildAnimationStep(Transform transform, Sequence sequence, LMAnimationParams animationParams, LMAnimationStep animationStep, ref Vector3 lastRotationTarget) {
-            LinkedMovement.Log($"BuildAnimationStep {animationStep.name} for sequence {animationParams.name}");
+        private static void BuildAnimationStep(Transform transform, Sequence sequence, LMAnimationParams animationParams, LMAnimationStep animationStep, ref Vector3 lastLocalRotationTarget) {
+            LinkedMovement.Log($"LMUtils.BuildAnimationStep {animationStep.name} for sequence {animationParams.name}");
             LinkedMovement.Log(animationStep.ToString());
 
             Ease ease = ParseStringToEase(animationStep.ease);
@@ -259,19 +251,28 @@ namespace LinkedMovement.Utils {
             if (hasPositionChange || hasRotationChange || hasScaleChange) {
                 LinkedMovement.Log("Has change");
                 if (hasPositionChange) {
-                    sequence.Group(Tween.LocalPositionAdditive(transform, animationStep.targetPosition, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
+                    //var newLocalPositionTarget = lastLocalPositionTarget + animationStep.targetPosition;
+                    //sequence.Group(Tween.LocalPosition(transform, lastLocalPositionTarget, newLocalPositionTarget, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
+                    //lastLocalPositionTarget = newLocalPositionTarget;
+                    sequence.Group(Tween.LocalPositionAdditive(transform, animationStep.targetPosition, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay)
+                        //.OnUpdate(target: transform, (target, tween) => {
+                        //    LinkedMovement.Log($"Update pos: {target.position.ToString()}, lPos: {target.localPosition.ToString()}, rot: {target.eulerAngles.ToString()}, lRot: {target.localEulerAngles.ToString()}");
+                        //})
+                    );
                 }
                 if (hasRotationChange) {
-                    var newRotationTarget = lastRotationTarget + animationStep.targetRotation;
+                    var newRotationTarget = lastLocalRotationTarget + animationStep.targetRotation;
                     //LinkedMovement.Log("Rotation change: " + newRotationTarget.ToString());
-                    sequence.Group(Tween.LocalEulerAngles(transform, lastRotationTarget, newRotationTarget, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
-                    lastRotationTarget = newRotationTarget;
+                    sequence.Group(Tween.LocalEulerAngles(transform, lastLocalRotationTarget, newRotationTarget, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
+                    lastLocalRotationTarget = newRotationTarget;
                 }
                 if (hasScaleChange) {
+                    // TODO: Does this also need last update fix?
                     var newScaleTarget = new Vector3(animationStep.targetScale.x * animationParams.startingLocalScale.x, animationStep.targetScale.y * animationParams.startingLocalScale.y, animationStep.targetScale.z * animationParams.startingLocalScale.z);
                     //LinkedMovement.Log("Scale change: " + newScaleTarget.ToString());
                     sequence.Group(Tween.ScaleAdditive(transform, newScaleTarget, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
                 }
+                // Add ChainDelay to "close" the current Sequence Group
                 sequence.ChainDelay(0f);
             } else {
                 LinkedMovement.Log("No change");
@@ -283,7 +284,7 @@ namespace LinkedMovement.Utils {
         }
 
         public static Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams, bool isEditing = false) {
-            LinkedMovement.Log("LMUtils.BuildAnimationSequence");
+            LinkedMovement.Log("LMUtils.BuildAnimationSequence name: " + animationParams.name);
 
             // TODO: Need to prevent adding multiple pairings on the same objects
             // E.g. an object can only be the base of a single Pairing
@@ -304,9 +305,10 @@ namespace LinkedMovement.Utils {
 
             Sequence sequence = Sequence.Create(cycles: loops, cycleMode: CycleMode.Restart);
 
-            var lastRotationTarget = animationParams.startingLocalRotation;
+            //var lastLocalPositionTarget = animationParams.startingLocalPosition;
+            var lastLocalRotationTarget = animationParams.startingLocalRotation;
             foreach (var animationStep in animationParams.animationSteps) {
-                BuildAnimationStep(transform, sequence, animationParams, animationStep, ref lastRotationTarget);
+                BuildAnimationStep(transform, sequence, animationParams, animationStep, ref lastLocalRotationTarget);
             }
 
             if (startingDelay > 0f) {

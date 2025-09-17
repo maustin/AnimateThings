@@ -24,6 +24,14 @@ namespace LinkedMovement {
 
         // TODO: !!! This needs to be split into a couple different classes
 
+        // TODO: 9-13
+        // Bug: Create an animation
+        // Create new animation
+        // Select original origin as a target
+        // Select new origin object
+        // Enter Animate panel
+        // Observe target moves incorrectly
+
         private SelectionHandler selectionHandler;
         private bool selectionHandlerEnabled {
             get => selectionHandler.enabled;
@@ -269,6 +277,8 @@ namespace LinkedMovement {
             disableSelectionHandler();
 
             removeOrigin();
+
+            restartAssociated();
 
             var originPosition = LMUtils.FindBuildObjectsCenterPosition(targetObjects);
             originObject = ScriptableSingleton<AssetManager>.Instance.instantiatePrefab<Deco>("98f0269770ff44247b38607fdb2cf837", originPosition, Quaternion.identity);
@@ -542,6 +552,8 @@ namespace LinkedMovement {
             if (originObject == null || animationParams == null) {
                 return;
             }
+
+            // TODO: Does this need to reset targets as well?
             LMUtils.ResetTransformLocals(originObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
         }
 
@@ -561,8 +573,24 @@ namespace LinkedMovement {
 
         private void restartAssociated() {
             LinkedMovement.Log("Controller.restartAssociated");
+            var restartList = new List<GameObject>();
             if (originObject != null && originObject.gameObject != null) {
-                LMUtils.RestartAssociatedAnimations(originObject.gameObject);
+                //LMUtils.RestartAssociatedAnimations(originObject.gameObject);
+                restartList.Add(originObject.gameObject);
+            }
+            if (targetObjects != null && targetObjects.Count > 0) {
+                foreach (var targetObject in targetObjects) {
+                    if (targetObject.gameObject != null) {
+                        restartList.Add(targetObject.gameObject);
+                    }
+                }
+            }
+
+            if (restartList.Count == 0) {
+                LinkedMovement.Log("No objects to restart");
+            } else {
+                LinkedMovement.Log($"Trying to restart {restartList.Count} objects");
+                LMUtils.RestartAssociatedAnimations(restartList);
             }
         }
 
@@ -582,7 +610,7 @@ namespace LinkedMovement {
         }
 
         private void enterAnimateState() {
-            LinkedMovement.Log("Enter Animate State");
+            LinkedMovement.Log("Controller.enterAnimateState START");
 
             if (animationParams == null) {
                 animationParams = new LMAnimationParams();
@@ -601,6 +629,8 @@ namespace LinkedMovement {
             }
 
             rebuildSampleSequence();
+
+            LinkedMovement.Log("Controller.enterAnimateState FINISH");
         }
 
         private void exitAnimateState() {

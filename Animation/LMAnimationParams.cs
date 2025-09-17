@@ -47,29 +47,30 @@ namespace LinkedMovement {
             LinkedMovement.Log("LMAnimationParams base constructor");
         }
 
-        public void setOriginalValues(Transform originTransform) {
-            LinkedMovement.Log("LMAnimationParams.setOriginalValues: " + originTransform.ToString());
+        public void setOriginalValues(Transform originalTransform) {
+            LinkedMovement.Log("LMAnimationParams.setOriginalValues");
+            LinkedMovement.Log("original rotation: " + originalTransform.eulerAngles.ToString());
+            LinkedMovement.Log("original localRotation: " + originalTransform.localEulerAngles.ToString());
+            LinkedMovement.Log("original scale: " + originalTransform.localScale.ToString());
             
-            originalRotation = originTransform.eulerAngles;
-            originalLocalRotation = originTransform.localEulerAngles;
-            originalScale = originTransform.localScale;
-
-            //LinkedMovement.Log("original eulerAngles: " + originalRotation.ToString());
-            //LinkedMovement.Log("original localEulerAngles: " + originalLocalRotation.ToString());
+            originalRotation = originalTransform.eulerAngles;
+            originalLocalRotation = originalTransform.localEulerAngles;
+            originalScale = originalTransform.localScale;
         }
 
-        // TODO: originIsGenerated doesn't seem to be carrying after save/load
-        public void setStartingValues(Transform originTransform) {
-            LinkedMovement.Log("LMAnimationParams.setStartingValues: " + originTransform.ToString());
-            //generatedOrigin = originIsGenerated;
-            startingPosition = originTransform.position;
-            startingLocalPosition = originTransform.localPosition;
-            startingRotation = originTransform.eulerAngles;
-            startingLocalRotation = originTransform.localEulerAngles;
-            startingLocalScale = originTransform.localScale;
+        public void setStartingValues(Transform startingTransform) {
+            LinkedMovement.Log("LMAnimationParams.setStartingValues");
+            LinkedMovement.Log("starting position: " + startingTransform.position.ToString());
+            LinkedMovement.Log("starting localPosition: " + startingTransform.localPosition.ToString());
+            LinkedMovement.Log("starting rotation: " + startingTransform.eulerAngles.ToString());
+            LinkedMovement.Log("starting localRotation: " + startingTransform.localEulerAngles.ToString());
+            LinkedMovement.Log("starting scale: " + startingTransform.localScale.ToString());
 
-            //LinkedMovement.Log("starting rotation: " + startingRotation.ToString());
-            //LinkedMovement.Log("starting local rotation: " + startingLocalRotation.ToString());
+            startingPosition = startingTransform.position;
+            startingLocalPosition = startingTransform.localPosition;
+            startingRotation = startingTransform.eulerAngles;
+            startingLocalRotation = startingTransform.localEulerAngles;
+            startingLocalScale = startingTransform.localScale;
         }
 
         // TODO: Do we need to ensure this only runs once?
