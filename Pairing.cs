@@ -92,6 +92,8 @@ namespace LinkedMovement
                 return;
             }
 
+            UnityEngine.Object.Destroy(baseBO.GetComponent<ChunkedMesh>());
+
             LinkedMovement.Log("connect iterate targetGOs");
             foreach (GameObject targetGO in targetGOs) {
                 // TODO: Below doesn't seem to be necessary
@@ -108,7 +110,10 @@ namespace LinkedMovement
                 //    }
                 //}
 
+                UnityEngine.Object.Destroy(targetGO.GetComponent<ChunkedMesh>());
+
                 var targetBO = LMUtils.GetBuildableObjectFromGameObject(targetGO);
+                //LMUtils.SetChunkedMeshEnalbedIfPresent(targetBO, false);
 
                 LMUtils.AttachTargetToBase(baseGO.transform, targetGO.transform);
             }
