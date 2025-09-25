@@ -59,13 +59,13 @@ namespace LinkedMovement.Utils {
         }
 
         // Currently only used when building animated Blueprints
-        public static void TryToBuildPairingFromBuiltObjects(List<BuildableObject> builtObjectInstances) {
+        public static void BuildingBlueprintTryToBuildPairingFromBuiltObjects(List<BuildableObject> builtObjectInstances) {
             foreach (var buildableObject in builtObjectInstances) {
-                TryToBuildPairingFromBuildableObject(buildableObject, builtObjectInstances);
+                BuildingBlueprintTryToBuildPairingFromBuildableObject(buildableObject, builtObjectInstances);
             }
         }
 
-        private static void TryToBuildPairingFromBuildableObject(BuildableObject possibleOriginBO, List<BuildableObject> builtObjectInstances) {
+        private static void BuildingBlueprintTryToBuildPairingFromBuildableObject(BuildableObject possibleOriginBO, List<BuildableObject> builtObjectInstances) {
             PairBase pairBase = GetPairBaseFromSerializedMonoBehaviour(possibleOriginBO);
             if (pairBase == null) return;
 
@@ -274,7 +274,6 @@ namespace LinkedMovement.Utils {
                 if (pairing.pairBase.sequence.isAlive) {
                     LinkedMovement.Log("Reset sequence progress!");
                     pairing.pairBase.sequence.progress = 0f;
-                    //pairing.pairBase.sequence.Stop();
                 } else {
                     LinkedMovement.Log("Sequence not alive");
                 }
@@ -330,8 +329,8 @@ namespace LinkedMovement.Utils {
                     //);
                 }
                 if (hasRotationChange) {
+                    // Can't be additive because rotation on multiple axes will cause object to reset to incorrect rotation
                     var newRotationTarget = lastLocalRotationTarget + animationStep.targetRotation;
-                    //LinkedMovement.Log("Rotation change: " + newRotationTarget.ToString());
                     sequence.Group(Tween.LocalEulerAngles(transform, lastLocalRotationTarget, newRotationTarget, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
                     lastLocalRotationTarget = newRotationTarget;
                 }
@@ -354,9 +353,6 @@ namespace LinkedMovement.Utils {
 
         public static Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams, bool isEditing = false) {
             LinkedMovement.Log("LMUtils.BuildAnimationSequence name: " + animationParams.name);
-
-            // TODO: Need to prevent adding multiple pairings on the same objects
-            // E.g. an object can only be the base of a single Pairing
 
             int loops = -1;
             float startingDelay = 0f;

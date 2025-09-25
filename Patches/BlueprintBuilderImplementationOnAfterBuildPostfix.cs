@@ -2,7 +2,6 @@
 using LinkedMovement.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 #nullable disable
@@ -32,7 +31,6 @@ class BlueprintBuilderImplementationOnAfterBuildPostfix {
         }
 
         LinkedMovement.LinkedMovement.Log("# created instances: " + builtObjectInstances.Count);
-        var reversedList = builtObjectInstances.AsEnumerable().Reverse().ToList();
-        LMUtils.TryToBuildPairingFromBuiltObjects(reversedList);
+        LMUtils.BuildingBlueprintTryToBuildPairingFromBuiltObjects(builtObjectInstances);
     }
 }

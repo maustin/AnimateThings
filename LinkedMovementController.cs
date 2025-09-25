@@ -24,9 +24,6 @@ namespace LinkedMovement {
 
         // TODO: !!! This needs to be split into a couple different classes
 
-        // TODO: 9-17
-        // Still working on bug https://trello.com/c/VvFAgxYf/32-chaining-animations-together-as-in-using-animation-on-one-set-of-objects-and-then-using-another-set-of-animations-onto-the-origi
-
         private SelectionHandler selectionHandler;
         private bool selectionHandlerEnabled {
             get => selectionHandler.enabled;
@@ -203,7 +200,6 @@ namespace LinkedMovement {
             LMUtils.ResetObjectHighlights();
             killSampleSequence();
 
-            //restartAssociatedAnimations(false);
             stopAssociatedAnimations(true);
 
             if (targetPairing != null) {
@@ -219,7 +215,6 @@ namespace LinkedMovement {
             }
 
             foreach (var targetBO in targetObjects) {
-                //targetBO.transform.SetParent(null);
                 LMUtils.AttachTargetToBase(null, targetBO.transform);
             }
             startAssociatedAnimations(true);

@@ -2,6 +2,7 @@
 using LinkedMovement;
 using LinkedMovement.Utils;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -26,6 +27,8 @@ class ParkEventFixedStartPostfix {
 
         var sos = GameController.Instance.getSerializedObjects();
         LinkedMovement.LinkedMovement.Log("SerializedObjects count: " + sos.Count);
+        // Have to reverse so animations are built in the correct order
+        sos = sos.AsEnumerable().Reverse().ToList();
 
         for (int i = sos.Count - 1; i >= 0; i--) {
             var so = sos[i];
@@ -42,7 +45,7 @@ class ParkEventFixedStartPostfix {
 
                     LinkedMovement.LinkedMovement.Log($"Creating Pairing with {pairTargetGOs.Count} targets");
                     var pairing = new Pairing(so.gameObject, pairTargetGOs, pairBase.pairId, pairBase.pairName);
-                    pairBase.animParams.setStartingValues(so.transform); //, LMUtils.IsGeneratedOrigin(so as BuildableObject));
+                    pairBase.animParams.setStartingValues(so.transform);
                     pairing.connect();
                 } else {
                     LinkedMovement.LinkedMovement.Log("No pair matches found, remove PairBase");

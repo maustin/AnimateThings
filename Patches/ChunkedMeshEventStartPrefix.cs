@@ -31,10 +31,12 @@ class ChunkedMeshEventStartPrefix {
         }
         PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(deco);
         if (pairBase != null) {
+            LinkedMovement.LinkedMovement.Log($"ChunkedMesh.eventStart deco {deco.getName()} is pairBase, don't start");
             return false;
         }
         PairTarget pairTarget = LMUtils.GetPairTargetFromSerializedMonoBehaviour(deco);
         if (pairTarget != null) {
+            LinkedMovement.LinkedMovement.Log($"ChunkedMesh.eventStart deco {deco.getName()} is pairTarget, don't start");
             return false;
         }
         return true;

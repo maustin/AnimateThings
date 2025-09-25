@@ -7,15 +7,15 @@ using UnityEngine;
 
 namespace LinkedMovement {
     public class LMAnimationParams : SerializedRawObject {
-        [NonSerialized]
+        [Serialized]
         public Vector3 startingPosition = Vector3.zero;
-        [NonSerialized]
+        [Serialized]
         public Vector3 startingLocalPosition = Vector3.zero;
-        [NonSerialized]
+        [Serialized]
         public Vector3 startingRotation = Vector3.zero;
-        [NonSerialized]
+        [Serialized]
         public Vector3 startingLocalRotation = Vector3.zero;
-        [NonSerialized]
+        [Serialized]
         public Vector3 startingLocalScale = Vector3.one;
 
         [Serialized]
