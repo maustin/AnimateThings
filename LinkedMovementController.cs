@@ -24,6 +24,18 @@ namespace LinkedMovement {
 
         // TODO: !!! This needs to be split into a couple different classes
 
+        // TODO: 9/25
+        // - Fixed issues with building animations "top-down" 
+        // Now finding problems with building "bottom-up"
+        // Repro:
+        // Create animation with Step changing position -1 z
+        // Create animation with previous target as base
+        // Create Step and set position to -1 z
+        // Target and Origin stay put while original origin moves
+        // Expected new Target and Origin should move -1 z (so total -2 z with original animation)
+        // Likely rotation offset not correct
+        // NOTE: Affects x and z but not y
+
         private SelectionHandler selectionHandler;
         private bool selectionHandlerEnabled {
             get => selectionHandler.enabled;
@@ -59,7 +71,22 @@ namespace LinkedMovement {
         
         // TODO: Love to eliminate this. Currently only used when creating new animatronic as there isn't
         // an "animationParams" to carry the name until the "Animate" step.
-        public string animatronicName = string.Empty;
+        //public string animatronicName = string.Empty;
+        private string _animatronicName = string.Empty;
+        public string animatronicName {
+            get {
+                return _animatronicName;
+            }
+            set {
+                if (_animatronicName == value) return;
+                _animatronicName = value;
+                LinkedMovement.Log("SET animatronicName TO: " + value);
+                if (animationParams != null) {
+                    LinkedMovement.Log("UPDATE animationParams");
+                    animationParams.name = _animatronicName;
+                }
+            }
+        }
 
         public Sequence sampleSequence;
 
@@ -440,8 +467,8 @@ namespace LinkedMovement {
             setCreationStep(CreationSteps.Select);
 
             targetPairing = null;
-            animatronicName = string.Empty;
             animationParams = null;
+            animatronicName = string.Empty;
 
             killSampleSequence();
             clearSelection();
@@ -474,7 +501,7 @@ namespace LinkedMovement {
             targetObjects.Clear();
 
             // TODO: This is duplicating data
-            animationParams.name = animatronicName;
+            //animationParams.name = animatronicName;
 
             var pairing = new Pairing(originObject.gameObject, targetGOs, null, animatronicName);
 
@@ -558,7 +585,7 @@ namespace LinkedMovement {
         }
 
         public void rebuildSampleSequence() {
-            LinkedMovement.Log("Controller.rebuildSampleSequence");
+            LinkedMovement.Log("Controller.rebuildSampleSequence START");
             killSampleSequence();
 
             if (originObject == null) {
@@ -569,6 +596,7 @@ namespace LinkedMovement {
             restartAssociatedAnimations(true);
 
             sampleSequence = LMUtils.BuildAnimationSequence(originObject.transform, animationParams, true);
+            LinkedMovement.Log("Controller.rebuildSampleSequence FINISH");
         }
 
         private List<GameObject> getAssociatedGameObjects() {
@@ -657,6 +685,7 @@ namespace LinkedMovement {
 
             if (animationParams == null) {
                 animationParams = new LMAnimationParams();
+                animationParams.name = animatronicName;
             }
 
             stopAssociatedAnimations(true);
