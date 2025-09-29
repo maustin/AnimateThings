@@ -67,8 +67,8 @@ namespace LinkedMovement
             setCustomData(false, default, default, animationParams);
         }
 
-        public void connect() {
-            LinkedMovement.Log("Pairing.connect, # targets: " + targetGOs.Count);
+        public void connect(bool createSequence = true) {
+            LinkedMovement.Log($"Pairing.connect for {pairingName}, # targets: {targetGOs.Count}");
 
             if (baseGO == null) {
                 LinkedMovement.Log("connect MISSING BASE GO!");
@@ -80,15 +80,9 @@ namespace LinkedMovement
             pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(baseBO);
 
             var baseAnimParams = pairBase.animParams;
-            LinkedMovement.Log("Pair has animParams: " + (baseAnimParams != null));
-            if (baseAnimParams != null) {
-                if (baseAnimParams.isTriggerable) {
-                    baseBO.gameObject.AddComponent<LMTrigger>().animationParams = baseAnimParams;
-                } else {
-                    pairBase.sequence = LMUtils.BuildAnimationSequence(baseBO.transform, baseAnimParams);
-                }
-            } else {
-                LinkedMovement.Log("NO animParams!!!");
+            if (baseAnimParams == null) {
+                // TODO: Delete pairing data
+                LinkedMovement.Log("MISSING animationParams!");
                 return;
             }
 
@@ -118,11 +112,22 @@ namespace LinkedMovement
                 LMUtils.AttachTargetToBase(baseGO.transform, targetGO.transform);
             }
 
+            if (createSequence) {
+                this.createSequence();
+            } else {
+                LinkedMovement.Log("Skip createSequence");
+            }
+            //if (baseAnimParams.isTriggerable) {
+            //    baseBO.gameObject.AddComponent<LMTrigger>().animationParams = baseAnimParams;
+            //} else {
+            //    pairBase.sequence = LMUtils.BuildAnimationSequence(baseBO.transform, baseAnimParams);
+            //}
+
             connected = true;
         }
 
         public void disconnect() {
-            LinkedMovement.Log("Pairing.disconnect pairing " + pairingName);
+            LinkedMovement.Log("Pairing.disconnect for " + pairingName);
             if (pairBase.sequence.isAlive) {
                 LinkedMovement.Log("Pairing is alive, stop and reset local");
                 pairBase.sequence.Stop();
@@ -132,8 +137,20 @@ namespace LinkedMovement
             connected = false;
         }
 
+        public void createSequence() {
+            LinkedMovement.Log("Pairing.createSequence for " + pairingName);
+            var animationParams = pairBase.animParams;
+            var baseBO = LMUtils.GetBuildableObjectFromGameObject(baseGO);
+            if (animationParams.isTriggerable) {
+                baseBO.gameObject.AddComponent<LMTrigger>().animationParams = animationParams;
+            } else {
+                pairBase.sequence = LMUtils.BuildAnimationSequence(baseBO.transform, animationParams);
+            }
+        }
+
         // TODO: Probably resource intensive. See when we can skip.
         // Can we determine if the objects are off-screen and skip?
+        // Also consider only running X number of updates per Y delta time
         public void frameUpdate() {
             if (!connected || !pairBase.sequence.isAlive || pairBase.sequence.isPaused) return;
             

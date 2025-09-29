@@ -150,6 +150,8 @@ namespace LinkedMovement {
             // TODO: What is dis?
             if (mouseTool == null) return;
 
+            // TODO: Likely resource intensive, consider how to reduce calls
+            // Maybe only update X number of Pairings per Y delta time
             foreach (var pairing in pairings) {
                 pairing.frameUpdate();
             }
@@ -390,10 +392,14 @@ namespace LinkedMovement {
 
         private void addOriginBuildableObject(BuildableObject bo) {
             LinkedMovement.Log("Controller.addOriginBuildableObject");
+            //LinkedMovement.Log($"BO name: {bo.name}, BO getName: {bo.getName()}, GO name: {bo.gameObject.name}");
+
             if (bo == null) {
                 LinkedMovement.Log("null BuildableObject");
                 return;
             }
+
+            LMUtils.LogDetails(bo);
 
             LMUtils.AddObjectHighlight(bo, Color.red);
             originObject = bo;
@@ -410,6 +416,12 @@ namespace LinkedMovement {
                 LinkedMovement.Log("BuildableObject already added");
                 return;
             }
+            //LinkedMovement.Log($"BO name: {bo.name}, BO getName: {bo.getName()}, GO name: {bo.gameObject.name}");
+
+            //LinkedMovement.Log($"TARGET POS: {bo.transform.position.ToString()}, lPOS: {bo.transform.localPosition.ToString()}");
+            //LinkedMovement.Log($"TARGET ROT: {bo.transform.eulerAngles.ToString()}, lRot: {bo.transform.localEulerAngles.ToString()}");
+
+            LMUtils.LogDetails(bo);
 
             targetObjects.Add(bo);
 
@@ -601,20 +613,21 @@ namespace LinkedMovement {
 
         private List<GameObject> getAssociatedGameObjects() {
             LinkedMovement.Log("Controller.getAssociatedGameObjects");
-            var associated = new List<GameObject>();
-            if (originObject != null && originObject.gameObject != null) {
-                LinkedMovement.Log("Add associated origin " + originObject.gameObject.name);
-                associated.Add(originObject.gameObject);
-            }
-            if (targetObjects != null && targetObjects.Count > 0) {
-                foreach (var targetObject in targetObjects) {
-                    if (targetObject.gameObject != null) {
-                        LinkedMovement.Log("Add associated target " + targetObject.gameObject.name);
-                        associated.Add(targetObject.gameObject);
-                    }
-                }
-            }
-            LinkedMovement.Log($"Controller.getAssociatedGameObjects got {associated.Count} associated objects");
+            var associated = LMUtils.GetAssociatedGameObjects(originObject, targetObjects);
+            //var associated = new List<GameObject>();
+            //if (originObject != null && originObject.gameObject != null) {
+            //    LinkedMovement.Log("Add associated origin " + originObject.gameObject.name);
+            //    associated.Add(originObject.gameObject);
+            //}
+            //if (targetObjects != null && targetObjects.Count > 0) {
+            //    foreach (var targetObject in targetObjects) {
+            //        if (targetObject.gameObject != null) {
+            //            LinkedMovement.Log("Add associated target " + targetObject.gameObject.name);
+            //            associated.Add(targetObject.gameObject);
+            //        }
+            //    }
+            //}
+            //LinkedMovement.Log($"Controller.getAssociatedGameObjects got {associated.Count} associated objects");
             return associated;
         }
 
@@ -640,6 +653,8 @@ namespace LinkedMovement {
 
         private void restartAssociatedAnimations(bool isEditing) {
             LinkedMovement.Log("Controller.restartAssociatedAnimations");
+            //stopAssociatedAnimations(isEditing);
+            //startAssociatedAnimations(isEditing);
             var restartList = getAssociatedGameObjects();
 
             if (restartList.Count > 0) {
@@ -697,6 +712,12 @@ namespace LinkedMovement {
             // set targets parent
             foreach (var targetBO in targetObjects) {
                 LMUtils.AttachTargetToBase(originObject.transform, targetBO.transform);
+
+                //var pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(targetBO);
+                //if (pairBase != null) {
+                //    pairBase.animParams.setOriginalValues(targetBO.transform);
+                //    pairBase.animParams.setStartingValues(targetBO.transform);
+                //}
             }
 
             startAssociatedAnimations(true);
@@ -714,6 +735,12 @@ namespace LinkedMovement {
             // reset targets parent to null
             foreach (var targetBO in targetObjects) {
                 LMUtils.AttachTargetToBase(null, targetBO.transform);
+
+                //var pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(targetBO);
+                //if (pairBase != null) {
+                //    pairBase.animParams.setOriginalValues(targetBO.transform);
+                //    pairBase.animParams.setStartingValues(targetBO.transform);
+                //}
             }
             
             startAssociatedAnimations(true);

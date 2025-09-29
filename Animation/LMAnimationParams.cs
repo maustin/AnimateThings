@@ -25,6 +25,17 @@ namespace LinkedMovement {
         [Serialized]
         public Vector3 originalScale = Vector3.one;
 
+        //[NonSerialized]
+        //private Vector3 builtOrientation = Vector3.zero;
+        [Serialized]
+        public Vector3 orientationOffset = Vector3.zero;
+
+        [Serialized]
+        public Vector3 forwardVec = Vector3.zero;
+
+        [Serialized]
+        public Quaternion forward = Quaternion.identity;
+
         [Serialized]
         public string name = string.Empty;
         
@@ -52,23 +63,33 @@ namespace LinkedMovement {
             LinkedMovement.Log("LMAnimationParams base constructor");
         }
 
+        public void setBuiltOrientation(Vector3 builtOrientation) {
+            LinkedMovement.Log($"LMAnimationParams.setBuiltOrientation {builtOrientation} for sequence: {name}");
+            //this.builtOrientation = builtOrientation;
+            orientationOffset = builtOrientation - originalLocalRotation;
+            LinkedMovement.Log("originalLocalRotation: " + originalLocalRotation.ToString());
+            LinkedMovement.Log("orientationOffset: " + orientationOffset.ToString());
+        }
+
         public void setOriginalValues(Transform originalTransform) {
             LinkedMovement.Log("LMAnimationParams.setOriginalValues for " + name);
 
             //LinkedMovement.Log("CHECK ME setOriginalValues");
             //LinkedMovement.Log(new StackTrace().ToString());
 
+            LinkedMovement.Log("OLD original rotation: " + originalRotation.ToString());
+            LinkedMovement.Log("OLD original localRotation: " + originalLocalRotation.ToString());
+            LinkedMovement.Log("OLD original scale: " + originalScale.ToString());
+
             LinkedMovement.Log("NEW original rotation: " + originalTransform.eulerAngles.ToString());
             LinkedMovement.Log("NEW original localRotation: " + originalTransform.localEulerAngles.ToString());
             LinkedMovement.Log("NEW original scale: " + originalTransform.localScale.ToString());
 
-            LinkedMovement.Log("OLD original rotation: " + originalRotation.ToString());
-            LinkedMovement.Log("OLD original localRotation: " + originalLocalRotation.ToString());
-            LinkedMovement.Log("OLD original scale: " + originalScale.ToString());
-            
             originalRotation = originalTransform.eulerAngles;
             originalLocalRotation = originalTransform.localEulerAngles;
             originalScale = originalTransform.localScale;
+
+            //newCalculateRotationOffset();
         }
 
         public void setStartingValues(Transform startingTransform) {
@@ -77,34 +98,53 @@ namespace LinkedMovement {
             //LinkedMovement.Log("CHECK ME setStartingValues");
             //LinkedMovement.Log(new StackTrace().ToString());
 
-            LinkedMovement.Log("NEW starting position: " + startingTransform.position.ToString());
-            LinkedMovement.Log("NEW starting localPosition: " + startingTransform.localPosition.ToString());
-            LinkedMovement.Log("NEW starting rotation: " + startingTransform.eulerAngles.ToString());
-            LinkedMovement.Log("NEW starting localRotation: " + startingTransform.localEulerAngles.ToString());
-            LinkedMovement.Log("NEW starting scale: " + startingTransform.localScale.ToString());
-
             LinkedMovement.Log("OLD starting position: " + startingPosition.ToString());
             LinkedMovement.Log("OLD starting localPosition: " + startingLocalPosition.ToString());
             LinkedMovement.Log("OLD starting rotation: " + startingRotation.ToString());
             LinkedMovement.Log("OLD starting localRotation: " + startingLocalRotation.ToString());
             LinkedMovement.Log("OLD starting scale: " + startingLocalScale.ToString());
 
+            LinkedMovement.Log("NEW starting position: " + startingTransform.position.ToString());
+            LinkedMovement.Log("NEW starting localPosition: " + startingTransform.localPosition.ToString());
+            LinkedMovement.Log("NEW starting rotation: " + startingTransform.eulerAngles.ToString());
+            LinkedMovement.Log("NEW starting localRotation: " + startingTransform.localEulerAngles.ToString());
+            LinkedMovement.Log("NEW starting scale: " + startingTransform.localScale.ToString());
+
             startingPosition = startingTransform.position;
             startingLocalPosition = startingTransform.localPosition;
             startingRotation = startingTransform.eulerAngles;
             startingLocalRotation = startingTransform.localEulerAngles;
             startingLocalScale = startingTransform.localScale;
+
+            newCalculateRotationOffset();
         }
 
-        // Calculate how the animation position target should 
-        public void calculateRotationOffset() {
-            LinkedMovement.Log("LMAnimationParams.calculateRotatationOffset");
-            LinkedMovement.Log($"Starting startingRot: {startingLocalRotation.ToString()}, originalRot: {originalLocalRotation.ToString()}");
+        private void newCalculateRotationOffset() {
+            LinkedMovement.Log("NEW LMAnimationParams.calculateRotatationOffset for " + name);
+
+            //LinkedMovement.Log($"startingRot: {startingLocalRotation.ToString()}, originalRot: {originalLocalRotation.ToString()}");
+
+            LinkedMovement.Log($"Original localRotation: {originalLocalRotation.ToString()}, starting localRotation: {startingLocalRotation.ToString()}");
 
             LinkedMovement.Log("OLD rotationOffset: " + rotationOffset.ToString());
 
             rotationOffset = startingLocalRotation - originalLocalRotation;
+            //rotationOffset = startingLocalRotation;
+            //rotationOffset = originalLocalRotation - startingLocalRotation;
             LinkedMovement.Log("NEW rotationOffset: " + rotationOffset.ToString());
+        }
+
+        // Calculate how the animation position target should 
+        public void calculateRotationOffset() {
+            LinkedMovement.Log("OLD LMAnimationParams.calculateRotatationOffset for " + name);
+            // SKIP!
+            return;
+            //LinkedMovement.Log($"Starting startingRot: {startingLocalRotation.ToString()}, originalRot: {originalLocalRotation.ToString()}");
+
+            //LinkedMovement.Log("OLD rotationOffset: " + rotationOffset.ToString());
+
+            //rotationOffset = startingLocalRotation - originalLocalRotation;
+            //LinkedMovement.Log("NEW rotationOffset: " + rotationOffset.ToString());
         }
 
         public void addNewAnimationStep() {
@@ -166,9 +206,9 @@ namespace LinkedMovement {
             newAnimationParams.startingRotation = animationParams.startingRotation;
             newAnimationParams.startingLocalRotation = animationParams.startingLocalRotation;
             newAnimationParams.startingLocalScale = animationParams.startingLocalScale;
-            newAnimationParams.originalRotation = animationParams.originalRotation;
-            newAnimationParams.originalLocalRotation = animationParams.originalLocalRotation;
-            newAnimationParams.originalScale = animationParams.originalScale;
+            //newAnimationParams.originalRotation = animationParams.originalRotation;
+            //newAnimationParams.originalLocalRotation = animationParams.originalLocalRotation;
+            //newAnimationParams.originalScale = animationParams.originalScale;
             newAnimationParams.name = animationParams.name;
             newAnimationParams.isTriggerable = animationParams.isTriggerable;
             newAnimationParams.useInitialStartDelay = animationParams.useInitialStartDelay;
