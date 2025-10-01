@@ -23,6 +23,8 @@ class ParkEventFixedStartPostfix {
     [HarmonyPostfix]
     static void eventFixedStart() {
         LinkedMovement.LinkedMovement.Log("Park.eventFixedStart Postfix");
+        // Ensure Controller has been created
+        LinkedMovement.LinkedMovement.GetController();
 
         var sos = GameController.Instance.getSerializedObjects();
         LinkedMovement.LinkedMovement.Log("SerializedObjects count: " + sos.Count);

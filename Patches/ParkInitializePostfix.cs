@@ -20,6 +20,7 @@ class ParkInitializePostfix {
     [HarmonyPostfix]
     static void Initialize() {
         LinkedMovement.LinkedMovement.Log("Park.Initialize Postfix");
+        // Ensure Controller has been created
         LinkedMovement.LinkedMovement.GetController();
     }
 }
