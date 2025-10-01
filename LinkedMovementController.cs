@@ -593,7 +593,6 @@ namespace LinkedMovement {
                 return;
             }
 
-            // TODO: Does this need to reset targets as well?
             LMUtils.ResetTransformLocals(originObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
         }
 
