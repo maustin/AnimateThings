@@ -16,16 +16,16 @@ namespace LinkedMovement.Utils {
         }
 
         private static Dictionary<BuildableObject, HighlightOverlayController.HighlightHandle> HighlightHandles;
-        private static HashSet<GameObject> associatedGameObjects;
+        private static HashSet<GameObject> AssociatedGameObjects;
 
-        public static void LogBuildableObjectComponents(BuildableObject bo) {
-            LinkedMovement.Log("LogBuildableObjectComponents:");
-            Component[] components = bo.GetComponents<Component>();
-            foreach (var component in components) {
-                LinkedMovement.Log(component.GetType().ToString());
-            }
-            LinkedMovement.Log("End list");
-        }
+        //public static void LogBuildableObjectComponents(BuildableObject bo) {
+        //    LinkedMovement.Log("LogBuildableObjectComponents:");
+        //    Component[] components = bo.GetComponents<Component>();
+        //    foreach (var component in components) {
+        //        LinkedMovement.Log(component.GetType().ToString());
+        //    }
+        //    LinkedMovement.Log("End list");
+        //}
 
         // Built-in objects have a ChunkedMesh component. This component can prevent visual updates
         // while we're modifying animations that affect their GameObject.
@@ -181,16 +181,20 @@ namespace LinkedMovement.Utils {
 
         private static void PrepAssociatedGameObjects() {
             LinkedMovement.Log("LMUtils.PrepAssociatedGameObjects");
-            if (associatedGameObjects != null) {
-                throw new Exception("LMUtils.PrepAssociatedGameObjects ALREADY RUNNING!");
+            if (AssociatedGameObjects != null) {
+                // SHOULD NEVER GET HERE
+                //throw new Exception("LMUtils.PrepAssociatedGameObjects ALREADY RUNNING!");
+                // For now, just handle gracefully
+                LinkedMovement.Log("ERROR: LMUtils AssociatedGameObjects was not reset!");
+                CleanupAssociateGameObjects();
             }
-            associatedGameObjects = new HashSet<GameObject>();
+            AssociatedGameObjects = new HashSet<GameObject>();
         }
 
         private static void CleanupAssociateGameObjects() {
             LinkedMovement.Log("LMUtils.CleanupAssociatedGameObjects");
-            associatedGameObjects.Clear();
-            associatedGameObjects = null;
+            AssociatedGameObjects.Clear();
+            AssociatedGameObjects = null;
         }
 
         // TODO: "editMode" and "isEditing" names are ambiguous here
@@ -205,13 +209,13 @@ namespace LinkedMovement.Utils {
 
         private static void EditAssociatedAnimation(GameObject gameObject, AssociatedAnimationEditMode editMode, bool isEditing) {
             LinkedMovement.Log("LMUtils.EditAssociatedAnimation for " + gameObject.name);
-            var gameObjectHasBeenVisited = associatedGameObjects.Contains(gameObject);
+            var gameObjectHasBeenVisited = AssociatedGameObjects.Contains(gameObject);
             if (gameObjectHasBeenVisited) {
                 LinkedMovement.Log("Already visited GameObject " + gameObject.name);
                 return;
             }
 
-            associatedGameObjects.Add(gameObject);
+            AssociatedGameObjects.Add(gameObject);
 
             switch (editMode) {
                 case AssociatedAnimationEditMode.Stop: {
