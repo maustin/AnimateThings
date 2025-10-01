@@ -389,6 +389,7 @@ namespace LinkedMovement.Utils {
                 if (hasRotationChange) {
                     // Can't be additive because rotation on multiple axes will cause object to reset to incorrect rotation
                     var newRotationTarget = lastLocalRotationTarget + animationStep.targetRotation;
+                    LinkedMovement.Log($"Rotate target: {animationStep.targetRotation.ToString()}, newTarget: {newRotationTarget.ToString()}");
                     sequence.Group(Tween.LocalEulerAngles(transform, lastLocalRotationTarget, newRotationTarget, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
                     lastLocalRotationTarget = newRotationTarget;
                 }
@@ -414,10 +415,12 @@ namespace LinkedMovement.Utils {
             int loops = -1;
             float startingDelay = 0f;
 
+            bool isTriggered = false;
             if (!isEditing) {
                 if (animationParams.isTriggerable) {
                     // Only play once for triggers
                     loops = 0;
+                    isTriggered = true;
                 } else {
                     if (animationParams.initialStartDelayMin > 0f || animationParams.initialStartDelayMax > 0f) {
                         startingDelay = UnityEngine.Random.Range(animationParams.initialStartDelayMin, animationParams.initialStartDelayMax);
@@ -428,6 +431,7 @@ namespace LinkedMovement.Utils {
             Sequence sequence = Sequence.Create(cycles: loops, cycleMode: CycleMode.Restart);
 
             var lastLocalRotationTarget = transform.localEulerAngles;
+            LinkedMovement.Log("transform.localEulerAngels: " + lastLocalRotationTarget.ToString());
             foreach (var animationStep in animationParams.animationSteps) {
                 BuildAnimationStep(transform, sequence, animationParams, animationStep, ref lastLocalRotationTarget);
             }
@@ -437,6 +441,10 @@ namespace LinkedMovement.Utils {
                     sequence.isPaused = true;
                     Tween.Delay(startingDelay, () => sequence.isPaused = false);
                 }
+            }
+
+            if (isTriggered) {
+                sequence.ResetBeforeComplete();
             }
 
             return sequence;

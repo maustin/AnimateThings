@@ -15,7 +15,8 @@ class ParkInitializePostfix {
         return methodBase;
     }
 
-    // TODO: This necessary?
+    // This ensures the controller is created at the start of park load
+    // TODO: Is this needed? If the controller is always created elsewhere, can eliminate this patch.
     [HarmonyPostfix]
     static void Initialize() {
         LinkedMovement.LinkedMovement.Log("Park.Initialize Postfix");

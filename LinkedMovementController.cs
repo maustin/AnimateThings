@@ -26,6 +26,12 @@ namespace LinkedMovement {
 
         // TODO: 10/1
         // So far, so good!
+        // NOTE: Generated origins are built with zero rotation offset.
+        // This can cause apparent inconsistencies when an animation is built with a generated origin vs not.
+        // Animations rotate around the origin's local rotation.
+        // A generated origin will always rotate around (0, 0, 0) while a deco origin will rotate around
+        // its placed rotation. For example, the "Snowman" object comes in with default (0, 180, 0) rotation.
+        // A 45 deg X rotation will result in different animated rotations based on the origin's rotation.
         
         private SelectionHandler selectionHandler;
         private bool selectionHandlerEnabled {

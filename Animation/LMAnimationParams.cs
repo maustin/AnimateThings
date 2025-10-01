@@ -81,17 +81,17 @@ namespace LinkedMovement {
         public void setStartingValues(Transform startingTransform) {
             LinkedMovement.Log("LMAnimationParams.setStartingValues for " + name);
 
-            //LinkedMovement.Log("OLD starting position: " + startingPosition.ToString());
-            //LinkedMovement.Log("OLD starting localPosition: " + startingLocalPosition.ToString());
-            //LinkedMovement.Log("OLD starting rotation: " + startingRotation.ToString());
-            //LinkedMovement.Log("OLD starting localRotation: " + startingLocalRotation.ToString());
-            //LinkedMovement.Log("OLD starting scale: " + startingLocalScale.ToString());
+            LinkedMovement.Log("OLD starting position: " + startingPosition.ToString());
+            LinkedMovement.Log("OLD starting localPosition: " + startingLocalPosition.ToString());
+            LinkedMovement.Log("OLD starting rotation: " + startingRotation.ToString());
+            LinkedMovement.Log("OLD starting localRotation: " + startingLocalRotation.ToString());
+            LinkedMovement.Log("OLD starting scale: " + startingLocalScale.ToString());
 
-            //LinkedMovement.Log("NEW starting position: " + startingTransform.position.ToString());
-            //LinkedMovement.Log("NEW starting localPosition: " + startingTransform.localPosition.ToString());
-            //LinkedMovement.Log("NEW starting rotation: " + startingTransform.eulerAngles.ToString());
-            //LinkedMovement.Log("NEW starting localRotation: " + startingTransform.localEulerAngles.ToString());
-            //LinkedMovement.Log("NEW starting scale: " + startingTransform.localScale.ToString());
+            LinkedMovement.Log("NEW starting position: " + startingTransform.position.ToString());
+            LinkedMovement.Log("NEW starting localPosition: " + startingTransform.localPosition.ToString());
+            LinkedMovement.Log("NEW starting rotation: " + startingTransform.eulerAngles.ToString());
+            LinkedMovement.Log("NEW starting localRotation: " + startingTransform.localEulerAngles.ToString());
+            LinkedMovement.Log("NEW starting scale: " + startingTransform.localScale.ToString());
 
             startingPosition = startingTransform.position;
             startingLocalPosition = startingTransform.localPosition;

@@ -32,7 +32,7 @@ namespace LinkedMovement {
             }
 
             EffectRunner.ExecutionHandle andExecute = new EffectRunner.ExecutionHandle((MonoBehaviour)this, this.playEffect());
-            andExecute.onComplete += new EffectRunner.ExecutionHandle.OnComplete(this.onCompleteHandler);
+            //andExecute.onComplete += new EffectRunner.ExecutionHandle.OnComplete(this.onCompleteHandler);
             return andExecute;
         }
 
@@ -56,7 +56,7 @@ namespace LinkedMovement {
         }
 
         public AbstractEditorPanel createEditorPanel(EffectEntry effectEntry, RectTransform parentRectTransform) {
-            AnimationTriggerEffectEditorPanel editorPanel = Object.Instantiate<AnimationTriggerEffectEditorPanel>(ScriptableSingleton<UIAssetManager>.Instance.animationTriggerEffectEditorPanel, (Transform)parentRectTransform);
+            AnimationTriggerEffectEditorPanel editorPanel = Instantiate<AnimationTriggerEffectEditorPanel>(ScriptableSingleton<UIAssetManager>.Instance.animationTriggerEffectEditorPanel, (Transform)parentRectTransform);
             editorPanel.setEffectEntry(effectEntry);
             return (AbstractEditorPanel)editorPanel;
         }
@@ -74,19 +74,11 @@ namespace LinkedMovement {
 
         private IEnumerator playEffect() {
             LinkedMovement.Log($"LMTrigger.playEffect sequence name: {animationParams.name}");
+            //LinkedMovement.Log("Time: " + DateTime.Now.ToString("HH:mm:ss.fff"));
             sequence = LMUtils.BuildAnimationSequence(gameObject.transform, animationParams);
-            sequence.OnComplete(() => {
-                LinkedMovement.Log($"Completed triggered sequence name: {animationParams.name}");
-                // TODO: Is this the best solution?
-                LMUtils.ResetTransformLocals(transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
-            });
+            
             yield return null;
         }
 
-        private void onCompleteHandler(EffectRunner.ExecutionHandle handle, bool successful) {
-            LinkedMovement.Log($"LMTrigger.onCompleteHandler sequence name: {animationParams.name}");
-            // This fires when the effect thinks it's complete, not when the sequence is actually complete.
-            // At the moment, the sequence will not respect Pause or Stop states from the Effects Controller.
-        }
     }
 }
