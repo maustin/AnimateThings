@@ -27,6 +27,8 @@ namespace LinkedMovement {
         // TODO: 9/29
         // Seems correct when building directly
         // Issue now is when building Blueprints
+        // *9/30 Not happening with just position change
+        // Current thought is (at least when building from blueprints) startingLocalRotation is unreliable
 
         private SelectionHandler selectionHandler;
         private bool selectionHandlerEnabled {

@@ -66,7 +66,8 @@ namespace LinkedMovement.Utils {
                 BuildingBlueprintTryToBuildPairingFromBuildableObject(buildableObject, builtObjectInstances, forward, ref createdPairings);
             }
             LinkedMovement.Log($"Built {createdPairings.Count} pairings, now creating sequences");
-            foreach (var pairing in createdPairings) {
+            var sortedPairings = SortPairings(createdPairings);
+            foreach (var pairing in sortedPairings) {
                 pairing.createSequence();
             }
         }
@@ -507,7 +508,26 @@ namespace LinkedMovement.Utils {
 
             Sequence sequence = Sequence.Create(cycles: loops, cycleMode: CycleMode.Restart);
 
-            var lastLocalRotationTarget = animationParams.startingLocalRotation;
+            //Vector3 parentLocalRotationOffset = GetCumulativeParentLocalRotation(transform, Vector3.zero);
+            //var lastLocalRotationTarget = animationParams.startingLocalRotation;
+
+            LinkedMovement.Log("startingLocalRotation: " + animationParams.startingLocalRotation.ToString());
+            var lastLocalRotationTarget = GetCumulativeParentLocalRotation(transform, animationParams.startingLocalRotation);
+            //LinkedMovement.Log("cumulative rotation: " + lastLocalRotationTarget.ToString());
+            //Vector3 forwardEuler = animationParams.forward.eulerAngles;
+            //LinkedMovement.Log("FORWARD euler: " + forwardEuler.ToString());
+            //Vector3 combinedOffset = forwardEuler - lastLocalRotationTarget;
+            //LinkedMovement.Log("combinedOffset: " + combinedOffset.ToString());
+            //lastLocalRotationTarget = combinedOffset;
+            
+            //LinkedMovement.Log("lastLocalRotationTarget: " + lastLocalRotationTarget.ToString());
+            //Vector3 forwardEuler = animationParams.forward.eulerAngles;
+            //LinkedMovement.Log("FORWARD euler: " + forwardEuler.ToString());
+            //Vector3 combinedOffset = forwardEuler - lastLocalRotationTarget;
+            //LinkedMovement.Log("combinedOffset: " + combinedOffset.ToString());
+            //lastLocalRotationTarget = combinedOffset;
+
+            //var lastLocalRotationTarget = GetCumulativeParentLocalRotation(transform, animationParams.orientationOffset);
             foreach (var animationStep in animationParams.animationSteps) {
                 BuildAnimationStep(transform, sequence, animationParams, animationStep, ref lastLocalRotationTarget);
             }
@@ -607,6 +627,52 @@ namespace LinkedMovement.Utils {
             if (parentPairing != null) {
                 depth++;
                 CountPairingParent(parentPairing, ref depth);
+            }
+        }
+
+        public static List<Pairing> SortPairings(List<Pairing> pairings) {
+            LinkedMovement.Log("LMUtils.SortPairings");
+            var sortedPairings = new List<Pairing>();
+            foreach (var pairing in pairings) {
+                var lowestPairing = FindLowestPairing(pairing);
+                AddPairingAndTargets(lowestPairing, sortedPairings);
+            }
+            // Return Bottom-Up order
+            sortedPairings = sortedPairings.AsEnumerable().Reverse().ToList();
+            return sortedPairings;
+        }
+
+        private static Pairing FindLowestPairing(Pairing pairing) {
+            LinkedMovement.Log("LMUtils.FindLowestPairing from " + pairing.pairingName);
+            var baseGO = pairing.baseGO;
+            var parentPairing = LinkedMovement.GetController().findPairingByTargetGameObject(baseGO);
+            if (parentPairing != null) {
+                return FindLowestPairing(parentPairing);
+            }
+            LinkedMovement.Log("Lowest pairing " + pairing.pairingName);
+            return pairing;
+        }
+
+        private static void AddPairingAndTargets(Pairing pairing, List<Pairing> pairings) {
+            LinkedMovement.Log("LMUtils.AddPairingAndTargets from " + pairing.pairingName);
+            if (!pairings.Contains(pairing)) {
+                pairings.Add(pairing);
+
+                //foreach (var targetGO in pairing.targetGOs) {
+                //    //var parentPairing = LinkedMovement.GetController().findPairingByTargetGameObject(targetGO);
+                //    var parentPairing = LinkedMovement.GetController().findPairingByBaseGameObject(targetGO);
+                //    if (parentPairing != null) {
+                //        AddPairingAndTargets(parentPairing, pairings);
+                //    }
+                //}
+            }
+            // TODO: Skip all targets if pairing already added?
+            foreach (var targetGO in pairing.targetGOs) {
+                //var parentPairing = LinkedMovement.GetController().findPairingByTargetGameObject(targetGO);
+                var parentPairing = LinkedMovement.GetController().findPairingByBaseGameObject(targetGO);
+                if (parentPairing != null) {
+                    AddPairingAndTargets(parentPairing, pairings);
+                }
             }
         }
 

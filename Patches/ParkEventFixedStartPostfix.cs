@@ -28,7 +28,7 @@ class ParkEventFixedStartPostfix {
         var sos = GameController.Instance.getSerializedObjects();
         LinkedMovement.LinkedMovement.Log("SerializedObjects count: " + sos.Count);
         // Have to reverse so animations are built in the correct order
-        sos = sos.AsEnumerable().Reverse().ToList();
+        //sos = sos.AsEnumerable().Reverse().ToList();
 
         var createdPairings = new List<Pairing>();
 
@@ -57,9 +57,15 @@ class ParkEventFixedStartPostfix {
             }
         }
 
-        foreach (var pairing in createdPairings) {
+        var sortedPairings = LMUtils.SortPairings(createdPairings);
+        //sortedPairings = sortedPairings.AsEnumerable().Reverse().ToList();
+        foreach (var pairing in sortedPairings) {
             pairing.createSequence();
         }
+
+        //foreach (var pairing in createdPairings) {
+        //    pairing.createSequence();
+        //}
         // TODO: Do we need to find orphaned PairTargets?
     }
 }
