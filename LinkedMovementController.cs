@@ -24,7 +24,9 @@ namespace LinkedMovement {
 
         // TODO: !!! This needs to be split into a couple different classes
 
-        // TODO: 10/1
+        // TODO: 10/4
+        // Edit -> Discard not properly resetting (tested with pos)
+        //
         // Check if starting or origin values can be removed from AnimationParams
         // Some plants not visually updating
         // Add Reverse step
@@ -233,7 +235,7 @@ namespace LinkedMovement {
             LMUtils.ResetObjectHighlights();
             killSampleSequence();
 
-            stopAssociatedAnimations(true);
+            stopAssociatedAnimations(false);
 
             if (targetPairing != null) {
                 // Reset parents for new targets
@@ -245,12 +247,16 @@ namespace LinkedMovement {
                 targetPairing = null;
                 originObject = null;
                 //targetObjects.Clear();
+            } else {
+                foreach (var targetBO in targetObjects) {
+                    LMUtils.AttachTargetToBase(null, targetBO.transform);
+                }
             }
 
-            foreach (var targetBO in targetObjects) {
-                LMUtils.AttachTargetToBase(null, targetBO.transform);
-            }
-            startAssociatedAnimations(true);
+            //foreach (var targetBO in targetObjects) {
+            //    LMUtils.AttachTargetToBase(null, targetBO.transform);
+            //}
+            startAssociatedAnimations(false);
             // TODO: Keep this or leave to resetController?
             targetObjects.Clear();
 

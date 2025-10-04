@@ -461,13 +461,13 @@ namespace LinkedMovement.Utils {
         }
         
         public static Vector3 FindBuildObjectsCenterPosition(List<BuildableObject> objects) {
-            var startingPos = objects[0].transform.position;
-            var minX = startingPos.x;
-            var maxX = startingPos.x;
-            var minY = startingPos.y;
-            var maxY = startingPos.y;
-            var minZ = startingPos.z;
-            var maxZ = startingPos.z;
+            var firstPos = objects[0].transform.position;
+            var minX = firstPos.x;
+            var maxX = firstPos.x;
+            var minY = firstPos.y;
+            var maxY = firstPos.y;
+            var minZ = firstPos.z;
+            var maxZ = firstPos.z;
 
             foreach (var target in objects) {
                 var tp = target.transform.position;
