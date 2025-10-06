@@ -24,18 +24,23 @@ namespace LinkedMovement.UI.Content {
                     if (Button($"{(animationStep.uiIsOpen ? "▼" : "►")} {stepIndex.ToString()} : {(animationStep.name == "" ? "Step" : animationStep.name)} ", RGUIStyle.flatButtonLeft)) {
                         animationStep.uiIsOpen = !animationStep.uiIsOpen;
                     }
-                    if (Button("↑", Width(25f))) {
+                    if (Button("↑", Width(26f))) {
                         LinkedMovement.Log("Move AnimationStep UP");
                         var didChange = animationParams.moveAnimationStepUp(animationStep);
                         if (didChange)
                             controller.rebuildSampleSequence();
                     }
-                    if (Button("↓", Width(25f))) {
+                    if (Button("↓", Width(26f))) {
                         LinkedMovement.Log("Move AnimationStep DOWN");
                         var didChange = animationParams.moveAnimationStepDown(animationStep);
                         if (didChange)
                             controller.rebuildSampleSequence();
                     }
+                    Label("|", RGUIStyle.dimText, Width(3f));
+                    if (Button("+Inv", Width(40f))) {
+                        LinkedMovement.Log("Add inverse step");
+                    }
+                    Label("|", RGUIStyle.dimText, Width(3f));
                     if (Button("✕", Width(25f))) {
                         LinkedMovement.Log("Delete AnimationStep");
                         animationParams.deleteAnimationStep(animationStep);
