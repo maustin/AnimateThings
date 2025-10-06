@@ -292,7 +292,7 @@ namespace LinkedMovement {
         }
 
         public void addPairing(Pairing pairing) {
-            LinkedMovement.Log("Controller.addPairing " + pairing.pairingId);
+            LinkedMovement.Log($"Controller.addPairing name: {pairing.pairingName}, id: {pairing.pairingId}");
             if (pairings.Contains(pairing)) {
                 LinkedMovement.Log("Pairing already present");
                 return;
@@ -302,7 +302,7 @@ namespace LinkedMovement {
         }
 
         public bool removePairing(Pairing pairing) {
-            LinkedMovement.Log("Controller.removePairing " + pairing.pairingId);
+            LinkedMovement.Log($"Controller.removePairing name: {pairing.pairingName}, id: {pairing.pairingId}");
             return pairings.Remove(pairing);
         }
 
@@ -580,7 +580,6 @@ namespace LinkedMovement {
             var associatedGameObjects = getAssociatedGameObjects(pairingOriginBuildableObject, pairingTargetBuildableObjects);
             LinkedMovement.Log("handleBuildableObjectDestroy stop associated");
             stopAssociatedAnimations(false, associatedGameObjects);
-            associatedGameObjects.Remove(bo.gameObject);
 
             if (pairBase != null) {
                 // Object is origin of Pairing
