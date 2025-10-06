@@ -5,24 +5,16 @@ using UnityEngine;
 
 namespace LinkedMovement {
     public class LMAnimationParams : SerializedRawObject {
-        //[Serialized]
-        //public Vector3 startingPosition = Vector3.zero;
         [Serialized]
         public Vector3 startingLocalPosition = Vector3.zero;
-        //[Serialized]
-        //public Vector3 startingRotation = Vector3.zero;
         [Serialized]
         public Vector3 startingLocalRotation = Vector3.zero;
         [Serialized]
         public Vector3 startingLocalScale = Vector3.one;
 
-        //[Serialized]
-        //public Vector3 originalRotation = Vector3.zero;
         [Serialized]
         public Vector3 originalLocalRotation = Vector3.zero;
-        //[Serialized]
-        //public Vector3 originalScale = Vector3.one;
-
+        
         [Serialized]
         public Vector3 orientationOffset = Vector3.zero;
 
@@ -64,38 +56,24 @@ namespace LinkedMovement {
 
         public void setOriginalValues(Transform originalTransform) {
             LinkedMovement.Log("LMAnimationParams.setOriginalValues for " + name);
+            LinkedMovement.Log("New localRotation: " + originalTransform.localEulerAngles.ToString());
 
-            //LinkedMovement.Log("OLD original rotation: " + originalRotation.ToString());
-            //LinkedMovement.Log("OLD original localRotation: " + originalLocalRotation.ToString());
-            //LinkedMovement.Log("OLD original scale: " + originalScale.ToString());
-
-            //LinkedMovement.Log("NEW original rotation: " + originalTransform.eulerAngles.ToString());
-            //LinkedMovement.Log("NEW original localRotation: " + originalTransform.localEulerAngles.ToString());
-            //LinkedMovement.Log("NEW original scale: " + originalTransform.localScale.ToString());
-
-            //originalRotation = originalTransform.eulerAngles;
             originalLocalRotation = originalTransform.localEulerAngles;
-            //originalScale = originalTransform.localScale;
         }
 
         public void setStartingValues(Transform startingTransform) {
             LinkedMovement.Log("LMAnimationParams.setStartingValues for " + name);
 
-            //LinkedMovement.Log("OLD starting position: " + startingPosition.ToString());
             LinkedMovement.Log("OLD starting localPosition: " + startingLocalPosition.ToString());
-            //LinkedMovement.Log("OLD starting rotation: " + startingRotation.ToString());
             LinkedMovement.Log("OLD starting localRotation: " + startingLocalRotation.ToString());
             LinkedMovement.Log("OLD starting scale: " + startingLocalScale.ToString());
 
-            //LinkedMovement.Log("NEW starting position: " + startingTransform.position.ToString());
             LinkedMovement.Log("NEW starting localPosition: " + startingTransform.localPosition.ToString());
             LinkedMovement.Log("NEW starting rotation: " + startingTransform.eulerAngles.ToString());
             LinkedMovement.Log("NEW starting localRotation: " + startingTransform.localEulerAngles.ToString());
             LinkedMovement.Log("NEW starting scale: " + startingTransform.localScale.ToString());
 
-            //startingPosition = startingTransform.position;
             startingLocalPosition = startingTransform.localPosition;
-            //startingRotation = startingTransform.eulerAngles;
             startingLocalRotation = startingTransform.localEulerAngles;
             startingLocalScale = startingTransform.localScale;
         }
@@ -163,14 +141,12 @@ namespace LinkedMovement {
 
         public static LMAnimationParams Duplicate(LMAnimationParams animationParams) {
             var newAnimationParams = new LMAnimationParams();
-            //newAnimationParams.startingPosition = animationParams.startingPosition;
             newAnimationParams.startingLocalPosition = animationParams.startingLocalPosition;
-            //newAnimationParams.startingRotation = animationParams.startingRotation;
             newAnimationParams.startingLocalRotation = animationParams.startingLocalRotation;
             newAnimationParams.startingLocalScale = animationParams.startingLocalScale;
-            //newAnimationParams.originalRotation = animationParams.originalRotation;
+
             newAnimationParams.originalLocalRotation = animationParams.originalLocalRotation;
-            //newAnimationParams.originalScale = animationParams.originalScale;
+
             newAnimationParams.orientationOffset = animationParams.orientationOffset;
             newAnimationParams.forward = animationParams.forward;
             newAnimationParams.forwardVec = animationParams.forwardVec;
