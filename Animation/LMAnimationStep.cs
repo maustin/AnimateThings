@@ -26,6 +26,18 @@ namespace LinkedMovement.Animation {
         [NonSerialized]
         public bool uiIsOpen = true;
 
+        public static LMAnimationStep CreateInvertedStep(LMAnimationStep step) {
+            var newStep = Duplicate(step);
+
+            // TODO: Naming algo
+            newStep.name = newStep.name + " inv";
+            newStep.targetPosition = -newStep.targetPosition;
+            newStep.targetRotation = -newStep.targetRotation;
+            newStep.targetScale = -newStep.targetScale;
+
+            return newStep;
+        }
+
         public static LMAnimationStep Duplicate(LMAnimationStep step) {
             var newAnimationStep = new LMAnimationStep();
             newAnimationStep.name = step.name;

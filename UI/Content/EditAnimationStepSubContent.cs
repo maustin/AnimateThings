@@ -39,6 +39,8 @@ namespace LinkedMovement.UI.Content {
                     Label("|", RGUIStyle.dimText, Width(3f));
                     if (Button("+Inv", Width(40f))) {
                         LinkedMovement.Log("Add inverse step");
+                        animationParams.addInverseAnimationStep(animationStep);
+                        controller.rebuildSampleSequence();
                     }
                     Label("|", RGUIStyle.dimText, Width(3f));
                     if (Button("✕", Width(25f))) {

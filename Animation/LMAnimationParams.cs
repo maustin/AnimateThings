@@ -101,7 +101,11 @@ namespace LinkedMovement {
         }
 
         public void addNewAnimationStep() {
-            animationSteps.Add(new LMAnimationStep());
+            addNewAnimationStep(new LMAnimationStep());
+        }
+
+        public void addNewAnimationStep(LMAnimationStep newStep) {
+            animationSteps.Add(newStep);
             timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         }
 
@@ -130,6 +134,11 @@ namespace LinkedMovement {
             animationSteps.Insert(++index, step);
             timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             return true;
+        }
+
+        public void addInverseAnimationStep(LMAnimationStep step) {
+            var newStep = LMAnimationStep.CreateInvertedStep(step);
+            addNewAnimationStep(newStep);
         }
 
         //public override string ToString() {
