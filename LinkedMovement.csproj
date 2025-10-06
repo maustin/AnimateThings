@@ -37,10 +37,8 @@
     <Compile Include="Animation\LMAnimationParams.cs" />
     <Compile Include="Animation\LMAnimationStep.cs" />
     <Compile Include="Animation\LMTrigger.cs" />
-    <Compile Include="Patches\BuilderUpdatePrefix.cs" />
     <Compile Include="Patches\GameControllerEnableMouseToolPostfix.cs" />
     <Compile Include="Patches\GameControllerRemoveMouseToolPostfix.cs" />
-    <Compile Include="Patches\SerializedMonoBehaviourInitializePostfix.cs" />
     <Compile Include="Patches\SerializedMonoBehaviourOnDestroyPostfix.cs" />
     <Compile Include="PrimeTween\Easing.cs" />
     <Compile Include="PrimeTween\Internal\AssemblyInfo.cs" />
@@ -99,7 +97,6 @@
     <Compile Include="Pairing.cs" />
     <Compile Include="PairTarget.cs" />
     <Compile Include="Patches\BlueprintBuilderImplementationOnAfterBuildPostfix.cs" />
-    <Compile Include="Patches\BlueprintBuilderInstantiateBuildableObjectPreviewPostfix.cs" />
     <Compile Include="Patches\ChunkedMeshEventStartPrefix.cs" />
     <Compile Include="Patches\ParkEventFixedStartPostfix.cs" />
     <Compile Include="Patches\ParkInitializePostfix.cs" />
@@ -468,9 +465,7 @@
   <ItemGroup>
     <None Include="RapidGUI\Component\Utilities\Cursor\Resources\cursorData.asset" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UI\InGame\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>COPY "$(TargetDir)$(TargetFileName)" "$(USERPROFILE)\Documents\Parkitect\Mods\$(ProjectName)\00$(TargetFileName)"</PostBuildEvent>
