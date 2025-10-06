@@ -24,8 +24,8 @@ namespace LinkedMovement {
 
         // TODO: !!! This needs to be split into a couple different classes
 
-        // TODO: 10/4
-        // (Can't repro) Edit -> Discard not properly resetting (tested with pos)
+        // TODO: 10/6
+        // Currently no known bugs (aside from Trello board)
         //
         // Check if starting or origin values can be removed from AnimationParams
         // Some plants not visually updating

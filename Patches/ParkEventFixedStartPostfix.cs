@@ -42,6 +42,7 @@ class ParkEventFixedStartPostfix {
                     var pairTargetGOs = new List<GameObject>();
                     foreach (var pairTarget in pairTargets) {
                         pairTargetGOs.Add(pairTarget.gameObject);
+                        //LMUtils.LogComponents(LMUtils.GetBuildableObjectFromGameObject(pairTarget.gameObject));
                     }
 
                     LinkedMovement.LinkedMovement.Log($"Creating Pairing with {pairTargetGOs.Count} targets");

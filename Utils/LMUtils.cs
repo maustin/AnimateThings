@@ -18,17 +18,21 @@ namespace LinkedMovement.Utils {
         private static Dictionary<BuildableObject, HighlightOverlayController.HighlightHandle> HighlightHandles;
         private static HashSet<GameObject> AssociatedGameObjects;
 
+        public static void LogComponents(BuildableObject bo) {
+            LinkedMovement.Log("LMUtils.LogComponents for " + bo.getName());
+            Component[] components = bo.gameObject.GetComponents<Component>();
+            foreach (var component in components) {
+                LinkedMovement.Log($"Component type: {component.GetType().Name}, name: {component.name}");
+            }
+        }
 
         // Built-in objects have a ChunkedMesh component. This component can prevent visual updates
         // while we're modifying animations that affect their GameObject.
         // Disable when creating and modifying. Re-enable when finished.
         public static void SetChunkedMeshEnalbedIfPresent(BuildableObject bo, bool enalbed) {
             LinkedMovement.Log($"LMUtils.SetChunkedMeshEnalbedIfPresent for {bo.getName()} set to {enalbed.ToString()}");
-            //Component[] components = bo.gameObject.GetComponents<Component>();
-            //foreach (var component in components) {
-            //    LinkedMovement.Log($"Component type: {component.GetType().Name}, name: {component.name}");
-            //}
-
+            //LogComponents(bo);
+            
             var chunker = bo.GetComponent<ChunkedMesh>();
             if (chunker != null) {
                 //LinkedMovement.Log($"LMUtils.SetChunkedMeshEnalbedIfPresent for {bo.getName()} set to {enalbed.ToString()}");
