@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LinkedMovement {
     public class LinkedMovement : AbstractMod {
-        public const string VERSION_NUMBER = "beta 10-06";
+        public const string VERSION_NUMBER = "beta 10-11";
         public override string getIdentifier() => "com.themeparkitect.LinkedMovementCode";
         public override string getName() => "Linked Movement";
         public override string getDescription() => "move things";

@@ -24,8 +24,8 @@ namespace LinkedMovement {
 
         // TODO: !!! This needs to be split into a couple different classes
 
-        // TODO: 10/6
-        // Currently no known bugs (aside from Trello board)
+        // TODO: 10/11
+        // Started info popups
         //
         // Check if starting or origin values can be removed from AnimationParams
         //
