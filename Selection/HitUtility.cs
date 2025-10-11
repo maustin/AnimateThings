@@ -126,9 +126,9 @@ namespace LinkedMovement.Selection {
                 return;
             }
 
-            if (LMUtils.HitTargetIsDisqualified(bo)) {
-                return;
-            }
+            //if (LMUtils.HitTargetIsDisqualified(bo)) {
+            //    return;
+            //}
 
             var obj = new BuildableObjectBelowMouseInfo();
             obj.HitObject = bo;

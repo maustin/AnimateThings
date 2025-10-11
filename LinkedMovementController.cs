@@ -28,8 +28,6 @@ namespace LinkedMovement {
         // Currently no known bugs (aside from Trello board)
         //
         // Check if starting or origin values can be removed from AnimationParams
-        // Some plants not visually updating
-        // Add Reverse step
         //
         // NOTE: Generated origins are built with zero rotation offset.
         // This can cause apparent inconsistencies when an animation is built with a generated origin vs not.
@@ -384,9 +382,6 @@ namespace LinkedMovement {
             LinkedMovement.Log("Object position: " + bo.transform.position.ToString());
             LinkedMovement.Log("Object local position: " + bo.transform.localPosition.ToString());
 
-            // We have to disable the ChunkedMesh component so tweens update the visual location
-            LMUtils.SetChunkedMeshEnalbedIfPresent(bo, false);
-
             if (pickingMode == PickingMode.Origin)
                 addOriginBuildableObject(bo);
             else if (pickingMode == PickingMode.Target)
@@ -397,7 +392,7 @@ namespace LinkedMovement {
 
         public void handleRemoveObjectSelection(BuildableObject bo) {
             LinkedMovement.Log("Controller.handleRemoveObjectSelection");
-            
+
             if (pickingMode == PickingMode.Target)
                 removeTargetBuildableObject(bo);
         }
@@ -410,6 +405,17 @@ namespace LinkedMovement {
                 LinkedMovement.Log("null BuildableObject");
                 return;
             }
+            if (originObject == bo) {
+                LinkedMovement.Log("BuildableObject already selected as origin");
+                return;
+            }
+            if (LMUtils.GetPairBaseFromSerializedMonoBehaviour(bo) != null) {
+                LinkedMovement.Log("BuildableObject already a PairBase");
+                return;
+            }
+
+            // We have to disable the ChunkedMesh component so tweens update the visual location
+            LMUtils.SetChunkedMeshEnalbedIfPresent(bo, false);
 
             LMUtils.LogDetails(bo);
 
@@ -425,10 +431,17 @@ namespace LinkedMovement {
                 return;
             }
             if (targetObjects.Contains(bo)) {
-                LinkedMovement.Log("BuildableObject already added");
+                LinkedMovement.Log("BuildableObject already added as target");
                 return;
             }
-            
+            if (LMUtils.GetPairTargetFromSerializedMonoBehaviour(bo) != null) {
+                LinkedMovement.Log("BuildableObject already a PairTarget");
+                return;
+            }
+
+            // We have to disable the ChunkedMesh component so tweens update the visual location
+            LMUtils.SetChunkedMeshEnalbedIfPresent(bo, false);
+
             LMUtils.LogDetails(bo);
 
             targetObjects.Add(bo);
@@ -460,6 +473,11 @@ namespace LinkedMovement {
             LinkedMovement.Log("Controller.removeTargetBuildableObject");
             if (bo == null) {
                 LinkedMovement.Log("null BuildableObject");
+                return;
+            }
+
+            if (!targetObjects.Contains(bo)) {
+                LinkedMovement.Log("Object is not a current target");
                 return;
             }
 

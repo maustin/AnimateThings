@@ -677,7 +677,7 @@ namespace LinkedMovement.Selection {
             foreach (MouseCollider.HitInfo hitInfo in boxHits) {
                 var o = hitInfo.hitObject.GetComponentInParent<BuildableObject>();
                 if (o != null) {
-                    if (LMUtils.HitTargetIsDisqualified(o)) { continue; }
+                    //if (LMUtils.HitTargetIsDisqualified(o)) { continue; }
 
                     if (Input.GetMouseButtonUp(0)) {
                         OnSelectedObject(SelectionOperation.Add, bounds, o);
