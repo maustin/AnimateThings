@@ -101,8 +101,6 @@ namespace LinkedMovement.Utils {
             if (targets.Count > 0) {
                 LinkedMovement.Log("Create Pairing " + pairBase.pairName);
                 pairBase.animParams.setStartingValues(originObject.transform);
-                pairBase.animParams.setBuiltOrientation(originObject.transform.localEulerAngles);
-                pairBase.animParams.forwardVec = forward;
                 pairBase.animParams.forward = Quaternion.LookRotation(forward);
 
                 // create new pairing ID so we don't collide with existing pairings

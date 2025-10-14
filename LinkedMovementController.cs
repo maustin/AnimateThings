@@ -755,7 +755,6 @@ namespace LinkedMovement {
 
             stopAssociatedAnimations(true);
 
-            animationParams.setOriginalValues(originObject.transform);
             animationParams.setStartingValues(originObject.transform);
 
             LinkedMovement.Log("Attach targets");

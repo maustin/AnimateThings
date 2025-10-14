@@ -13,15 +13,6 @@ namespace LinkedMovement {
         public Vector3 startingLocalScale = Vector3.one;
 
         [Serialized]
-        public Vector3 originalLocalRotation = Vector3.zero;
-        
-        [Serialized]
-        public Vector3 orientationOffset = Vector3.zero;
-
-        [Serialized]
-        public Vector3 forwardVec = Vector3.zero;
-
-        [Serialized]
         public Quaternion forward = Quaternion.identity;
 
         [Serialized]
@@ -45,20 +36,6 @@ namespace LinkedMovement {
 
         public LMAnimationParams() {
             LinkedMovement.Log("LMAnimationParams base constructor");
-        }
-
-        public void setBuiltOrientation(Vector3 builtOrientation) {
-            LinkedMovement.Log($"LMAnimationParams.setBuiltOrientation of {builtOrientation} for sequence: {name}");
-            orientationOffset = builtOrientation - originalLocalRotation;
-            //LinkedMovement.Log("originalLocalRotation: " + originalLocalRotation.ToString());
-            LinkedMovement.Log("new orientationOffset: " + orientationOffset.ToString());
-        }
-
-        public void setOriginalValues(Transform originalTransform) {
-            LinkedMovement.Log("LMAnimationParams.setOriginalValues for " + name);
-            LinkedMovement.Log("New localRotation: " + originalTransform.localEulerAngles.ToString());
-
-            originalLocalRotation = originalTransform.localEulerAngles;
         }
 
         public void setStartingValues(Transform startingTransform) {
@@ -150,11 +127,8 @@ namespace LinkedMovement {
             newAnimationParams.startingLocalRotation = animationParams.startingLocalRotation;
             newAnimationParams.startingLocalScale = animationParams.startingLocalScale;
 
-            newAnimationParams.originalLocalRotation = animationParams.originalLocalRotation;
-
-            newAnimationParams.orientationOffset = animationParams.orientationOffset;
             newAnimationParams.forward = animationParams.forward;
-            newAnimationParams.forwardVec = animationParams.forwardVec;
+
             newAnimationParams.name = animationParams.name;
             newAnimationParams.isTriggerable = animationParams.isTriggerable;
             newAnimationParams.useInitialStartDelay = animationParams.useInitialStartDelay;
