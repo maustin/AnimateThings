@@ -15,6 +15,10 @@ namespace LinkedMovement {
             LINK,
         }
 
+        // TODO: 10-16
+        // Blueprint animations
+        // Implement Links
+
         public LMAnimation currentAnimation { get; private set; }
         // TODO: currentLink
 
@@ -70,6 +74,15 @@ namespace LinkedMovement {
             }
         }
 
+        public void onParkStarted() {
+            LinkedMovement.Log("LMController.onParkStarted");
+            // TODO: Links
+
+            foreach (var animation in animations) {
+                animation.buildSequence();
+            }
+        }
+
         public void clearEditMode() {
             LinkedMovement.Log("LMController.clearEditMode");
             if (currentAnimation != null) {
@@ -81,6 +94,25 @@ namespace LinkedMovement {
             editMode = EditMode.NONE;
         }
 
+        public LMAnimation addAnimation(LMAnimationParams animationParams, GameObject target) {
+            LinkedMovement.Log("LMController.addAnimation from LMAnimationParams");
+            
+            var animation = new LMAnimation(animationParams, target);
+            addAnimation(animation);
+            return animation;
+        }
+
+        public void addAnimation(LMAnimation animation) {
+            LinkedMovement.Log("LMController.addAnimation from LMAnimation");
+
+            if (animations.Contains(animation)) {
+                LinkedMovement.Log("Animation already in controller list");
+                return;
+            }
+
+            animations.Add(animation);
+        }
+
         public void editAnimation(LMAnimation animation = null) {
             LinkedMovement.Log("LMController.editAnimation");
             clearEditMode();
@@ -90,7 +122,7 @@ namespace LinkedMovement {
             } else {
                 // TODO: Set new animation name
                 var animationParams = new LMAnimationParams();
-                currentAnimation = new LMAnimation(animationParams, true);
+                currentAnimation = new LMAnimation(animationParams);
             }
 
             currentAnimation.IsEditing = true;
@@ -111,10 +143,6 @@ namespace LinkedMovement {
             LinkedMovement.Log("LMController.commitEdit");
             
             if (currentAnimation != null) {
-                if (!animations.Contains(currentAnimation)) {
-                    animations.Add(currentAnimation);
-                }
-
                 currentAnimation.saveChanges();
                 currentAnimation = null;
             }

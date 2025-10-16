@@ -34,17 +34,24 @@ namespace LinkedMovement.Animation {
         // If discard, simply delete the temp. If save, replace params data on target and swap temp to base.
         private LMAnimationParams tempAnimationParams;
 
-        public LMAnimation() {
-            LinkedMovement.Log("LMAnimation constructor");
-            //animationParams = new LMAnimationParams();
+        //public LMAnimation() {
+        //    LinkedMovement.Log("LMAnimation constructor");
+        //    //animationParams = new LMAnimationParams();
+        //}
+
+        public LMAnimation(LMAnimationParams animationParams) {
+            LinkedMovement.Log("LMAnimation constructor as NEW");
+            this.animationParams = animationParams;
+            this.isNewAnimation = true;
         }
 
-        // TODO: Constructor that takes an object?
-
-        public LMAnimation(LMAnimationParams animationParams, bool isNewAnimation) {
-            LinkedMovement.Log("LMAnimation constructor w/ params");
+        public LMAnimation(LMAnimationParams animationParams, GameObject target) {
+            LinkedMovement.Log("LMAnimation constructor as EXISTING");
             this.animationParams = animationParams;
-            this.isNewAnimation = isNewAnimation;
+
+            var buildableObject = LMUtils.GetBuildableObjectFromGameObject(target);
+            setTarget(buildableObject);
+            UnityEngine.Object.Destroy(targetBuildableObject.GetComponent<ChunkedMesh>());
         }
 
         public LMAnimationParams getAnimationParams() {
@@ -70,8 +77,10 @@ namespace LinkedMovement.Animation {
 
             getAnimationParams().setStartingValues(targetGameObject.transform);
 
-            LMUtils.AddObjectHighlight(targetBuildableObject, Color.red);
-            LMUtils.SetChunkedMeshEnalbedIfPresent(targetBuildableObject, false);
+            if (IsEditing) {
+                LMUtils.AddObjectHighlight(targetBuildableObject, Color.red);
+                LMUtils.SetChunkedMeshEnalbedIfPresent(targetBuildableObject, false);
+            }
         }
 
         public void removeTarget() {
@@ -113,7 +122,11 @@ namespace LinkedMovement.Animation {
             IsEditing = false;
             isNewAnimation = false;
 
+            LinkedMovement.GetLMController().addAnimation(this);
+
             buildSequence();
+
+            setCustomData();
         }
 
         // Remove the animation from the target
@@ -158,6 +171,20 @@ namespace LinkedMovement.Animation {
             targetGameObject = null;
             targetBuildableObject = null;
             animationParams = null;
+        }
+
+        private void setCustomData() {
+            LinkedMovement.Log("LMAnimation.setCustomData");
+            // TODO
+            removeCustomData();
+
+            targetBuildableObject.addCustomData(animationParams);
+        }
+
+        private void removeCustomData() {
+            LinkedMovement.Log("LMAnimation.removeCustomData");
+            // TODO
+            targetBuildableObject.removeCustomData<LMAnimationParams>();
         }
     }
 }

@@ -164,6 +164,12 @@ namespace LinkedMovement.Utils {
             return buildableObject;
         }
 
+        public static LMAnimationParams GetAnimationParamsFromSerializedMonoBehaviour(SerializedMonoBehaviour smb) {
+            LMAnimationParams animationParams;
+            smb.tryGetCustomData(out animationParams);
+            return animationParams;
+        }
+
         public static PairBase GetPairBaseFromSerializedMonoBehaviour(SerializedMonoBehaviour smb) {
             PairBase pairBase;
             smb.tryGetCustomData(out pairBase);

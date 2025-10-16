@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using LinkedMovement;
+using LinkedMovement.Animation;
 using LinkedMovement.Utils;
 using System.Collections.Generic;
 using System.Reflection;
@@ -30,9 +31,20 @@ class ParkEventFixedStartPostfix {
         LinkedMovement.LinkedMovement.Log("SerializedObjects count: " + sos.Count);
         
         var createdPairings = new List<Pairing>();
+        var createdAnimations = new List<LMAnimation>();
 
         for (int i = sos.Count - 1; i >= 0; i--) {
             var so = sos[i];
+
+            // NEW
+            LMAnimationParams animationParams = LMUtils.GetAnimationParamsFromSerializedMonoBehaviour(so);
+            if (animationParams != null) {
+                LinkedMovement.LinkedMovement.Log("Found animationParams");
+                var animation = LinkedMovement.LinkedMovement.GetLMController().addAnimation(animationParams, so.gameObject);
+                createdAnimations.Add(animation);
+            }
+
+            // OLD
             PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(so);
             if (pairBase != null) {
                 LinkedMovement.LinkedMovement.Log("Found pairBase");
@@ -57,6 +69,10 @@ class ParkEventFixedStartPostfix {
             }
         }
 
+        // NEW
+        LinkedMovement.LinkedMovement.GetLMController().onParkStarted();
+
+        // OLD
         var sortedPairings = LMUtils.SortPairings(createdPairings);
         foreach (var pairing in sortedPairings) {
             pairing.createSequence();
