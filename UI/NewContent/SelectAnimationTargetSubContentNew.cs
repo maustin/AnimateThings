@@ -17,17 +17,16 @@ namespace LinkedMovement.UI.NewContent {
 
                 Space(10f);
 
-                var targetObject = controller.currentAnimation.targetGameObject;
-                var hasTarget = targetObject != null;
+                var targetBO = controller.currentAnimation.targetBuildableObject;
+                var hasTarget = targetBO != null;
 
                 if (hasTarget) {
                     using (Scope.Horizontal()) {
-                        Label(targetObject.name);
+                        var name = targetBO.getName();
+                        Label(name);
                         if (Button("✕", Width(40f))) {
                             controller.currentAnimation.removeTarget();
                         }
-
-                        // TODO Offset?
                     }
                 }
 
