@@ -156,8 +156,8 @@ namespace LinkedMovement.Utils {
             LinkedMovement.Log($"ROT: {bo.transform.eulerAngles.ToString()}, lRot: {bo.transform.localEulerAngles.ToString()}");
         }
 
-        public static void AttachTargetToBase(Transform baseObject, Transform targetObject) {
-            LinkedMovement.Log("LMUtils.AttachTargetToBase");
+        public static void SetTargetParentToBase(Transform baseObject, Transform targetObject) {
+            LinkedMovement.Log("LMUtils.SetTargetParentToBase");
             var oldParent = targetObject.parent;
             var oldParentName = (oldParent != null) ? oldParent.name : "null";
             LinkedMovement.Log("OLD PARENT: " + oldParentName);

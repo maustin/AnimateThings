@@ -109,7 +109,7 @@ namespace LinkedMovement
                 var targetBO = LMUtils.GetBuildableObjectFromGameObject(targetGO);
                 //LMUtils.SetChunkedMeshEnalbedIfPresent(targetBO, false);
 
-                LMUtils.AttachTargetToBase(baseGO.transform, targetGO.transform);
+                LMUtils.SetTargetParentToBase(baseGO.transform, targetGO.transform);
             }
 
             if (createSequence) {
