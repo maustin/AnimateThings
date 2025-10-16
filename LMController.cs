@@ -25,6 +25,11 @@ namespace LinkedMovement {
 
         // TODO: 10-16
         // Implement Links
+        // - Need to implement actual parenting
+        // - Rebuild animations on parenting changed
+        // - Support save/load cycle
+        // - Support blueprint creation
+        // - Affect associated
 
         public LMAnimation currentAnimation { get; private set; }
         public LMLink currentLink { get; private set; }
@@ -201,7 +206,6 @@ namespace LinkedMovement {
                 return;
             }
 
-            //options.Mode = Selection.Mode.Individual;
             options.Mode = newMode;
             selectionHandler.enabled = true;
         }
