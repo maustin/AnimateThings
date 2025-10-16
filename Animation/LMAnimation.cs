@@ -157,11 +157,17 @@ namespace LinkedMovement.Animation {
                 return;
             }
 
+            var animationParams = getAnimationParams();
+            if (!IsEditing && animationParams.isTriggerable) {
+                LinkedMovement.Log("Create trigger");
+                targetGameObject.AddComponent<LMTrigger>().animationParams = animationParams;
+                return;
+            }
+
             stopSequence();
 
             // TODO: Restart associated
 
-            var animationParams = getAnimationParams();
             sequence = LMUtils.BuildAnimationSequence(targetGameObject.transform, animationParams, IsEditing);
         }
 

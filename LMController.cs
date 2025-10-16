@@ -16,7 +16,6 @@ namespace LinkedMovement {
         }
 
         // TODO: 10-16
-        // Blueprint animations
         // Implement Links
 
         public LMAnimation currentAnimation { get; private set; }
