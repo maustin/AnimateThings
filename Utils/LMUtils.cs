@@ -45,7 +45,8 @@ namespace LinkedMovement.Utils {
         }
 
         public static bool IsGeneratedOrigin(BuildableObject bo) {
-            return bo != null && bo.getName().Contains("LMOriginBase");
+            //return bo != null && bo.getName().Contains("LMOriginBase");
+            return bo != null && bo.getName().Contains(LinkedMovement.HELPER_OBJECT_NAME);
         }
 
         public static List<SerializedMonoBehaviour> FindPairTargetSOs(PairBase pairBase) {

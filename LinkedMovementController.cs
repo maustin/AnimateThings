@@ -338,7 +338,7 @@ namespace LinkedMovement {
             if (originObject == null) {
                 throw new Exception("FAILED TO CREATE ORIGIN OBJECT");
             }
-            originObject.setDisplayName("LMOriginBase");
+            originObject.setDisplayName(LinkedMovement.HELPER_OBJECT_NAME);
             originObject.setCanBeDestroyedByPlayer(false);
             // TODO: Configurable generated origin color?
             originObject.GetComponent<CustomColors>().setColor(new Color(1f, 0f, 1f), 0);
