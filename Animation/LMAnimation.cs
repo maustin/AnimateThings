@@ -16,6 +16,7 @@ namespace LinkedMovement.Animation {
         public bool IsEditing {
             get => _isEditing;
             set {
+                LinkedMovement.Log("LMAnimation.IsEditing SET to " + value.ToString());
                 _isEditing = value;
 
                 if (_isEditing) {
@@ -27,6 +28,8 @@ namespace LinkedMovement.Animation {
                 }
             }
         }
+
+        private bool isNewAnimation = false;
 
         private LMAnimationParams animationParams;
         // Used when editing params. Allow ability to discard changes.
@@ -40,9 +43,10 @@ namespace LinkedMovement.Animation {
 
         // TODO: Constructor that takes an object?
 
-        public LMAnimation(LMAnimationParams animationParams) {
+        public LMAnimation(LMAnimationParams animationParams, bool isNewAnimation) {
             LinkedMovement.Log("LMAnimation constructor w/ params");
             this.animationParams = animationParams;
+            this.isNewAnimation = isNewAnimation;
         }
 
         public LMAnimationParams getAnimationParams() {
@@ -55,14 +59,20 @@ namespace LinkedMovement.Animation {
         }
 
         public void setTarget(BuildableObject buildableObject) {
+            LinkedMovement.Log("LMAnimation.setTarget");
             removeTarget();
 
             targetBuildableObject = buildableObject;
             targetGameObject = targetBuildableObject.gameObject;
+
+            getAnimationParams().setStartingValues(targetGameObject.transform);
+
             LMUtils.AddObjectHighlight(targetBuildableObject, Color.red);
+            LMUtils.SetChunkedMeshEnalbedIfPresent(targetBuildableObject, false);
         }
 
         public void removeTarget() {
+            LinkedMovement.Log("LMAnimation.removeTarget");
             if (targetGameObject != null) {
                 LMUtils.RemoveObjectHighlight(targetBuildableObject);
                 targetGameObject = null;
@@ -71,22 +81,71 @@ namespace LinkedMovement.Animation {
         }
 
         public void discardChanges() {
-            LinkedMovement.Log("LMAnimation discardChanges");
-            // TODO
-            IsEditing = false;
+            LinkedMovement.Log("LMAnimation.discardChanges");
+            
             if (targetBuildableObject != null) {
                 LMUtils.RemoveObjectHighlight(targetBuildableObject);
+            }
+
+            if (isNewAnimation) {
+                // Was creating a new animation, just stop the sequence
+                stopSequence();
+                IsEditing = false;
+                reset();
+            } else {
+                // Was editing animation, rebuild the sequence
+                IsEditing = false;
+                buildSequence();
             }
         }
 
         public void saveChanges() {
-            LinkedMovement.Log("LMAnimation saveChanges");
+            LinkedMovement.Log("LMAnimation.saveChanges");
             // TODO
         }
 
         // Remove the animation from the target
         public void removeAnimation() {
+            LinkedMovement.Log("LMAnimation.removeAnimation");
             // TODO
+        }
+
+        public void stopSequence() {
+            LinkedMovement.Log("LMAnimation.stopSequence");
+
+            if (sequence.isAlive) {
+                LinkedMovement.Log("Sequence is alive, stop!");
+                sequence.progress = 0;
+                sequence.Stop();
+            }
+
+            // TODO: Should this only happen is sequence is alive?
+            var animationParams = getAnimationParams();
+            LMUtils.ResetTransformLocals(targetGameObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
+        }
+
+        public void buildSequence() {
+            LinkedMovement.Log("LMAnimation.buildSequence");
+
+            if (targetGameObject == null) {
+                LinkedMovement.Log("ERROR: LMAnimation.buildSequence targetGameObject is null!");
+                return;
+            }
+
+            stopSequence();
+
+            // TODO: Restart associated
+
+            var animationParams = getAnimationParams();
+            sequence = LMUtils.BuildAnimationSequence(targetGameObject.transform, animationParams, IsEditing);
+        }
+
+        public void reset() {
+            LinkedMovement.Log("LMAnimation.reset");
+            // Remove references
+            targetGameObject = null;
+            targetBuildableObject = null;
+            animationParams = null;
         }
     }
 }

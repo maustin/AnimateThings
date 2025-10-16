@@ -16,7 +16,6 @@ namespace LinkedMovement.UI.NewContent {
             controller = LinkedMovement.GetLMController();
 
             var animation = controller.currentAnimation;
-            animation.IsEditing = true;
             animationParams = animation.getAnimationParams();
         }
 

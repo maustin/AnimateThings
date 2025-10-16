@@ -54,6 +54,7 @@ namespace LinkedMovement {
                 return;
             }
 
+            // If there is no mouse tool active, we don't need to update mouse colliders
             var mouseTool = GameController.Instance.getActiveMouseTool();
             if (mouseTool == null) {
                 return;
@@ -89,8 +90,10 @@ namespace LinkedMovement {
             } else {
                 // TODO: Set new animation name
                 var animationParams = new LMAnimationParams();
-                currentAnimation = new LMAnimation(animationParams);
+                currentAnimation = new LMAnimation(animationParams, true);
             }
+
+            currentAnimation.IsEditing = true;
 
             editMode = EditMode.ANIMATION;
         }
@@ -118,6 +121,7 @@ namespace LinkedMovement {
             // - Muddies control flow
 
             // Animation was updated, rebuild
+            currentAnimation.buildSequence();
         }
 
         public void enableObjectPicker() {

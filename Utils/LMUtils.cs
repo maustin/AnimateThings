@@ -306,6 +306,7 @@ namespace LinkedMovement.Utils {
             }
         }
 
+        // CONV: Reused as-is
         public static void ResetTransformLocals(Transform transform, Vector3 localPosition, Vector3 localRotation, Vector3 localScale) {
             LinkedMovement.Log("LMUtils.ResetTransformLocals");
             LinkedMovement.Log($"FROM pos: {transform.position.ToString()}, lPos: {transform.localPosition.ToString()}, rot: {transform.eulerAngles.ToString()}, lRot: {transform.localEulerAngles.ToString()}, scale: {transform.localScale.ToString()}");
@@ -413,6 +414,7 @@ namespace LinkedMovement.Utils {
 
         }
 
+        // CONV: Reused as-is
         public static Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams, bool isEditing = false) {
             LinkedMovement.Log("LMUtils.BuildAnimationSequence name: " + animationParams.name);
 
