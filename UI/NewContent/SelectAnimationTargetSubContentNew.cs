@@ -23,7 +23,7 @@ namespace LinkedMovement.UI.NewContent {
                 if (hasTarget) {
                     using (Scope.Horizontal()) {
                         Label(targetObject.name);
-                        if (Button("X", Width(40f))) {
+                        if (Button("✕", Width(40f))) {
                             controller.currentAnimation.removeTarget();
                         }
 

@@ -28,7 +28,15 @@ namespace LinkedMovement.UI {
             this.Open();
             this.onClose += (WindowLauncher launcher) => {
                 windowManager.removeWindow(launcher as LMWindow);
-                // TODO: NEED a better way to do this
+                
+                // TODO: Refactor so controller subscribes to onClose and handles this
+
+                if (type == WindowManager.WindowType.CreateAnimationNew) {
+                    LinkedMovement.Log("CLOSE CreateAnimationNew window");
+                    LinkedMovement.GetLMController().clearEditMode();
+                }
+
+                // OLD UI
                 if (type == WindowManager.WindowType.CreateNewAnimatronic) {
                     LinkedMovement.Log("CLOSE CreateNewAnimatronic window");
                     LinkedMovement.GetController().discardChanges();

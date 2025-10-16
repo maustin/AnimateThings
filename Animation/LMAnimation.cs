@@ -12,6 +12,22 @@ namespace LinkedMovement.Animation {
 
         public Sequence sequence;
 
+        private bool _isEditing;
+        public bool IsEditing {
+            get => _isEditing;
+            set {
+                _isEditing = value;
+
+                if (_isEditing) {
+                    // create temp
+                    tempAnimationParams = LMAnimationParams.Duplicate(animationParams);
+                } else {
+                    // clear temp
+                    tempAnimationParams = null;
+                }
+            }
+        }
+
         private LMAnimationParams animationParams;
         // Used when editing params. Allow ability to discard changes.
         // If discard, simply delete the temp. If save, replace params data on target and swap temp to base.
@@ -34,6 +50,10 @@ namespace LinkedMovement.Animation {
             return animationParams;
         }
 
+        public bool hasTarget() {
+            return targetGameObject != null;
+        }
+
         public void setTarget(BuildableObject buildableObject) {
             removeTarget();
 
@@ -53,6 +73,10 @@ namespace LinkedMovement.Animation {
         public void discardChanges() {
             LinkedMovement.Log("LMAnimation discardChanges");
             // TODO
+            IsEditing = false;
+            if (targetBuildableObject != null) {
+                LMUtils.RemoveObjectHighlight(targetBuildableObject);
+            }
         }
 
         public void saveChanges() {

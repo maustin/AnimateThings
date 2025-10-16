@@ -86,6 +86,8 @@
     <Compile Include="UI\LMWindowContent.cs" />
     <Compile Include="UI\LMWindowFactory.cs" />
     <Compile Include="UI\NewContent\CreateAnimationContentNew.cs" />
+    <Compile Include="UI\NewContent\CreateAnimationStepSubContentNew.cs" />
+    <Compile Include="UI\NewContent\CreateAnimationSubContentNew.cs" />
     <Compile Include="UI\NewContent\ModeDeterminationContentNew.cs" />
     <Compile Include="UI\NewContent\SelectAnimationTargetSubContentNew.cs" />
     <Compile Include="UI\Utils\CollapsibleWindow.cs" />

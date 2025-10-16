@@ -29,8 +29,8 @@ namespace LinkedMovement {
             LinkedMovement.Log("LMController Awake");
             selectionHandler = gameObject.AddComponent<SelectionHandler>();
             selectionHandler.enabled = false;
-            selectionHandler.OnAddBuildableObject += handleAddObject;
-            selectionHandler.OnRemoveBuildableObject += handleRemoveObject;
+            selectionHandler.OnAddBuildableObject += handlePickerAddObject;
+            selectionHandler.OnRemoveBuildableObject += handlePickerRemoveObject;
         }
 
         private void OnDisable() {
@@ -70,6 +70,7 @@ namespace LinkedMovement {
         }
 
         public void clearEditMode() {
+            LinkedMovement.Log("LMController.clearEditMode");
             if (currentAnimation != null) {
                 currentAnimation.discardChanges();
                 currentAnimation = null;
@@ -80,23 +81,43 @@ namespace LinkedMovement {
         }
 
         public void editAnimation(LMAnimation animation = null) {
+            LinkedMovement.Log("LMController.editAnimation");
             clearEditMode();
 
             if (animation != null) {
                 currentAnimation = animation;
             } else {
-                currentAnimation = new LMAnimation();
+                // TODO: Set new animation name
+                var animationParams = new LMAnimationParams();
+                currentAnimation = new LMAnimation(animationParams);
             }
 
             editMode = EditMode.ANIMATION;
         }
 
         public void editLink() {
+            LinkedMovement.Log("LMController.editLink");
             clearEditMode();
 
             // TODO
 
             editMode = EditMode.LINK;
+        }
+
+        public void commitEdit() {
+            LinkedMovement.Log("LMController.commitEdit");
+            // TODO save changes to animation and rebuild
+
+            clearEditMode();
+        }
+
+        public void currentAnimationUpdated() {
+            LinkedMovement.Log("LMController.currentAnimationUpdated");
+            // TODO: Should this be an event handler subscribed to LMAnimation?
+            // + Eliminates direct calls to controller
+            // - Muddies control flow
+
+            // Animation was updated, rebuild
         }
 
         public void enableObjectPicker() {
@@ -105,8 +126,8 @@ namespace LinkedMovement {
             selectionHandler.enabled = true;
         }
 
-        private void handleAddObject(BuildableObject buildableObject) {
-            LinkedMovement.Log("LMController.handleAddObject");
+        private void handlePickerAddObject(BuildableObject buildableObject) {
+            LinkedMovement.Log("LMController.handlePickerAddObject");
             // TODO
             if (editMode == EditMode.ANIMATION) {
                 currentAnimation.setTarget(buildableObject);
@@ -114,10 +135,11 @@ namespace LinkedMovement {
             }
         }
 
-        private void handleRemoveObject(BuildableObject buildableObject) {
-            LinkedMovement.Log("LMController.handleRemoveObject");
+        private void handlePickerRemoveObject(BuildableObject buildableObject) {
+            LinkedMovement.Log("LMController.handlePickerRemoveObject");
             // TODO
-            // currentAnimation cannot be removed this way
+
+            // Note, currentAnimation target cannot be removed this way
         }
     }
 }
