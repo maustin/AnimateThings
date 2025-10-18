@@ -1,5 +1,6 @@
 ﻿using LinkedMovement.Utils;
 using PrimeTween;
+using System;
 using UnityEngine;
 
 namespace LinkedMovement.Animation {
@@ -67,6 +68,10 @@ namespace LinkedMovement.Animation {
             var buildableObject = LMUtils.GetBuildableObjectFromGameObject(target);
             setTarget(buildableObject);
             UnityEngine.Object.Destroy(targetBuildableObject.GetComponent<ChunkedMesh>());
+        }
+
+        public void generateNewId() {
+            id = Guid.NewGuid().ToString();
         }
 
         public LMAnimationParams getAnimationParams() {

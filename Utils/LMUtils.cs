@@ -83,14 +83,32 @@ namespace LinkedMovement.Utils {
         public static void BuildLinksAndAnimationsFromBlueprint(List<BuildableObject> builtObjectInstances, Vector3 forward) {
             LinkedMovement.Log("LMUtils.BuildLinksAndAnimationsFromBlueprint");
 
-            // TODO: Links
-
+            var createdLinkParents = new List<LMLinkParent>();
+            var createdLinkTargets = new List<LMLinkTarget>();
             var createdAnimations = new List<LMAnimation>();
             foreach (var buildableObject in builtObjectInstances) {
+                TryToBuildLinkParentFromBlueprintObject(buildableObject, createdLinkParents);
+                TryToBuildLinkTargetFromBlueprintObject(buildableObject, createdLinkTargets);
                 TryToBuildAnimationFromBlueprintObject(buildableObject, forward, createdAnimations);
             }
 
+            // Generate new Link Ids
+            var newLinkIds = new Dictionary<string, string>();
+            foreach (var linkParent in createdLinkParents) {
+                var newId = Guid.NewGuid().ToString();
+                newLinkIds.Add(linkParent.id, newId);
+                linkParent.id = newId;
+            }
+            foreach (var linkTarget in createdLinkTargets) {
+                var newId = newLinkIds[linkTarget.id];
+                linkTarget.id = newId;
+            }
+
+            LinkedMovement.Log($"Try to build {createdLinkParents.Count} links");
+            LinkedMovement.GetLMController().setupLinks(createdLinkParents, createdLinkTargets);
+
             LinkedMovement.Log($"Built {createdAnimations.Count} animations from blueprint");
+
             foreach (var animation in createdAnimations) {
                 animation.buildSequence();
             }
@@ -135,6 +153,22 @@ namespace LinkedMovement.Utils {
             }
         }
 
+        private static void TryToBuildLinkParentFromBlueprintObject(BuildableObject buildableObject, List<LMLinkParent> createdLinkParents) {
+            LMLinkParent linkParent = GetLinkParentFromSerializedMonoBehaviour(buildableObject);
+            if (linkParent != null) {
+                linkParent.setTarget(buildableObject.gameObject);
+                createdLinkParents.Add(linkParent);
+            }
+        }
+
+        private static void TryToBuildLinkTargetFromBlueprintObject(BuildableObject buildableObject, List<LMLinkTarget> createdLinkTargets) {
+            LMLinkTarget linkTarget = GetLinkTargetFromSerializedMonoBehaviour(buildableObject);
+            if (linkTarget != null) {
+                linkTarget.setTarget(buildableObject.gameObject);
+                createdLinkTargets.Add(linkTarget);
+            }
+        }
+
         private static void TryToBuildAnimationFromBlueprintObject(BuildableObject buildableObject, Vector3 forward, List<LMAnimation> createdAnimations) {
             LMAnimationParams animationParams = GetAnimationParamsFromSerializedMonoBehaviour(buildableObject);
             if (animationParams == null) {
@@ -143,8 +177,8 @@ namespace LinkedMovement.Utils {
 
             LinkedMovement.Log("LMUtils.TryToBuildAnimationFromBlueprintObject for " + buildableObject.getName());
 
-            // TODO: Animation ID
             LMAnimation animation = new LMAnimation(animationParams, buildableObject.gameObject);
+            animation.generateNewId();
             animationParams.forward = Quaternion.LookRotation(forward);
 
             LinkedMovement.GetLMController().addAnimation(animation);

@@ -74,6 +74,7 @@ namespace LinkedMovement {
                 if (matchingTargets.Count > 0) {
                     var link = new LMLink(linkParent, matchingTargets);
                     links.Add(link);
+                    link.rebuildLink();
                 } else {
                     // TODO: Handle this
                 }

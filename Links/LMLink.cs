@@ -77,7 +77,7 @@ namespace LinkedMovement.Links {
             }
         }
 
-        private bool isNewLink = false;
+        //private bool isNewLink = false;
 
         public LMLink() {
             LinkedMovement.Log("LMLink base constructor");

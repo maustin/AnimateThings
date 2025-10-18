@@ -38,8 +38,10 @@ class BlueprintBuilderImplementationOnAfterBuildPostfix {
         }
 
         LinkedMovement.LinkedMovement.Log("# created instances: " + builtObjectInstances.Count);
+        // OLD
         LMUtils.BuildingBlueprintTryToBuildPairingFromBuiltObjects(builtObjectInstances, forward);
 
+        // NEW
         LMUtils.BuildLinksAndAnimationsFromBlueprint(builtObjectInstances, forward);
     }
 }
