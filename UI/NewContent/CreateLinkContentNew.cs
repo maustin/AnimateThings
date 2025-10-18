@@ -37,9 +37,12 @@ namespace LinkedMovement.UI.NewContent {
 
                 // select targets sub
                 var hasParent = controller.currentLink.hasParent();
-                if (hasParent) {
+                using (Scope.GuiEnabled(hasParent)) {
                     selectTargetsSubContent.DoGUI();
                 }
+                //if (hasParent) {
+                //    selectTargetsSubContent.DoGUI();
+                //}
             }
         }
     }

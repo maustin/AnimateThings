@@ -26,6 +26,7 @@ namespace LinkedMovement.UI.NewContent {
                         Label(name);
                         if (Button("✕", Width(40f))) {
                             controller.currentLink.removeParentObject();
+                            controller.disableObjectPicker();
                         }
                     }
                 }

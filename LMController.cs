@@ -193,6 +193,7 @@ namespace LinkedMovement {
             currentAnimation.buildSequence();
         }
 
+        // TODO: Should selectionHandler be on each Animation or Link?
         public void enableObjectPicker(PickerMode pickerMode, Selection.Mode newMode) {
             LinkedMovement.Log($"LMController.enableObjectPicker pickerMode: {pickerMode.ToString()}, newMode: {newMode.ToString()}");
             this.pickerMode = pickerMode;
@@ -208,6 +209,13 @@ namespace LinkedMovement {
 
             options.Mode = newMode;
             selectionHandler.enabled = true;
+        }
+
+        public void disableObjectPicker() {
+            LinkedMovement.Log("LMController.disableObjectPicker");
+            var options = selectionHandler.Options;
+            options.Mode = Selection.Mode.None;
+            selectionHandler.enabled = false;
         }
 
         private void handlePickerAddObject(BuildableObject buildableObject) {
