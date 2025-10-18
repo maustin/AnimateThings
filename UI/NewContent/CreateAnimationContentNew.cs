@@ -27,6 +27,18 @@ namespace LinkedMovement.UI.NewContent {
             base.DoGUI();
 
             using (Scope.Vertical()) {
+                // Name
+                using (Scope.Horizontal()) {
+                    InfoPopper.DoInfoPopper(LMStringKey.CREATE_NEW_ANIM_NAME);
+                    Label("Animation name");
+                    var newName = RGUI.Field(controller.currentAnimation.name);
+                    if (newName != controller.currentAnimation.name) {
+                        controller.currentAnimation.name = newName;
+                    }
+                }
+
+                Space(5f);
+
                 // Select target subcontent
                 selectSubContent.DoGUI();
 

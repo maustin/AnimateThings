@@ -10,6 +10,20 @@ namespace LinkedMovement.Animation {
 
         public Sequence sequence;
 
+        public string name {
+            get => animationParams.name;
+            set {
+                animationParams.name = value;
+            }
+        }
+
+        public string id {
+            get => animationParams.id;
+            set {
+                animationParams.id = value;
+            }
+        }
+
         private bool _isEditing;
         public bool IsEditing {
             get => _isEditing;

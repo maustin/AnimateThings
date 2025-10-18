@@ -1,9 +1,42 @@
 ﻿using LinkedMovement.Utils;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace LinkedMovement.Links {
     public class LMLink {
+        private string _name = string.Empty;
+        public string name {
+            get {
+                if (parent != null) {
+                    return parent.name;
+                }
+                return _name;
+            }
+            set {
+                if (parent != null) {
+                    parent.name = value;
+                }
+                _name = value;
+            }
+        }
+
+        private string _id = string.Empty;
+        public string id {
+            get {
+                if (parent != null) {
+                    return parent.id;
+                }
+                return _id;
+            }
+            set {
+                if (parent != null) {
+                    parent.id = value;
+                }
+                _id = value;
+            }
+        }
+
         private LMLinkParent parent;
         private List<LMLinkTarget> targets;
 
@@ -48,8 +81,10 @@ namespace LinkedMovement.Links {
         private bool isNewLink = false;
 
         public LMLink() {
-            LinkedMovement.Log("LMLink constructor");
+            LinkedMovement.Log("LMLink base constructor");
             targets = new List<LMLinkTarget>();
+            _name = "New Link";
+            _id = Guid.NewGuid().ToString();
         }
 
         public GameObject getParentGameObject() {

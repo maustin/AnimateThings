@@ -17,7 +17,6 @@ namespace LinkedMovement {
 
         [Serialized]
         public string name = string.Empty;
-        // TODO: Support ID
         [Serialized]
         public string id = string.Empty;
         
@@ -39,6 +38,10 @@ namespace LinkedMovement {
 
         public LMAnimationParams() {
             LinkedMovement.Log("LMAnimationParams base constructor");
+
+            // TODO: Incremental naming
+            name = "New Animation";
+            id = Guid.NewGuid().ToString();
         }
 
         public void setStartingValues(Transform startingTransform) {
@@ -132,7 +135,10 @@ namespace LinkedMovement {
 
             newAnimationParams.forward = animationParams.forward;
 
+            // TODO: Incremental naming
             newAnimationParams.name = animationParams.name;
+            newAnimationParams.id = Guid.NewGuid().ToString();
+
             newAnimationParams.isTriggerable = animationParams.isTriggerable;
             newAnimationParams.useInitialStartDelay = animationParams.useInitialStartDelay;
             newAnimationParams.initialStartDelayMin = animationParams.initialStartDelayMin;

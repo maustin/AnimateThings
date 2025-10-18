@@ -6,10 +6,10 @@ using UnityEngine;
 namespace LinkedMovement.Links {
     public class LMLinkParent : SerializedRawObject {
         [Serialized]
-        public string linkName = string.Empty;
+        public string name = string.Empty;
 
         [Serialized]
-        public string linkId;
+        public string id;
 
         [NonSerialized]
         public GameObject targetGameObject;

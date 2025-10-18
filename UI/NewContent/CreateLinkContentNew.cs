@@ -28,7 +28,18 @@ namespace LinkedMovement.UI.NewContent {
             base.DoGUI();
 
             using (Scope.Vertical()) {
-                // TODO: Info i
+                // Name
+                using (Scope.Horizontal()) {
+                    //InfoPopper.DoInfoPopper(LMStringKey.CREATE_NEW_ANIM_NAME);
+                    // TODO: Info i
+                    Label("Link name");
+                    var newName = RGUI.Field(controller.currentLink.name);
+                    if (newName != controller.currentLink.name) {
+                        controller.currentLink.name = newName;
+                    }
+                }
+
+                Space(5f);
 
                 // select parent sub
                 selectParentSubContent.DoGUI();
@@ -40,9 +51,6 @@ namespace LinkedMovement.UI.NewContent {
                 using (Scope.GuiEnabled(hasParent)) {
                     selectTargetsSubContent.DoGUI();
                 }
-                //if (hasParent) {
-                //    selectTargetsSubContent.DoGUI();
-                //}
             }
         }
     }
