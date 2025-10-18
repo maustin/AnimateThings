@@ -1,27 +1,16 @@
 ﻿using LinkedMovement.Animation;
 using LinkedMovement.Links;
-using LinkedMovement.UI;
 using LinkedMovement.Utils;
-using Parkitect.UI;
-using PrimeTween;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace LinkedMovement {
     public class LMController : MonoBehaviour {
-        public enum EditMode {
-            NONE,
-            ANIMATION,
-            LINK,
-        }
-
-        public enum PickerMode {
-            NONE,
-            ANIMATION_TARGET,
-            LINK_PARENT,
-            LINK_TARGETS,
-        }
+        //public enum EditMode {
+        //    NONE,
+        //    ANIMATION,
+        //    LINK,
+        //}
 
         // TODO: 10-16
         // Implement Links
@@ -34,10 +23,7 @@ namespace LinkedMovement {
         public LMAnimation currentAnimation { get; private set; }
         public LMLink currentLink { get; private set; }
         
-        private EditMode editMode;
-        private PickerMode pickerMode;
-
-        private SelectionHandler selectionHandler;
+        //private EditMode editMode;
 
         private List<LMAnimation> animations = new List<LMAnimation>();
         private List<LMLink> links = new List<LMLink>();
@@ -46,23 +32,15 @@ namespace LinkedMovement {
 
         private void Awake() {
             LinkedMovement.Log("LMController Awake");
-            selectionHandler = gameObject.AddComponent<SelectionHandler>();
-            selectionHandler.enabled = false;
-            selectionHandler.OnAddBuildableObject += handlePickerAddObject;
-            selectionHandler.OnRemoveBuildableObject += handlePickerRemoveObject;
         }
 
         private void OnDisable() {
             LinkedMovement.Log("LMController OnDisable");
-            selectionHandler.enabled = false;
         }
 
         private void OnDestroy() {
             LinkedMovement.Log("LMController OnDestroy");
-            if (selectionHandler != null) {
-                GameObject.Destroy(selectionHandler);
-                selectionHandler = null;
-            }
+            
             animations.Clear();
             links.Clear();
             LinkedMovement.ClearLMController();
@@ -81,7 +59,6 @@ namespace LinkedMovement {
 
             buildableObjectsToUpdate.Clear();
             foreach (var animation in animations) {
-                //animation.update();
                 buildableObjectsToUpdate.Add(animation.targetBuildableObject);
             }
             foreach (var bo in buildableObjectsToUpdate) {
@@ -109,9 +86,7 @@ namespace LinkedMovement {
                 currentLink = null;
             }
 
-            editMode = EditMode.NONE;
-            pickerMode = PickerMode.NONE;
-            selectionHandler.enabled = false;
+            //editMode = EditMode.NONE;
         }
 
         public LMAnimation addAnimation(LMAnimationParams animationParams, GameObject target) {
@@ -149,7 +124,7 @@ namespace LinkedMovement {
 
             currentAnimation.IsEditing = true;
 
-            editMode = EditMode.ANIMATION;
+            //editMode = EditMode.ANIMATION;
         }
 
         public void editLink(LMLink link = null) {
@@ -167,7 +142,7 @@ namespace LinkedMovement {
 
             currentLink.IsEditing = true;
 
-            editMode = EditMode.LINK;
+            //editMode = EditMode.LINK;
         }
 
         public void commitEdit() {
@@ -195,59 +170,5 @@ namespace LinkedMovement {
             currentAnimation.buildSequence();
         }
 
-        // TODO: Should selectionHandler be on each Animation or Link?
-        public void enableObjectPicker(PickerMode pickerMode, Selection.Mode newMode) {
-            LinkedMovement.Log($"LMController.enableObjectPicker pickerMode: {pickerMode.ToString()}, newMode: {newMode.ToString()}");
-            this.pickerMode = pickerMode;
-
-            var options = selectionHandler.Options;
-
-            if (options.Mode == newMode) {
-                LinkedMovement.Log("Set picker mode NONE");
-                options.Mode = Selection.Mode.None;
-                selectionHandler.enabled = false;
-                return;
-            }
-
-            options.Mode = newMode;
-            selectionHandler.enabled = true;
-        }
-
-        public void disableObjectPicker() {
-            LinkedMovement.Log("LMController.disableObjectPicker");
-            var options = selectionHandler.Options;
-            options.Mode = Selection.Mode.None;
-            selectionHandler.enabled = false;
-        }
-
-        private void handlePickerAddObject(BuildableObject buildableObject) {
-            LinkedMovement.Log("LMController.handlePickerAddObject");
-            
-            if (editMode == EditMode.ANIMATION) {
-                currentAnimation.setTarget(buildableObject);
-                selectionHandler.enabled = false;
-            }
-            if (editMode == EditMode.LINK) {
-                if (pickerMode == PickerMode.LINK_PARENT) {
-                    currentLink.setParentObject(buildableObject);
-                    selectionHandler.enabled = false;
-                }
-                if (pickerMode == PickerMode.LINK_TARGETS) {
-                    // Add target
-                    currentLink.addTargetObject(buildableObject);
-                }
-            }
-        }
-
-        private void handlePickerRemoveObject(BuildableObject buildableObject) {
-            LinkedMovement.Log("LMController.handlePickerRemoveObject");
-            // TODO
-
-            // Note, currentAnimation target cannot be removed this way
-
-            if (editMode == EditMode.LINK && pickerMode == PickerMode.LINK_TARGETS) {
-                currentLink.removeTargetObject(buildableObject);
-            }
-        }
     }
 }

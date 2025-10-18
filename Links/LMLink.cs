@@ -219,6 +219,7 @@ namespace LinkedMovement.Links {
             LinkedMovement.Log("LMLink.handlePickerAddObjectAsParent");
 
             // TODO: Validate
+            // Object not this parent and doesn't have LMLinkParent
 
             setParentObject(buildableObject);
             stopPicking();
@@ -228,6 +229,7 @@ namespace LinkedMovement.Links {
             LinkedMovement.Log("LMLink.handlePickerAddObjectAsTarget");
 
             // TODO: Validate
+            // Object not already target and doesn't have LMLinkTarget
 
             addTargetObject(buildableObject);
         }
@@ -235,7 +237,7 @@ namespace LinkedMovement.Links {
         private void handlePickerRemoveObjectAsTarget(BuildableObject buildableObject) {
             LinkedMovement.Log("LMLink.handlePickerRemoveObjectAsTarget");
 
-            // TODO: Validate
+            // TODO: Validate - maybe not, already validating in removeTargetObject
 
             removeTargetObject(buildableObject);
         }

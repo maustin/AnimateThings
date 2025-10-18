@@ -34,6 +34,8 @@ namespace LinkedMovement.Animation {
         // If discard, simply delete the temp. If save, replace params data on target and swap temp to base.
         private LMAnimationParams tempAnimationParams;
 
+        private SelectionHandler selectionHandler;
+
         //public LMAnimation() {
         //    LinkedMovement.Log("LMAnimation constructor");
         //    //animationParams = new LMAnimationParams();
@@ -68,6 +70,26 @@ namespace LinkedMovement.Animation {
             return hasTarget() && animationParams.animationSteps.Count > 0;
         }
 
+        public void stopPicking() {
+            LinkedMovement.Log("LMAnimation.stopPicking");
+
+            clearSelectionHandler();
+        }
+
+        public void startPicking() {
+            LinkedMovement.Log("LMAnimation.startPicking");
+
+            clearSelectionHandler();
+
+            selectionHandler = LinkedMovement.GetLMController().gameObject.AddComponent<SelectionHandler>();
+            selectionHandler.OnAddBuildableObject += handlePickerAddObject;
+            // No OnRemove as this is not supported in this mode
+
+            var options = selectionHandler.Options;
+            options.Mode = Selection.Mode.Individual;
+            selectionHandler.enabled = true;
+        }
+
         public void setTarget(BuildableObject buildableObject) {
             LinkedMovement.Log("LMAnimation.setTarget");
             removeTarget();
@@ -81,11 +103,14 @@ namespace LinkedMovement.Animation {
                 LMUtils.AddObjectHighlight(targetBuildableObject, Color.red);
                 LMUtils.SetChunkedMeshEnalbedIfPresent(targetBuildableObject, false);
             }
+
+            buildSequence();
         }
 
         public void removeTarget() {
             LinkedMovement.Log("LMAnimation.removeTarget");
             if (targetGameObject != null) {
+                stopSequence();
                 LMUtils.RemoveObjectHighlight(targetBuildableObject);
                 targetGameObject = null;
                 targetBuildableObject = null;
@@ -94,6 +119,8 @@ namespace LinkedMovement.Animation {
 
         public void discardChanges() {
             LinkedMovement.Log("LMAnimation.discardChanges");
+
+            stopPicking();
             
             if (targetBuildableObject != null) {
                 LMUtils.RemoveObjectHighlight(targetBuildableObject);
@@ -144,7 +171,7 @@ namespace LinkedMovement.Animation {
                 sequence.Stop();
             }
 
-            // TODO: Should this only happen is sequence is alive?
+            // TODO: Should this only happen if sequence is alive?
             var animationParams = getAnimationParams();
             LMUtils.ResetTransformLocals(targetGameObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
         }
@@ -179,9 +206,30 @@ namespace LinkedMovement.Animation {
             animationParams = null;
         }
 
+        private void handlePickerAddObject(BuildableObject buildableObject) {
+            LinkedMovement.Log("LMAnimation.handlePickerAddObject");
+
+            // TODO: Validate
+            // Object not already target and doesn't have LMAnimationParams
+
+            setTarget(buildableObject);
+            stopPicking();
+        }
+
+        private void clearSelectionHandler() {
+            LinkedMovement.Log("LMAnimation.clearSelectionHandler");
+            if (selectionHandler != null) {
+                selectionHandler.enabled = false;
+                selectionHandler.OnAddBuildableObject -= handlePickerAddObject;
+
+                GameObject.Destroy(selectionHandler);
+                selectionHandler = null;
+            }
+        }
+
         private void setCustomData() {
             LinkedMovement.Log("LMAnimation.setCustomData");
-            // TODO
+            
             removeCustomData();
 
             targetBuildableObject.addCustomData(animationParams);
@@ -189,7 +237,7 @@ namespace LinkedMovement.Animation {
 
         private void removeCustomData() {
             LinkedMovement.Log("LMAnimation.removeCustomData");
-            // TODO
+            
             targetBuildableObject.removeCustomData<LMAnimationParams>();
         }
     }
