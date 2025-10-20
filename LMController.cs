@@ -9,7 +9,13 @@ namespace LinkedMovement {
 
         // TODO: 10-20
         // + Need picker validation
+        // + Deleting an object that's part of anim-link chain deletes all children
         // Test layering
+        
+        // + There's some weird 1-frame artifact when linked animations reset where child objects appear incorrectly
+        //   LATEST: Currently can't repro (intermittent?)
+        //   (like the animations aren't all resetting at the same time)
+        //   TEST: Does this happen with Blueprints too (e.g., something created all at once)
 
         public LMAnimation currentAnimation { get; private set; }
         public LMLink currentLink { get; private set; }
