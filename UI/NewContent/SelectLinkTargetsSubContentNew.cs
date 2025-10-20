@@ -43,7 +43,7 @@ namespace LinkedMovement.UI.NewContent {
                     using (Scope.Horizontal()) {
                         Label(targetObject.getName());
                         if (Button("✕", Width(40))) {
-                            controller.currentLink.removeTargetObject(targetObject);
+                            controller.currentLink.removeSingleTargetObject(targetObject);
                         }
                     }
                 }

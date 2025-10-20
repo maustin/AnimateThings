@@ -96,14 +96,17 @@ namespace LinkedMovement.Links {
             _id = linkParent.id;
         }
 
-        public void initializeWith(BuildableObject parentBuildableObject, List<BuildableObject> targetBuildableObjects) {
+        private void initializeWith(BuildableObject parentBuildableObject, List<BuildableObject> targetBuildableObjects) {
             LinkedMovement.Log("LMLink.initializeWith");
 
             removeCustomData();
 
-            var newParent = new LMLinkParent(_name, _id, parentBuildableObject);
-            linkParent = newParent;
+            if (linkParent == null || linkParent.targetBuildableObject != parentBuildableObject) {
+                var newParent = new LMLinkParent(_name, _id, parentBuildableObject);
+                linkParent = newParent;
+            } // else linkParent already setup
 
+            // Just recreate all LMLinkTargets
             var newTargets = new List<LMLinkTarget>();
             foreach (var target in targetBuildableObjects) {
                 var newTarget = new LMLinkTarget(_id, target);
@@ -243,8 +246,8 @@ namespace LinkedMovement.Links {
             LMUtils.EditAssociatedAnimations(new List<GameObject>() { tempParentGameObject }, LMUtils.AssociatedAnimationEditMode.Start, true);
         }
 
-        public void removeTargetObject(BuildableObject buildableObject, bool skipRemoval = false) {
-            LinkedMovement.Log("LMLink.removeTargetObject");
+        public void removeSingleTargetObject(BuildableObject buildableObject) {
+            LinkedMovement.Log("LMLink.removeSingleTargetObject");
 
             if (!tempTargetBuildableObjects.Contains(buildableObject)) {
                 // Not a target
@@ -253,14 +256,34 @@ namespace LinkedMovement.Links {
 
             LMUtils.RemoveObjectHighlight(buildableObject);
 
-            if (!skipRemoval) {
-                tempTargetBuildableObjects.Remove(buildableObject);
-                tempTargetGameObjects.Remove(buildableObject.gameObject);
-            }
+            tempTargetBuildableObjects.Remove(buildableObject);
+            tempTargetGameObjects.Remove(buildableObject.gameObject);
 
             LMUtils.EditAssociatedAnimations(new List<GameObject>() { tempParentGameObject }, LMUtils.AssociatedAnimationEditMode.Stop, true);
             LMUtils.SetTargetParent(null, buildableObject.transform);
             LMUtils.EditAssociatedAnimations(new List<GameObject>() { tempParentGameObject, buildableObject.gameObject }, LMUtils.AssociatedAnimationEditMode.Start, true);
+
+        }
+
+        // Called from UI
+        public void removeAllTargetObjects() {
+            LinkedMovement.Log("LMLink.removeAllTargetObjects");
+
+            LMUtils.EditAssociatedAnimations(new List<GameObject>() { tempParentGameObject }, LMUtils.AssociatedAnimationEditMode.Stop, true);
+
+            foreach (var buildableObject in tempTargetBuildableObjects) {
+                LMUtils.RemoveObjectHighlight(buildableObject);
+                LMUtils.SetTargetParent(null, buildableObject.transform);
+            }
+
+            // Restart the parent with isEditing true
+            LMUtils.EditAssociatedAnimations(new List<GameObject>() { tempParentGameObject }, LMUtils.AssociatedAnimationEditMode.Start, true);
+
+            // Removed targets will restart with isEditing false as they are no longer associated with UI
+            LMUtils.EditAssociatedAnimations(tempTargetGameObjects, LMUtils.AssociatedAnimationEditMode.Start, false);
+
+            tempTargetBuildableObjects.Clear();
+            tempTargetGameObjects.Clear();
         }
 
         public void discardChanges() {
@@ -268,16 +291,48 @@ namespace LinkedMovement.Links {
 
             stopPicking();
 
+            // Stop temp parent and targets
+            var stopList = new List<GameObject>();
             if (tempParentBuildableObject != null) {
+                stopList.Add(tempParentGameObject);
                 LMUtils.RemoveObjectHighlight(tempParentBuildableObject);
+            }
+            if (tempTargetGameObjects.Count > 0) {
+                stopList.AddRange(tempTargetGameObjects);
+            }
+            if (stopList.Count > 0) {
+                LMUtils.EditAssociatedAnimations(stopList, LMUtils.AssociatedAnimationEditMode.Stop, false);
             }
 
             foreach (var buildableObject in tempTargetBuildableObjects) {
                 LMUtils.RemoveObjectHighlight(buildableObject);
-                removeTargetObject(buildableObject, true);
+                LMUtils.SetTargetParent(null, buildableObject.transform);
+            }
+
+            var restartList = new List<GameObject>() { tempParentGameObject };
+
+            // Temp targets that are *not* an original should have be added to the restartList
+            // This ensures any that had their own animations are rebuilt now without the parent
+            if (linkTargets != null && linkTargets.Count > 0 && tempTargetGameObjects.Count > 0) {
+                var originalTargetGameObjects = new List<GameObject>();
+                foreach (var target in linkTargets) {
+                    originalTargetGameObjects.Add(target.targetGameObject);
+                }
+                foreach (var tempTargetGameObject in tempTargetGameObjects) {
+                    if (!originalTargetGameObjects.Contains(tempTargetGameObject)) {
+                        restartList.Add(tempTargetGameObject);
+                    }
+                }
+            }
+
+            if (linkParent != null) {
+                // Only rebuild the link if we were editing (e.g. LinkParent and LinkTargets present)
+                rebuildLink();
             }
 
             IsEditing = false;
+
+            LMUtils.EditAssociatedAnimations(restartList, LMUtils.AssociatedAnimationEditMode.Start, false);
         }
 
         public void saveChanges() {
@@ -285,22 +340,21 @@ namespace LinkedMovement.Links {
 
             stopPicking();
 
-            if (tempParentBuildableObject != null) {
-                LMUtils.RemoveObjectHighlight(tempParentBuildableObject);
-            }
+            LMUtils.RemoveObjectHighlight(tempParentBuildableObject);
 
             foreach (var buildableObject in tempTargetBuildableObjects) {
                 LMUtils.RemoveObjectHighlight(buildableObject);
-                removeTargetObject(buildableObject, true);
             }
 
             initializeWith(tempParentBuildableObject, tempTargetBuildableObjects);
 
             IsEditing = false;
 
+            LMUtils.EditAssociatedAnimations(new List<GameObject>() { linkParent.targetGameObject }, LMUtils.AssociatedAnimationEditMode.Stop, false);
+            LMUtils.EditAssociatedAnimations(new List<GameObject>() { linkParent.targetGameObject }, LMUtils.AssociatedAnimationEditMode.Start, false);
+
             LinkedMovement.GetLMController().addLink(this);
 
-            rebuildLink();
         }
 
         public void removeLink() {
@@ -309,18 +363,12 @@ namespace LinkedMovement.Links {
             // TODO
         }
 
-        public void rebuildLink(bool skipRestartAnimations = false) {
+        public void rebuildLink() {
             LinkedMovement.Log("LMLink.rebuildLink");
 
             var parentTransform = linkParent.targetGameObject.transform;
             foreach (var targetLink in linkTargets) {
                 LMUtils.SetTargetParent(parentTransform, targetLink.targetGameObject.transform);
-            }
-
-            if (!skipRestartAnimations) {
-                //LMUtils.EditAssociatedAnimations(new List<GameObject>() { linkParent.targetGameObject }, LMUtils.AssociatedAnimationEditMode.Restart, false);
-                LMUtils.EditAssociatedAnimations(new List<GameObject>() { linkParent.targetGameObject }, LMUtils.AssociatedAnimationEditMode.Stop, false);
-                LMUtils.EditAssociatedAnimations(new List<GameObject>() { linkParent.targetGameObject }, LMUtils.AssociatedAnimationEditMode.Start, false);
             }
         }
 
@@ -348,7 +396,7 @@ namespace LinkedMovement.Links {
 
             // TODO: Validate - maybe not, already validating in removeTargetObject
 
-            removeTargetObject(buildableObject);
+            removeSingleTargetObject(buildableObject);
         }
 
         private void clearSelectionHandler() {

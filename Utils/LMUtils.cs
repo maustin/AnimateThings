@@ -288,10 +288,12 @@ namespace LinkedMovement.Utils {
         }
 
         // TODO: "editMode" and "isEditing" names are ambiguous here
+        // Only Start mode uses isEditing
         public static void EditAssociatedAnimations(List<GameObject> gameObjects, AssociatedAnimationEditMode editMode, bool isEditing) {
             LinkedMovement.Log($"LMUtils.EditAssociatedAnimations mode {editMode.ToString()} with {gameObjects.Count} gameObjects, isEditing: {isEditing.ToString()}");
             PrepAssociatedGameObjects();
             foreach (GameObject go in gameObjects) {
+                if (go == null) continue;
                 EditAssociatedAnimation(go, editMode, isEditing);
             }
             CleanupAssociateGameObjects();
