@@ -1,5 +1,6 @@
 ﻿using LinkedMovement.UI.Content;
 using LinkedMovement.UI.NewContent;
+using Parkitect.UI;
 using System;
 using UnityEngine;
 
@@ -90,9 +91,16 @@ namespace LinkedMovement.UI {
                     allowMultiple = true;
                     break;
                 case WindowManager.WindowType.Error:
+                    //title = "Animate Things - Error";
+                    //var message = data as string;
+                    //Notification nf = new Notification(title, message);
+                    //NotificationBar.Instance.addNotification(nf);
+
+
                     title = "Error";
                     width = 400;
                     position = getWindowPositionCenter(width, 75);
+                    position = modifyPositionByOffset(position, windowManager.getNumberOfWindowsOfType(WindowManager.WindowType.Error));
                     alwaysRender = true;
                     content = new InfoContent(data as string);
                     allowMultiple = true;
