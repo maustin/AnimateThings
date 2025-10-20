@@ -85,7 +85,8 @@ namespace LinkedMovement.UI {
                     title = "Information";
                     width = 400;
                     position = getWindowPositionCenter(width, 75);
-                    position = modifyPositionByOffset(position, windowManager.getNumberOfWindowsOfType(WindowManager.WindowType.Information));
+                    //position = modifyPositionByOffset(position, windowManager.getNumberOfWindowsOfType(WindowManager.WindowType.Information));
+                    position = modifyPositionByOffset(windowManager, position, WindowManager.WindowType.Information, WindowManager.WindowType.Error);
                     alwaysRender = true;
                     content = new InfoContent(data as string);
                     allowMultiple = true;
@@ -100,7 +101,8 @@ namespace LinkedMovement.UI {
                     title = "Error";
                     width = 400;
                     position = getWindowPositionCenter(width, 75);
-                    position = modifyPositionByOffset(position, windowManager.getNumberOfWindowsOfType(WindowManager.WindowType.Error));
+                    //position = modifyPositionByOffset(position, windowManager.getNumberOfWindowsOfType(WindowManager.WindowType.Error));
+                    position = modifyPositionByOffset(windowManager, position, WindowManager.WindowType.Information, WindowManager.WindowType.Error);
                     alwaysRender = true;
                     content = new InfoContent(data as string);
                     allowMultiple = true;
@@ -140,6 +142,16 @@ namespace LinkedMovement.UI {
             var positionY = VERTICAL_PADDING / Settings.Instance.uiScale;
             //LinkedMovement.Log($"position x: {positionX.ToString()}, y: {positionY.ToString()}");
             return new Vector2 { x = positionX,y = positionY };
+        }
+
+        private static Vector2 modifyPositionByOffset(WindowManager windowManager, Vector2 position, params WindowManager.WindowType[] checkTypes) {
+            var offsetMultiplier = 0;
+            foreach (var type in checkTypes) {
+                var numWindowsOfType = windowManager.getNumberOfWindowsOfType(type);
+                offsetMultiplier += numWindowsOfType;
+            }
+
+            return modifyPositionByOffset(position, offsetMultiplier);
         }
 
         private static Vector2 modifyPositionByOffset(Vector2 position, int offsetMultiplier) {

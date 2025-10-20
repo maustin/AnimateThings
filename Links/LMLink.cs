@@ -427,8 +427,9 @@ namespace LinkedMovement.Links {
             var gameObject = buildableObject.gameObject;
             var link = LinkedMovement.GetLMController().findLinkByParentGameObject(gameObject);
             if (link != null) {
-                LinkedMovement.Log("Target already parent to another Link");
-                LinkedMovement.GetController().windowManager.createWindow(UI.WindowManager.WindowType.Error, "Target is already Parent for Link " + link.name);
+                string rejectMessage = $"Selection is already the Parent object of Link '{link.name}'";
+                LinkedMovement.Log(rejectMessage);
+                LinkedMovement.GetController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                 return;
             }
 
@@ -439,17 +440,38 @@ namespace LinkedMovement.Links {
         private void handlePickerAddObjectAsTarget(BuildableObject buildableObject) {
             LinkedMovement.Log("LMLink.handlePickerAddObjectAsTarget");
 
-            // Validate - ensure Target is not already selected (silent fail)
+            // Validate
+            // Ensure target is not already selected as parent
+            if (getParentBuildableObject() == buildableObject) {
+                LinkedMovement.Log("Target is already the parent of current link");
+                return;
+            }
+            // Ensure Target is not already selected as target (silent fail)
             if (getTargetBuildableObjects().Contains(buildableObject)) {
                 LinkedMovement.Log("Target is already child of current link");
                 return;
             }
+            // Ensure Target is not already child of another link
             var gameObject = buildableObject.gameObject;
-            var link = LinkedMovement.GetLMController().findLinkByTargetGameObject(gameObject);
-            if (link != null) {
-                LinkedMovement.Log("Target is already child of link " + link.name);
-                LinkedMovement.GetController().windowManager.createWindow(UI.WindowManager.WindowType.Error, "Target is already Child of Link " + link.name);
+            var otherLink = LinkedMovement.GetLMController().findLinkByTargetGameObject(gameObject);
+            if (otherLink != null) {
+                string rejectMessage = $"Selection is already a child of Link '{otherLink.name}'";
+                LinkedMovement.Log(rejectMessage);
+                // TODO: This call needs much cleaner access
+                LinkedMovement.GetController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                 return;
+            }
+            // Ensure Target is not parent of this link (circular link)
+            var parentLink = LinkedMovement.GetLMController().findLinkByParentGameObject(gameObject);
+            if (parentLink != null) {
+                var parentTargets = parentLink.getTargetGameObjects();
+                if (parentTargets.Contains(getParentGameObject())) {
+                    string rejectMessage = "Circular link! Selection is already the parent of this link.";
+                    LinkedMovement.Log(rejectMessage);
+                    // TODO: This call needs much cleaner access
+                    LinkedMovement.GetController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
+                    return;
+                }
             }
 
             addTargetObject(buildableObject);

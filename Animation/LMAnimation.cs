@@ -260,9 +260,10 @@ namespace LinkedMovement.Animation {
             var gameObject = buildableObject.gameObject;
             var animation = LinkedMovement.GetLMController().findAnimationByGameObject(gameObject);
             if (animation != null) {
-                LinkedMovement.Log("Target already has animation " + animation.name);
+                string rejectMessage = $"Selection already has Animation '{animation.name}'";
+                LinkedMovement.Log(rejectMessage);
                 // TODO: This call needs much cleaner access
-                LinkedMovement.GetController().windowManager.createWindow(UI.WindowManager.WindowType.Error, "Target already has Animation " + animation.name);
+                LinkedMovement.GetController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                 return;
             }
 
