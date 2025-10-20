@@ -47,12 +47,56 @@ namespace LinkedMovement {
             }
 
             buildableObjectsToUpdate.Clear();
+            foreach (var link in links) {
+                link.addObjectsToUpdateMouseColliders(buildableObjectsToUpdate);
+            }
             foreach (var animation in animations) {
                 buildableObjectsToUpdate.Add(animation.targetBuildableObject);
             }
             foreach (var bo in buildableObjectsToUpdate) {
                 LMUtils.UpdateMouseColliders(bo);
             }
+        }
+
+        // Called via ParkEventStartPostFix
+        public void setupPark(List<SerializedMonoBehaviour> serializedMonoBehaviours) {
+            LinkedMovement.Log($"LMController.setPark with {serializedMonoBehaviours.Count} objects");
+            
+            var createdLinkParents = new List<LMLinkParent>();
+            var createdLinkTargets = new List<LMLinkTarget>();
+
+            // TODO: Does this need to be reversed?
+            for (int i = serializedMonoBehaviours.Count - 1; i >= 0; i--) {
+                var smb = serializedMonoBehaviours[i];
+
+                LMLinkParent linkParent = LMUtils.GetLinkParentFromSerializedMonoBehaviour(smb);
+                if (linkParent != null) {
+                    LinkedMovement.Log($"Found LinkParent name: {linkParent.name}, id: {linkParent.id}");
+                    linkParent.setTarget(smb.gameObject);
+                    createdLinkParents.Add(linkParent);
+                    LMUtils.DeleteChunkedMesh(smb as BuildableObject);
+                }
+
+                LMLinkTarget linkTarget = LMUtils.GetLinkTargetFromSerializedMonoBehaviour(smb);
+                if (linkTarget != null) {
+                    LinkedMovement.Log($"Found LinkTarget id: {linkTarget.id}");
+                    linkTarget.setTarget(smb.gameObject);
+                    createdLinkTargets.Add(linkTarget);
+                    LMUtils.DeleteChunkedMesh(smb as BuildableObject);
+                }
+
+                LMAnimationParams animationParams = LMUtils.GetAnimationParamsFromSerializedMonoBehaviour(smb);
+                if (animationParams != null) {
+                    LinkedMovement.Log($"Found AnimationParams name: {animationParams.name}, id: {animationParams.id}");
+                    addAnimation(animationParams, smb.gameObject);
+                    LMUtils.DeleteChunkedMesh(smb as BuildableObject);
+                }
+            }
+
+            // TODO: Do we need to find orphaned PairTargets?
+
+            setupLinks(createdLinkParents, createdLinkTargets);
+            onParkStarted();
         }
 
         public void setupLinks(List<LMLinkParent> linkParents, List<LMLinkTarget> linkTargets) {
@@ -72,11 +116,6 @@ namespace LinkedMovement {
 
         public void onParkStarted() {
             LinkedMovement.Log("LMController.onParkStarted");
-
-            // TODO: Does this need to be called? Already calling in setupLinks()
-            //foreach (var link in links) {
-            //    link.rebuildLink();
-            //}
 
             foreach (var animation in animations) {
                 animation.setup();

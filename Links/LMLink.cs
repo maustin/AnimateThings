@@ -165,6 +165,17 @@ namespace LinkedMovement.Links {
             return tempParentGameObject != null && tempTargetGameObjects != null && tempTargetGameObjects.Count > 0;
         }
 
+        public void addObjectsToUpdateMouseColliders(HashSet<BuildableObject> buildableObjectsToUpdate) {
+            var parentBuildableObject = getParentBuildableObject();
+            if (parentBuildableObject != null) {
+                buildableObjectsToUpdate.Add(parentBuildableObject);
+            }
+            var targetBuildableObjects = getTargetBuildableObjects();
+            foreach (var buildableObject in targetBuildableObjects) {
+                buildableObjectsToUpdate.Add(buildableObject);
+            }
+        }
+
         // TODO: Necessary? Just make clearSelectionHandler public?
         public void stopPicking() {
             LinkedMovement.Log("LMLink.stopPicking");
@@ -208,6 +219,8 @@ namespace LinkedMovement.Links {
             if (IsEditing) {
                 tempParentBuildableObject = buildableObject;
                 tempParentGameObject = buildableObject.gameObject;
+
+                LMUtils.DeleteChunkedMesh(buildableObject);
                 LMUtils.AddObjectHighlight(buildableObject, Color.red);
             } else {
                 // TODO: ?
@@ -238,7 +251,7 @@ namespace LinkedMovement.Links {
             tempTargetBuildableObjects.Add(buildableObject);
             tempTargetGameObjects.Add(buildableObject.gameObject);
 
-            LMUtils.SetChunkedMeshEnalbedIfPresent(buildableObject, false);
+            LMUtils.DeleteChunkedMesh(buildableObject);
             LMUtils.AddObjectHighlight(buildableObject, Color.yellow);
 
             LMUtils.EditAssociatedAnimations(new List<GameObject>() { tempParentGameObject, buildableObject.gameObject }, LMUtils.AssociatedAnimationEditMode.Stop, true);

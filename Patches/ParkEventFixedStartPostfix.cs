@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using LinkedMovement;
-using LinkedMovement.Links;
 using LinkedMovement.Utils;
 using System.Collections.Generic;
 using System.Reflection;
@@ -29,37 +28,19 @@ class ParkEventFixedStartPostfix {
         // Ensure LMController has been created
         LinkedMovement.LinkedMovement.GetLMController();
 
-        // TODO: Too much happening here, move to controller(s)
+        // TODO: THIS ALL NEEDS TO BE SPLIT OUT OF HERE!
+        // Update: Should be better once Pairings are removed
 
         var sos = GameController.Instance.getSerializedObjects();
         LinkedMovement.LinkedMovement.Log("SerializedObjects count: " + sos.Count);
+
+        // NEW
+        LinkedMovement.LinkedMovement.GetLMController().setupPark(sos);
         
         var createdPairings = new List<Pairing>();
 
-        var createdLinkParents = new List<LMLinkParent>();
-        var createdLinkTargets = new List<LMLinkTarget>();
-
         for (int i = sos.Count - 1; i >= 0; i--) {
             var so = sos[i];
-
-            // NEW
-            LMLinkParent linkParent = LMUtils.GetLinkParentFromSerializedMonoBehaviour(so);
-            if (linkParent != null) {
-                LinkedMovement.LinkedMovement.Log("Found LinkParent");
-                linkParent.setTarget(so.gameObject);
-                createdLinkParents.Add(linkParent);
-            }
-            LMLinkTarget linkTarget = LMUtils.GetLinkTargetFromSerializedMonoBehaviour(so);
-            if (linkTarget != null) {
-                LinkedMovement.LinkedMovement.Log("Found LinkTarget");
-                linkTarget.setTarget(so.gameObject);
-                createdLinkTargets.Add(linkTarget);
-            }
-            LMAnimationParams animationParams = LMUtils.GetAnimationParamsFromSerializedMonoBehaviour(so);
-            if (animationParams != null) {
-                LinkedMovement.LinkedMovement.Log("Found animationParams");
-                LinkedMovement.LinkedMovement.GetLMController().addAnimation(animationParams, so.gameObject);
-            }
 
             // OLD
             PairBase pairBase = LMUtils.GetPairBaseFromSerializedMonoBehaviour(so);
@@ -86,16 +67,10 @@ class ParkEventFixedStartPostfix {
             }
         }
 
-        // NEW
-        LinkedMovement.LinkedMovement.GetLMController().setupLinks(createdLinkParents, createdLinkTargets);
-        LinkedMovement.LinkedMovement.GetLMController().onParkStarted();
-
         // OLD
         var sortedPairings = LMUtils.SortPairings(createdPairings);
         foreach (var pairing in sortedPairings) {
             pairing.createSequence();
         }
-
-        // TODO: Do we need to find orphaned PairTargets?
     }
 }

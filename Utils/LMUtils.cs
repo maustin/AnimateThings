@@ -27,6 +27,13 @@ namespace LinkedMovement.Utils {
             }
         }
 
+        public static void DeleteChunkedMesh(BuildableObject bo) {
+            if (bo == null) return;
+            LinkedMovement.Log("LMUtils.DeleteChunkedMesh for " + bo.name);
+            UnityEngine.Object.Destroy(bo.GetComponent<ChunkedMesh>());
+        }
+
+        // TODO: Eliminate this method (prefer delete ChunkedMesh instead)
         // Built-in objects have a ChunkedMesh component. This component can prevent visual updates
         // while we're modifying animations that affect their GameObject.
         // Disable when creating and modifying. Re-enable when finished.
@@ -90,6 +97,8 @@ namespace LinkedMovement.Utils {
                 TryToBuildLinkParentFromBlueprintObject(buildableObject, createdLinkParents);
                 TryToBuildLinkTargetFromBlueprintObject(buildableObject, createdLinkTargets);
                 TryToBuildAnimationFromBlueprintObject(buildableObject, forward, createdAnimations);
+
+                DeleteChunkedMesh(buildableObject);
             }
 
             // Generate new Link Ids
@@ -739,10 +748,10 @@ namespace LinkedMovement.Utils {
         }
 
         // BuildableObjects in the old list that are not in the new list need to have their parent reset
-        // and their ChunkedMesh (if present) re-enabled
+        
         public static void ResetUnusedTargets(List<BuildableObject> oldTargetObjects, List<BuildableObject> newTargetObjects) {
             LinkedMovement.Log("LMUtils.ResetUnusedTargets");
-            // TODO: Re-enable ChunkedMesh for unused targets
+            
             foreach (var oldTargetObject in oldTargetObjects) {
                 if (!newTargetObjects.Contains(oldTargetObject)) {
                     LinkedMovement.Log("Reset old target " + oldTargetObject.gameObject.name);

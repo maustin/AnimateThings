@@ -3,6 +3,8 @@ using LinkedMovement;
 using LinkedMovement.Utils;
 using System.Reflection;
 
+// TODO: This should be eliminated
+
 #nullable disable
 [HarmonyPatch]
 class ChunkedMeshEventStartPrefix {

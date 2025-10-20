@@ -67,7 +67,7 @@ namespace LinkedMovement.Animation {
             this.animationParams = animationParams;
 
             var buildableObject = LMUtils.GetBuildableObjectFromGameObject(target);
-            UnityEngine.Object.Destroy(buildableObject.GetComponent<ChunkedMesh>());
+            LMUtils.DeleteChunkedMesh(buildableObject);
 
             setTarget(buildableObject, delaySetup);
         }
@@ -124,7 +124,7 @@ namespace LinkedMovement.Animation {
 
             if (IsEditing) {
                 LMUtils.AddObjectHighlight(targetBuildableObject, Color.red);
-                UnityEngine.Object.Destroy(targetBuildableObject.GetComponent<ChunkedMesh>());
+                LMUtils.DeleteChunkedMesh(targetBuildableObject);
             }
 
             if (!delaySetup) {
