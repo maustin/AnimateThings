@@ -36,9 +36,7 @@ namespace LinkedMovement {
 
         private LMAnimation queuedAnimationToRemove;
         private LMLink queuedLinkToRemove;
-        private bool queueCommit;
-        private bool queueDiscard;
-
+        
         private void Awake() {
             LinkedMovement.Log("LMController Awake");
         }
@@ -328,6 +326,10 @@ namespace LinkedMovement {
             }
 
             currentAnimation.IsEditing = true;
+
+            if (animation != null) {
+                currentAnimation.buildSequence();
+            }
         }
 
         public void editLink(LMLink link = null) {

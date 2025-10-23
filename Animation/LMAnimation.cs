@@ -231,14 +231,14 @@ namespace LinkedMovement.Animation {
 
             var isEditing = passedIsEditing || IsEditing;
 
+            stopSequence();
+
             var animationParams = getAnimationParams();
             if (!isEditing && animationParams.isTriggerable) {
                 LinkedMovement.Log("Create trigger");
                 targetGameObject.AddComponent<LMTrigger>().animationParams = animationParams;
                 return;
             }
-
-            stopSequence();
 
             sequence = LMUtils.BuildAnimationSequence(targetGameObject.transform, animationParams, isEditing);
         }
