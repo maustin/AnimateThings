@@ -147,7 +147,7 @@ namespace LinkedMovement.UI {
                 return null;
             }
 
-            title = title.Length == 0 ? "Animatronitect" : title;
+            title = title.Length == 0 ? "Animate Things" : title;
 
             var lmWindow = new LMWindow(type, title, content, alwaysRender, width);
             lmWindow.Configure(position, fixedHeight, windowManager);
