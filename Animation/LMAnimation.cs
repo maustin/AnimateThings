@@ -47,9 +47,15 @@ namespace LinkedMovement.Animation {
                 if (_isEditing) {
                     // create temp
                     tempAnimationParams = LMAnimationParams.Duplicate(animationParams);
+                    if (targetBuildableObject != null) {
+                        LMUtils.AddObjectHighlight(targetBuildableObject, Color.red);
+                    }
                 } else {
                     // clear temp
                     tempAnimationParams = null;
+                    if (targetBuildableObject != null) {
+                        LMUtils.RemoveObjectHighlight(targetBuildableObject);
+                    }
                 }
             }
         }
@@ -150,8 +156,6 @@ namespace LinkedMovement.Animation {
             }
 
             if (!delaySetup) {
-                //getAnimationParams().setStartingValues(targetGameObject.transform);
-                //buildSequence();
                 setup();
             }
         }
@@ -171,10 +175,6 @@ namespace LinkedMovement.Animation {
 
             stopPicking();
             
-            if (targetBuildableObject != null) {
-                LMUtils.RemoveObjectHighlight(targetBuildableObject);
-            }
-
             if (isNewAnimation) {
                 // Was creating a new animation, just stop the sequence
                 stopSequence();
@@ -189,8 +189,6 @@ namespace LinkedMovement.Animation {
 
         public void saveChanges() {
             LinkedMovement.Log("LMAnimation.saveChanges");
-
-            LMUtils.RemoveObjectHighlight(targetBuildableObject);
 
             stopSequence();
             animationParams = tempAnimationParams;

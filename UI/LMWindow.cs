@@ -36,8 +36,16 @@ namespace LinkedMovement.UI {
                     LinkedMovement.Log("CLOSE CreateAnimationNew window");
                     LinkedMovement.GetLMController().clearEditMode();
                 }
+                if (type == WindowManager.WindowType.EditAnimationNew) {
+                    LinkedMovement.Log("CLOSE EditAnimationNew window");
+                    LinkedMovement.GetLMController().clearEditMode();
+                }
                 if (type == WindowManager.WindowType.CreateLinkNew) {
                     LinkedMovement.Log("CLOSE CreateLinkNew window");
+                    LinkedMovement.GetLMController().clearEditMode();
+                }
+                if (type == WindowManager.WindowType.EditLinkNew) {
+                    LinkedMovement.Log("CLOSE EditLinkNew window");
                     LinkedMovement.GetLMController().clearEditMode();
                 }
 

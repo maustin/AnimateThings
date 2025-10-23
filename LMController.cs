@@ -73,6 +73,14 @@ namespace LinkedMovement {
             }
         }
 
+        public List<LMAnimation> getAnimations() {
+            return animations;
+        }
+
+        public List<LMLink> getLinks() {
+            return links;
+        }
+
         // Called via ParkEventStartPostFix
         public void setupPark(List<SerializedMonoBehaviour> serializedMonoBehaviours) {
             LinkedMovement.Log($"LMController.setPark with {serializedMonoBehaviours.Count} objects");
@@ -323,9 +331,11 @@ namespace LinkedMovement {
             clearEditMode();
 
             if (animation != null) {
+                LinkedMovement.Log("Edit existing Animation");
                 currentAnimation = animation;
             } else {
                 // TODO: Set new animation name
+                LinkedMovement.Log("Edit new Animation");
                 var animationParams = new LMAnimationParams();
                 currentAnimation = new LMAnimation(animationParams);
             }

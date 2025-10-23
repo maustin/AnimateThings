@@ -7,6 +7,7 @@ namespace LinkedMovement.UI {
 
         // TODO: Move out
         public enum WindowType {
+            // OLD
             ModeDetermination,
             CreateNewAnimatronic,
             ShowExistingAnimatronics,
@@ -15,10 +16,12 @@ namespace LinkedMovement.UI {
             Information,
             Error,
             ConfirmAction,
-            //
+            // NEW
             ModeDeterminationNew,
+            ViewAnimationsNew,
             CreateAnimationNew,
             EditAnimationNew,
+            ViewLinksNew,
             CreateLinkNew,
             EditLinkNew,
         }

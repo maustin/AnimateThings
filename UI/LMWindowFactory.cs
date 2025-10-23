@@ -1,4 +1,5 @@
-﻿using LinkedMovement.UI.Content;
+﻿using LinkedMovement.Animation;
+using LinkedMovement.UI.Content;
 using LinkedMovement.UI.NewContent;
 using Parkitect.UI;
 using System;
@@ -27,11 +28,30 @@ namespace LinkedMovement.UI {
                     position = getWindowPositionCenter(width, 300);
                     content = new ModeDeterminationContentNew();
                     break;
+                case WindowManager.WindowType.ViewAnimationsNew:
+                    title = "Animations";
+                    width = 400;
+                    fixedHeight = 500;
+                    position = getWindowPositionCenter(width, fixedHeight);
+                    content = new ViewExistingAnimationsContentNew();
+                    break;
                 case WindowManager.WindowType.CreateAnimationNew:
                     title = "Create Animation";
                     width = 450;
                     position = getWindowPositionRight(width);
                     content = new CreateAnimationContentNew();
+                    break;
+                case WindowManager.WindowType.EditAnimationNew:
+                    title = "Edit Animation";
+                    width = 450;
+                    position = getWindowPositionRight(width);
+                    content = new EditAnimationContentNew(data as LMAnimation);
+                    break;
+                case WindowManager.WindowType.ViewLinksNew:
+                    title = "Links";
+                    width = 400;
+                    fixedHeight = 500;
+                    // TODO: content =
                     break;
                 case WindowManager.WindowType.CreateLinkNew:
                     title = "Create Link";
