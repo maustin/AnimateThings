@@ -4,11 +4,11 @@ using UnityEngine;
 using static UnityEngine.GUILayout;
 
 namespace LinkedMovement.UI.NewContent {
-    internal class ViewExistingAnimationsContentNew : LMWindowContent {
+    internal class ViewExistingLinksContentNew : LMWindowContent {
         private LMController controller;
         private Vector2 targetsScrollPosition;
 
-        public ViewExistingAnimationsContentNew() {
+        public ViewExistingLinksContentNew() {
             controller = LinkedMovement.GetLMController();
         }
 
@@ -16,18 +16,18 @@ namespace LinkedMovement.UI.NewContent {
             base.DoGUI();
 
             using (Scope.Vertical()) {
-                var animations = controller.getAnimations();
+                var links = controller.getLinks();
                 targetsScrollPosition = BeginScrollView(targetsScrollPosition, Height(400f));
 
-                foreach (var animation in animations) {
+                foreach (var link in links) {
                     using (Scope.Horizontal()) {
-                        if (Button(animation.name, RGUIStyle.flatButtonLeft)) {
+                        if (Button(link.name, RGUIStyle.flatButtonLeft)) {
                             windowManager.removeWindow(this.window);
-                            windowManager.createWindow(WindowManager.WindowType.EditLinkNew, animation);
+                            windowManager.createWindow(WindowManager.WindowType.EditLinkNew, link);
                         }
                         using (Scope.GuiEnabled(false)) {
                             if (Button("✕", Width(40f))) {
-                                // TODO delete animation
+                                // TODO delete link
                             }
                         }
                     }

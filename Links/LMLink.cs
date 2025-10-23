@@ -5,25 +5,32 @@ using UnityEngine;
 namespace LinkedMovement.Links {
     public class LMLink {
         private string _name = string.Empty;
+        private string _tempName = null;
         public string name {
-            // TODO: Link name original vs new temp
             get {
-                if (linkParent != null) {
-                    return linkParent.name;
+                if (IsEditing) {
+                    return _tempName;
+                } else {
+                    if (linkParent != null) {
+                        return linkParent.name;
+                    }
+                    return _name;
                 }
-                return _name;
             }
             set {
-                if (linkParent != null) {
-                    linkParent.name = value;
+                if (IsEditing) {
+                    _tempName = value;
+                } else {
+                    if (linkParent != null) {
+                        linkParent.name = value;
+                    }
+                    _name = value;
                 }
-                _name = value;
             }
         }
 
         private string _id = string.Empty;
         public string id {
-            // TODO: Link id original vs new temp
             get {
                 if (linkParent != null) {
                     return linkParent.id;
@@ -60,6 +67,7 @@ namespace LinkedMovement.Links {
                     if (linkParent != null) {
                         tempParentGameObject = linkParent.targetGameObject;
                         tempParentBuildableObject = linkParent.targetBuildableObject;
+                        LMUtils.AddObjectHighlight(tempParentBuildableObject, Color.red);
                     }
 
                     tempTargetGameObjects = new List<GameObject>();
@@ -67,13 +75,22 @@ namespace LinkedMovement.Links {
                     foreach (var target in linkTargets) {
                         tempTargetGameObjects.Add(target.targetGameObject);
                         tempTargetBuildableObjects.Add(target.targetBuildableObject);
+                        LMUtils.AddObjectHighlight(target.targetBuildableObject, Color.yellow);
                     }
+                    _tempName = _name;
                 } else {
                     // clear temps
+                    LMUtils.RemoveObjectHighlight(tempParentBuildableObject);
+                    if (tempTargetBuildableObjects != null && tempTargetBuildableObjects.Count > 0) {
+                        foreach (var buildableObject in tempTargetBuildableObjects) {
+                            LMUtils.RemoveObjectHighlight(buildableObject);
+                        }
+                    }
                     tempParentGameObject = null;
                     tempParentBuildableObject = null;
                     tempTargetGameObjects = null;
                     tempTargetBuildableObjects = null;
+                    _tempName = null;
                 }
             }
         }
@@ -246,7 +263,8 @@ namespace LinkedMovement.Links {
                 tempParentGameObject = null;
                 tempParentBuildableObject = null;
 
-                // TODO: If any targets present, reset their parent to null
+                // TODO: Needed?
+                // If any targets present, reset their parent to null
                 // Also, stop associated animations
             }
         }
@@ -254,7 +272,8 @@ namespace LinkedMovement.Links {
         public void addTargetObject(BuildableObject buildableObject) {
             LinkedMovement.Log("LMLink.addTargetObject");
 
-            // TODO: Possibly cache target original parent
+            // TODO: Needed?
+            // Possibly cache target original parent
             // Actually think this should be fine. If changes are discarded, reset temp targets parent to null
             // then rebuild original linkage.
             tempTargetBuildableObjects.Add(buildableObject);
@@ -308,6 +327,7 @@ namespace LinkedMovement.Links {
             LMUtils.SetTargetParent(null, buildableObject.transform);
             LMUtils.EditAssociatedAnimations(new List<GameObject>() { tempParentGameObject, buildableObject.gameObject }, LMUtils.AssociatedAnimationEditMode.Start, true);
 
+            LMUtils.UpdateMouseColliders(buildableObject);
         }
 
         // Called from UI
@@ -319,6 +339,7 @@ namespace LinkedMovement.Links {
             foreach (var buildableObject in tempTargetBuildableObjects) {
                 LMUtils.RemoveObjectHighlight(buildableObject);
                 LMUtils.SetTargetParent(null, buildableObject.transform);
+                LMUtils.UpdateMouseColliders(buildableObject);
             }
 
             // Restart the parent with isEditing true
@@ -340,7 +361,6 @@ namespace LinkedMovement.Links {
             var stopList = new List<GameObject>();
             if (tempParentBuildableObject != null) {
                 stopList.Add(tempParentGameObject);
-                LMUtils.RemoveObjectHighlight(tempParentBuildableObject);
             }
             if (tempTargetGameObjects.Count > 0) {
                 stopList.AddRange(tempTargetGameObjects);
@@ -350,8 +370,8 @@ namespace LinkedMovement.Links {
             }
 
             foreach (var buildableObject in tempTargetBuildableObjects) {
-                LMUtils.RemoveObjectHighlight(buildableObject);
                 LMUtils.SetTargetParent(null, buildableObject.transform);
+                LMUtils.UpdateMouseColliders(buildableObject);
             }
 
             var restartList = new List<GameObject>() { tempParentGameObject };
@@ -385,21 +405,16 @@ namespace LinkedMovement.Links {
 
             stopPicking();
 
-            LMUtils.RemoveObjectHighlight(tempParentBuildableObject);
-
-            foreach (var buildableObject in tempTargetBuildableObjects) {
-                LMUtils.RemoveObjectHighlight(buildableObject);
-            }
-
             initializeWith(tempParentBuildableObject, tempTargetBuildableObjects);
 
+            var newName = _tempName;
             IsEditing = false;
+            name = newName;
 
             LMUtils.EditAssociatedAnimations(new List<GameObject>() { linkParent.targetGameObject }, LMUtils.AssociatedAnimationEditMode.Stop, false);
             LMUtils.EditAssociatedAnimations(new List<GameObject>() { linkParent.targetGameObject }, LMUtils.AssociatedAnimationEditMode.Start, false);
 
             LinkedMovement.GetLMController().addLink(this);
-
         }
 
         public void removeLink() {
