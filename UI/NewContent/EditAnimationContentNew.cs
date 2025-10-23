@@ -21,6 +21,10 @@ namespace LinkedMovement.UI.NewContent {
         public override void DoGUI() {
             base.DoGUI();
 
+            if (controller.currentAnimation == null) {
+                return;
+            }
+
             using (Scope.Vertical()) {
                 // Name
                 using (Scope.Horizontal()) {
