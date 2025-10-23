@@ -236,7 +236,12 @@ namespace LinkedMovement.Animation {
             var animationParams = getAnimationParams();
             if (!isEditing && animationParams.isTriggerable) {
                 LinkedMovement.Log("Create trigger");
-                targetGameObject.AddComponent<LMTrigger>().animationParams = animationParams;
+                var existingTrigger = targetGameObject.GetComponent<LMTrigger>();
+                if (existingTrigger == null) {
+                    targetGameObject.AddComponent<LMTrigger>().animationParams = animationParams;
+                } else {
+                    existingTrigger.update(animationParams);
+                }
                 return;
             }
 

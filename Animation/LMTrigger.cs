@@ -9,6 +9,7 @@ namespace LinkedMovement {
         private SerializedMonoBehaviour effectBehaviour;
         private List<EffectBoxHandle> effectBoxHandles;
         private Sequence sequence;
+        private EffectEntry effectEntry;
 
         public LMAnimationParams animationParams;
 
@@ -21,10 +22,19 @@ namespace LinkedMovement {
             effectBehaviour = GetComponent<SerializedMonoBehaviour>();
         }
 
+        public void update(LMAnimationParams animationParams) {
+            LinkedMovement.Log("LMTrigger.update");
+            this.animationParams = animationParams;
+            if (effectEntry != null) {
+                initializeOnFirstAssignment(effectEntry);
+            }
+        }
+
         public SerializedMonoBehaviour getEffectBehaviour() => this.effectBehaviour;
 
         public EffectRunner.ExecutionHandle execute(EffectEntry effectEntry) {
             LinkedMovement.Log($"LMTrigger.execute sequence name: {animationParams.name}");
+            this.effectEntry = effectEntry;
             if (sequence.isAlive) {
                 LinkedMovement.Log("Sequence is already running, reset");
                 sequence.SetRemainingCycles(false);
@@ -56,12 +66,16 @@ namespace LinkedMovement {
         }
 
         public AbstractEditorPanel createEditorPanel(EffectEntry effectEntry, RectTransform parentRectTransform) {
+            LinkedMovement.Log("LMTrigger.createEditorPanel");
+            this.effectEntry = effectEntry;
             AnimationTriggerEffectEditorPanel editorPanel = Instantiate<AnimationTriggerEffectEditorPanel>(ScriptableSingleton<UIAssetManager>.Instance.animationTriggerEffectEditorPanel, (Transform)parentRectTransform);
             editorPanel.setEffectEntry(effectEntry);
             return (AbstractEditorPanel)editorPanel;
         }
 
         public void initializeOnFirstAssignment(EffectEntry effectEntry) {
+            LinkedMovement.Log("LMTrigger.initializeOnFirstAssignment");
+            this.effectEntry = effectEntry;
             effectEntry.setDuration(LMUtils.GetSequenceDuration(animationParams));
         }
 
@@ -69,12 +83,13 @@ namespace LinkedMovement {
 
         public Sprite getSprite(EffectEntry effectEntry) {
             // TODO: Could we have a custom icon?
+            LinkedMovement.Log("LMTrigger.getSprite");
+            this.effectEntry = effectEntry;
             return ScriptableSingleton<UIAssetManager>.Instance.effectIconGeneric;
         }
 
         private IEnumerator playEffect() {
             LinkedMovement.Log($"LMTrigger.playEffect sequence name: {animationParams.name}");
-            //LinkedMovement.Log("Time: " + DateTime.Now.ToString("HH:mm:ss.fff"));
             sequence = LMUtils.BuildAnimationSequence(gameObject.transform, animationParams);
             
             yield return null;
