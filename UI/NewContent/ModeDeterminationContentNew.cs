@@ -22,8 +22,8 @@ namespace LinkedMovement.UI.NewContent {
 
                 Space(3f);
 
-                if (Button("Edit Animation")) {
-                    LinkedMovement.Log("Clicked Edit Animation");
+                if (Button("View Animations")) {
+                    LinkedMovement.Log("Clicked View Animations");
                     windowManager.removeWindow(this.window);
                     windowManager.createWindow(WindowManager.WindowType.ViewAnimationsNew, null);
                 }
@@ -38,8 +38,8 @@ namespace LinkedMovement.UI.NewContent {
 
                 Space(3f);
 
-                if (Button("Edit Link")) {
-                    LinkedMovement.Log("Clicked Edit Link");
+                if (Button("View Links")) {
+                    LinkedMovement.Log("Clicked View Links");
                     windowManager.removeWindow(this.window);
                     windowManager.createWindow(WindowManager.WindowType.ViewLinksNew, null);
                 }
