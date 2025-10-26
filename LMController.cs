@@ -7,8 +7,9 @@ using UnityEngine;
 namespace LinkedMovement {
     public class LMController : MonoBehaviour {
 
-        // TODO: 10-23
+        // TODO: 10-26
         //
+        // Pick hidden objects
         // Test layering
         // Delays
         // UI update

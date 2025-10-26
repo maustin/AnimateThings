@@ -639,6 +639,26 @@ namespace LinkedMovement.Utils {
             return new Vector3(midX, midY, midZ);
         }
 
+        public static void AddObjectHighlight(BuildableObject buildableObject, HighlightType highlightType) {
+            LinkedMovement.Log($"LMUtils.AddObjectHighlight to {buildableObject.getName()} type {highlightType.ToString()}");
+            var highlightComponent = buildableObject.gameObject.GetComponent<LMHighlightComponent>();
+            if (highlightComponent == null) {
+                LinkedMovement.Log("LMHighlightComponent doesn't exist, creating");
+                highlightComponent = buildableObject.gameObject.AddComponent<LMHighlightComponent>();
+            }
+            highlightComponent.addHighlightFlag(highlightType);
+        }
+
+        public static void RemoveObjectHighlight(BuildableObject buildableObject, HighlightType highlightType) {
+            LinkedMovement.Log($"LMUtils.RemoveObjectHighlight to {buildableObject.getName()} type {highlightType.ToString()}");
+            var highlightComponent = buildableObject.gameObject.GetComponent<LMHighlightComponent>();
+            if (highlightComponent == null) {
+                LinkedMovement.Log("LMHighlightComponent doesn't exist");
+            } else {
+                highlightComponent.removeHighlightFlag(highlightType);
+            }
+        }
+
         public static void AddObjectHighlight(BuildableObject bo, Color color) {
             EnsureHighlightHandlesReady();
             // Remove target if already present

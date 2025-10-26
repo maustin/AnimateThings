@@ -32,6 +32,7 @@ namespace LinkedMovement.Selection {
         void OnDisable();
 
         void Tick();
+        
         event OnAddedSelectedObjectHandler OnAddedSelectedObject;
         event OnRemovedSelectedObjectHandler OnRemovedSelectedObject;
     }
@@ -202,6 +203,7 @@ namespace LinkedMovement.Selection {
         }
 
         public void OnDisable() {
+            Clear();
             UpdateHintMessages(show: false);
 
             CursorManager.Instance.setCursorType(CursorType.DEFAULT);
@@ -222,6 +224,7 @@ namespace LinkedMovement.Selection {
             return Visibility.Ignore;
         }
 
+        private BuildableObject lastTargetBuildableObject = null;
         /// <summary>
         /// List for HitUtility
         /// </summary>
@@ -260,6 +263,13 @@ namespace LinkedMovement.Selection {
             }
         }
 
+        public void Clear() {
+            if (lastTargetBuildableObject != null) {
+                LMUtils.RemoveObjectHighlight(lastTargetBuildableObject, HighlightType.MouseOver);
+                lastTargetBuildableObject = null;
+            }
+        }
+
         public void Tick() {
             // true when objects below mouse are different from previous tick
             var objectsChanged = false;
@@ -269,6 +279,21 @@ namespace LinkedMovement.Selection {
             var mouseDown = false;
 
             HitUtility.GetObjectsBelowMouse(CalcVisibility, hits);
+
+            BuildableObject nextTargetBuildableObject = null;
+            if (hits.Count > 0) {
+                // TODO: Get selected
+                nextTargetBuildableObject = hits[0].HitObject;
+            }
+            if (nextTargetBuildableObject != lastTargetBuildableObject) {
+                if (lastTargetBuildableObject != null) {
+                    LMUtils.RemoveObjectHighlight(lastTargetBuildableObject, HighlightType.MouseOver);
+                }
+                if (nextTargetBuildableObject != null) {
+                    LMUtils.AddObjectHighlight(nextTargetBuildableObject, HighlightType.MouseOver);
+                }
+            }
+            lastTargetBuildableObject = nextTargetBuildableObject;
 
             // check if changed compared to previous hits
             objectsChanged = hits.Count != currentObjects.Count;
@@ -332,7 +357,7 @@ namespace LinkedMovement.Selection {
         }
         private bool HandleChangeSelectedHiddenObject() {
             if (NumberOfHiddenObjects > 1) {
-                // TODO: this (actually don't think this is needed)
+                // TODO: enable and rename
                 LinkedMovement.Log("HandleChangeSelectedHiddenObject: TODO");
                 //if (InputManager.getKeyDown(KeyHandler.MoveHiddenCloserKeyIdentifier)) {
                 //    var newIdx = selectedHiddenObjectIndex - 1;
@@ -545,6 +570,7 @@ namespace LinkedMovement.Selection {
         private bool mouseDown, changeHeight, didChangeHeight;
         private Vector3 rectangleSelectionPlaceStartDragMouseDown, startPositionOffset, endPositionOffset, changeHeightStartWorldPosition, mouseDownWorldPosition, currentMouseWorldPosition;
         private float changeHeightStartTime;
+
         public void Tick() {
             var isMouseUsable = UIUtility.isMouseUsable();
             if (isMouseUsable) {

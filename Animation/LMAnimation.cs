@@ -48,13 +48,13 @@ namespace LinkedMovement.Animation {
                     // create temp
                     tempAnimationParams = LMAnimationParams.Duplicate(animationParams);
                     if (targetBuildableObject != null) {
-                        LMUtils.AddObjectHighlight(targetBuildableObject, Color.red);
+                        LMUtils.AddObjectHighlight(targetBuildableObject, HighlightType.AnimationTarget);
                     }
                 } else {
                     // clear temp
                     tempAnimationParams = null;
                     if (targetBuildableObject != null) {
-                        LMUtils.RemoveObjectHighlight(targetBuildableObject);
+                        LMUtils.RemoveObjectHighlight(targetBuildableObject, HighlightType.AnimationTarget);
                     }
                 }
             }
@@ -152,7 +152,7 @@ namespace LinkedMovement.Animation {
             targetGameObject = targetBuildableObject.gameObject;
 
             if (IsEditing) {
-                LMUtils.AddObjectHighlight(targetBuildableObject, Color.red);
+                LMUtils.AddObjectHighlight(targetBuildableObject, HighlightType.AnimationTarget);
                 LMUtils.DeleteChunkedMesh(targetBuildableObject);
             }
 
@@ -165,7 +165,7 @@ namespace LinkedMovement.Animation {
             LinkedMovement.Log("LMAnimation.removeTarget");
             if (targetGameObject != null) {
                 stopSequence();
-                LMUtils.RemoveObjectHighlight(targetBuildableObject);
+                LMUtils.RemoveObjectHighlight(targetBuildableObject, HighlightType.AnimationTarget);
                 targetGameObject = null;
                 targetBuildableObject = null;
             }

@@ -67,7 +67,7 @@ namespace LinkedMovement.Links {
                     if (linkParent != null) {
                         tempParentGameObject = linkParent.targetGameObject;
                         tempParentBuildableObject = linkParent.targetBuildableObject;
-                        LMUtils.AddObjectHighlight(tempParentBuildableObject, Color.red);
+                        LMUtils.AddObjectHighlight(tempParentBuildableObject, HighlightType.LinkParent);
                     }
 
                     tempTargetGameObjects = new List<GameObject>();
@@ -75,15 +75,15 @@ namespace LinkedMovement.Links {
                     foreach (var target in linkTargets) {
                         tempTargetGameObjects.Add(target.targetGameObject);
                         tempTargetBuildableObjects.Add(target.targetBuildableObject);
-                        LMUtils.AddObjectHighlight(target.targetBuildableObject, Color.yellow);
+                        LMUtils.AddObjectHighlight(target.targetBuildableObject, HighlightType.LinkTarget);
                     }
                     _tempName = _name;
                 } else {
                     // clear temps
-                    LMUtils.RemoveObjectHighlight(tempParentBuildableObject);
+                    LMUtils.RemoveObjectHighlight(tempParentBuildableObject, HighlightType.LinkParent);
                     if (tempTargetBuildableObjects != null && tempTargetBuildableObjects.Count > 0) {
                         foreach (var buildableObject in tempTargetBuildableObjects) {
-                            LMUtils.RemoveObjectHighlight(buildableObject);
+                            LMUtils.RemoveObjectHighlight(buildableObject, HighlightType.LinkTarget);
                         }
                     }
                     tempParentGameObject = null;
@@ -247,7 +247,7 @@ namespace LinkedMovement.Links {
                 tempParentGameObject = buildableObject.gameObject;
 
                 LMUtils.DeleteChunkedMesh(buildableObject);
-                LMUtils.AddObjectHighlight(buildableObject, Color.red);
+                LMUtils.AddObjectHighlight(buildableObject, HighlightType.LinkParent);
             } else {
                 // TODO: ?
                 // Think this shouldn't be a case. Setting parent would only occur during link creation.
@@ -258,7 +258,7 @@ namespace LinkedMovement.Links {
             LinkedMovement.Log("LMLink.removeParentObject");
 
             if (tempParentBuildableObject != null) {
-                LMUtils.RemoveObjectHighlight(tempParentBuildableObject);
+                LMUtils.RemoveObjectHighlight(tempParentBuildableObject, HighlightType.LinkParent);
                 
                 tempParentGameObject = null;
                 tempParentBuildableObject = null;
@@ -280,7 +280,7 @@ namespace LinkedMovement.Links {
             tempTargetGameObjects.Add(buildableObject.gameObject);
 
             LMUtils.DeleteChunkedMesh(buildableObject);
-            LMUtils.AddObjectHighlight(buildableObject, Color.yellow);
+            LMUtils.AddObjectHighlight(buildableObject, HighlightType.LinkTarget);
 
             LMUtils.EditAssociatedAnimations(new List<GameObject>() { tempParentGameObject, buildableObject.gameObject }, LMUtils.AssociatedAnimationEditMode.Stop, true);
             LMUtils.SetTargetParent(tempParentGameObject.transform, buildableObject.transform);
@@ -318,7 +318,7 @@ namespace LinkedMovement.Links {
                 return;
             }
 
-            LMUtils.RemoveObjectHighlight(buildableObject);
+            LMUtils.RemoveObjectHighlight(buildableObject, HighlightType.LinkTarget);
 
             tempTargetBuildableObjects.Remove(buildableObject);
             tempTargetGameObjects.Remove(buildableObject.gameObject);
@@ -337,7 +337,7 @@ namespace LinkedMovement.Links {
             LMUtils.EditAssociatedAnimations(new List<GameObject>() { tempParentGameObject }, LMUtils.AssociatedAnimationEditMode.Stop, true);
 
             foreach (var buildableObject in tempTargetBuildableObjects) {
-                LMUtils.RemoveObjectHighlight(buildableObject);
+                LMUtils.RemoveObjectHighlight(buildableObject, HighlightType.LinkTarget);
                 LMUtils.SetTargetParent(null, buildableObject.transform);
                 LMUtils.UpdateMouseColliders(buildableObject);
             }
