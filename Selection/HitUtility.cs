@@ -34,7 +34,8 @@ namespace LinkedMovement.Selection {
         public delegate Visibility CalcVisibility(BuildableObject o);
         private static int Compare(BuildableObjectBelowMouseInfo o1, BuildableObjectBelowMouseInfo o2) {
             return Comparer<float>.Default.Compare(o1.HitDistance, o2.HitDistance) switch {
-                0 => -1 * Comparer<Visibility>.Default.Compare(o1.HitVisibility, o2.HitVisibility),
+                //0 => -1 * Comparer<Visibility>.Default.Compare(o1.HitVisibility, o2.HitVisibility),
+                0 => Comparer<Visibility>.Default.Compare(o1.HitVisibility, o2.HitVisibility),
                 var c => c,
             };
         }
@@ -49,6 +50,7 @@ namespace LinkedMovement.Selection {
         }
 
         private static readonly List<BuildableObjectBelowMouseInfo> tmpResults = new List<BuildableObjectBelowMouseInfo>();
+
         /// <summary>
         /// Returns object below the mouse.
         /// Unlike Utility.getObjectBelowMouse, which returns the closest canBeSelected() object,
@@ -70,6 +72,27 @@ namespace LinkedMovement.Selection {
         /// </summary>
         public static void GetObjectsBelowMouse(CalcVisibility calcVisibility, List<BuildableObjectBelowMouseInfo> results) {
             Debug.Assert(results.Count == 0);
+
+            try {
+                GetAllObjectsBelowMouse(calcVisibility, tmpResults);
+
+                foreach (var hit in tmpResults) {
+                    switch (hit.HitVisibility) {
+                        case Visibility.Hidden:
+                            results.Add(hit);
+                            break;
+                        case Visibility.Block:
+                            break;
+                        case Visibility.Visible:
+                            results.Add(hit);
+                            // don't return, get all
+                            break;
+                    }
+                }
+            } finally {
+                tmpResults.Clear();
+            }
+            return;
 
             //LinkedMovement.Log("HitUtility.GetObjectsBelowMouse");
 
@@ -177,7 +200,7 @@ namespace LinkedMovement.Selection {
 
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             var hits = MouseCollisions.Instance.raycastAll(ray, float.MaxValue);
-            LinkedMovement.Log("GetAllObjectsBelowMouse hits count: " + hits.Length);
+            //LinkedMovement.Log("GetAllObjectsBelowMouse hits count: " + hits.Length);
             foreach (var hit in MouseCollisions.Instance.raycastAll(ray, float.MaxValue)) {
                 var o = hit.hitObject.GetComponentInParent<BuildableObject>();
                 if (o != null) {

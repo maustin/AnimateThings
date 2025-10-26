@@ -170,7 +170,6 @@
     <Compile Include="RapidGUI\RGUI\Slider.cs" />
     <Compile Include="RapidGUI\RGUI\Slider\RecursiveSlider.cs" />
     <Compile Include="Utils\LMHighlightComponent.cs" />
-    <Compile Include="Utils\LMHighlightManager.cs" />
     <Compile Include="Utils\PairingConverter.cs" />
     <Compile Include="Utils\SelectionHandler.cs" />
     <Compile Include="Selection\HitUtility.cs" />

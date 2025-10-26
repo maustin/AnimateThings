@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LinkedMovement {
     public class LinkedMovement : AbstractMod {
-        public const string VERSION_NUMBER = "beta 10-23";
+        public const string VERSION_NUMBER = "beta 10-26";
         public const string HELPER_OBJECT_NAME = "Animation Helper (autohides)";
         public override string getIdentifier() => "com.themeparkitect.LinkedMovementCode";
         public override string getName() => "Animate Things";
@@ -170,6 +170,9 @@ namespace LinkedMovement {
             Log("register hotkeys");
             _keybindManager = new KeybindManager(getIdentifier(), getName());
             _keybindManager.AddKeybind("LM_toggleGUI", "Toggle Linker UI", "Toggles whether the Linker UI is visible", KeyCode.Keypad3);
+            _keybindManager.AddKeybind("LM_prevTargetObject", "Previous Target Object", "Previous target object", KeyCode.Minus);
+            _keybindManager.AddKeybind("LM_nextTargetObject", "Next Target Object", "Next target object", KeyCode.Equals);
+
             _keybindManager.RegisterAll();
             KeybindsRegistered = true;
         }

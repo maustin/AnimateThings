@@ -34,6 +34,7 @@ namespace LinkedMovement.UI.NewContent {
 
                 using (Scope.GuiEnabled(!hasParent)) {
                     if (Button("Select Parent")) {
+                        GUI.FocusControl(null);
                         controller.currentLink.startPickingParent();
                     }
                 }

@@ -1,7 +1,6 @@
 ﻿// ATTRIB: HideScenery
 using LinkedMovement.Selection;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 
 namespace LinkedMovement {
@@ -66,9 +65,9 @@ namespace LinkedMovement {
         }
         private void OnOptionsChanged(Options options, string property) {
             switch (property) {
-                case nameof(Options.Transparency):
-                    UpdateTransparency();
-                    break;
+                //case nameof(Options.Transparency):
+                //    UpdateTransparency();
+                //    break;
                 case nameof(Options.Mode):
                     ApplyMode();
                     break;
@@ -93,19 +92,20 @@ namespace LinkedMovement {
             }
         }
 
-        private Material _highlightMaterial = null;
-        private Material HighlightMaterial {
-            get {
-                if (_highlightMaterial == null) {
-                    _highlightMaterial = (Material)
-                      typeof(Park)
-                        .GetField("seeThroughMaterialInstance", BindingFlags.NonPublic | BindingFlags.Instance)
-                        .GetValue(GameController.Instance.park);
-                }
-                return _highlightMaterial;
-            }
-        }
+        //private Material _highlightMaterial = null;
+        //private Material HighlightMaterial {
+        //    get {
+        //        if (_highlightMaterial == null) {
+        //            _highlightMaterial = (Material)
+        //              typeof(Park)
+        //                .GetField("seeThroughMaterialInstance", BindingFlags.NonPublic | BindingFlags.Instance)
+        //                .GetValue(GameController.Instance.park);
+        //        }
+        //        return _highlightMaterial;
+        //    }
+        //}
 
+        // TODO: Eliminate
         public const string HideSceneryTag = "HideSceneryObject";
         private readonly List<SerializedMonoBehaviour> isHiddenBuffer = new();
         public bool IsHidden(BuildableObject o) {
@@ -119,12 +119,12 @@ namespace LinkedMovement {
             return true;
         }
 
-        private void UpdateTransparency() {
-            // from Park.updateSeeThroughObjectsMaterialAlpha
-            var color = HighlightMaterial.color;
-            color.a = Mathf.Lerp(0.01960784f, 0.1764706f, Options.Transparency);
-            HighlightMaterial.color = color;
-        }
+        //private void UpdateTransparency() {
+        //    // from Park.updateSeeThroughObjectsMaterialAlpha
+        //    var color = HighlightMaterial.color;
+        //    color.a = Mathf.Lerp(0.01960784f, 0.1764706f, Options.Transparency);
+        //    HighlightMaterial.color = color;
+        //}
 
         private void OnAddedSelectedObject(BuildableObject o) {
             if (o == null) {

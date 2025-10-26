@@ -225,43 +225,47 @@ namespace LinkedMovement.Selection {
         }
 
         private BuildableObject lastTargetBuildableObject = null;
+
         /// <summary>
         /// List for HitUtility
         /// </summary>
         private List<BuildableObjectBelowMouseInfo> hits = new();
+
         /// <summary>
         /// List to detect changes in consecutive hits
         /// </summary>
         private List<BuildableObjectBelowMouseInfo> currentObjects = new();
 
-        private int ObjectsCount => currentObjects.Count;
-        private bool HasObjects => currentObjects.Count > 0;
-        private bool TryGetLast(out BuildableObjectBelowMouseInfo o) {
-            if (currentObjects.Count > 0) {
-                o = currentObjects[currentObjects.Count - 1];
-                return true;
-            }
-            else {
-                o = default;
-                return false;
-            }
-        }
-        private bool HasVisibleObject
-          => TryGetLast(out var o) && o.HitVisibility == Visibility.Visible;
-        private int NumberOfHiddenObjects
-          => HasVisibleObject ? currentObjects.Count - 1 : currentObjects.Count;
-        private int selectedHiddenObjectIndex = -1;
+        //private int ObjectsCount => currentObjects.Count;
+        //private bool HasObjects => currentObjects.Count > 0;
+        //private bool TryGetLast(out BuildableObjectBelowMouseInfo o) {
+        //    if (currentObjects.Count > 0) {
+        //        o = currentObjects[currentObjects.Count - 1];
+        //        return true;
+        //    }
+        //    else {
+        //        o = default;
+        //        return false;
+        //    }
+        //}
+        //private bool HasVisibleObject
+        //  => TryGetLast(out var o) && o.HitVisibility == Visibility.Visible;
+        //private int NumberOfHiddenObjects
+        //  => HasVisibleObject ? currentObjects.Count - 1 : currentObjects.Count;
+        //private int selectedHiddenObjectIndex = -1;
 
-        private bool TryGetVisibleObject(out BuildableObjectBelowMouseInfo o) {
-            if (TryGetLast(out var om) && om.HitVisibility == Visibility.Visible) {
-                o = om;
-                return true;
-            }
-            else {
-                o = default;
-                return false;
-            }
-        }
+        //private bool TryGetVisibleObject(out BuildableObjectBelowMouseInfo o) {
+        //    if (TryGetLast(out var om) && om.HitVisibility == Visibility.Visible) {
+        //        o = om;
+        //        return true;
+        //    }
+        //    else {
+        //        o = default;
+        //        return false;
+        //    }
+        //}
+
+        private int currentSelectionOffset = 0;
 
         public void Clear() {
             if (lastTargetBuildableObject != null) {
@@ -270,20 +274,52 @@ namespace LinkedMovement.Selection {
             }
         }
 
+        private bool getObjectsChanged() {
+            if (hits.Count != currentObjects.Count) return true;
+
+            for (int i = 0; i < hits.Count; i++) {
+                var hit = hits[i];
+                var currentObj = currentObjects[i];
+                if (hit.HitObject != currentObj.HitObject) return true;
+            }
+            return false;
+        }
+
+        private void updateCurrentSelectionOffset() {
+            var numHits = hits.Count;
+            if (InputManager.getKeyDown("LM_prevTargetObject")) {
+                //LinkedMovement.Log("PREV SELECTION TARGET");
+                currentSelectionOffset--;
+                if (currentSelectionOffset < 0) currentSelectionOffset = hits.Count - 1;
+            }
+            if (InputManager.getKeyDown("LM_nextTargetObject")) {
+                //LinkedMovement.Log("NEXT SELECTION TARGET");
+                currentSelectionOffset++;
+                if (currentSelectionOffset >= hits.Count) currentSelectionOffset = 0;
+            }
+        }
+
         public void Tick() {
             // true when objects below mouse are different from previous tick
-            var objectsChanged = false;
+            //var objectsChanged = false;
             // true when selected hidden object changed
-            var selectedObjectChanged = false;
+            //var selectedObjectChanged = false;
             // true when mouse down
             var mouseDown = false;
 
             HitUtility.GetObjectsBelowMouse(CalcVisibility, hits);
 
+            var objectChanged = false;
+            var objectsChanged = getObjectsChanged();
+            if (objectsChanged) {
+                currentSelectionOffset = 0;
+            }
+            updateCurrentSelectionOffset();
+
             BuildableObject nextTargetBuildableObject = null;
             if (hits.Count > 0) {
-                // TODO: Get selected
-                nextTargetBuildableObject = hits[0].HitObject;
+                //nextTargetBuildableObject = hits[0].HitObject;
+                nextTargetBuildableObject = hits[currentSelectionOffset].HitObject;
             }
             if (nextTargetBuildableObject != lastTargetBuildableObject) {
                 if (lastTargetBuildableObject != null) {
@@ -292,26 +328,34 @@ namespace LinkedMovement.Selection {
                 if (nextTargetBuildableObject != null) {
                     LMUtils.AddObjectHighlight(nextTargetBuildableObject, HighlightType.MouseOver);
                 }
+                objectChanged = true;
             }
             lastTargetBuildableObject = nextTargetBuildableObject;
 
             // check if changed compared to previous hits
-            objectsChanged = hits.Count != currentObjects.Count;
-            if (!objectsChanged) {
-                Debug.Assert(hits.Count == currentObjects.Count);
-                for (int i = hits.Count - 1; i >= 0; i--) {
-                    var h = hits[i];
-                    var c = currentObjects[i];
-                    if (h.HitVisibility != c.HitVisibility || h.HitObject != c.HitObject) {
-                        objectsChanged = true;
-                        break;
-                    }
-                }
-            }
+            //objectsChanged = hits.Count != currentObjects.Count;
+            //if (!objectsChanged) {
+            //    Debug.Assert(hits.Count == currentObjects.Count);
+            //    for (int i = hits.Count - 1; i >= 0; i--) {
+            //        var h = hits[i];
+            //        var c = currentObjects[i];
+            //        if (h.HitVisibility != c.HitVisibility || h.HitObject != c.HitObject) {
+            //            objectsChanged = true;
+            //            break;
+            //        }
+            //    }
+            //}
+
+            //if (objectsChanged) {
+            //    UpdateCurrentObjects();
+            //    selectedObjectChanged = true;
+            //}
 
             if (objectsChanged) {
-                UpdateCurrentObjects();
-                selectedObjectChanged = true;
+                // TODO: Why dis way?
+                var t = currentObjects;
+                currentObjects = hits;
+                hits = t;
             }
 
             hits.Clear();
@@ -321,26 +365,34 @@ namespace LinkedMovement.Selection {
                 // add objects
                 if (Input.GetMouseButtonDown(0)) {
                     LinkedMovement.Log("Vis Tick mouse 0 down");
-                    if (TryGetVisibleObject(out var o)) {
-                        LinkedMovement.Log("Do Add");
-                        OnSelectedObject(SelectionOperation.Add, o.HitObject);
-                        mouseDown = true;
-                    }
+                    // TODO: DO ADD for current selected object
+                    LinkedMovement.Log("Do Add");
+                    OnSelectedObject(SelectionOperation.Add, lastTargetBuildableObject);
+                    mouseDown = true;
+                    //if (TryGetVisibleObject(out var o)) {
+                    //    LinkedMovement.Log("Do Add");
+                    //    OnSelectedObject(SelectionOperation.Add, o.HitObject);
+                    //    mouseDown = true;
+                    //}
                 }
                 // remove
                 else if (Input.GetMouseButtonDown(1)) {
                     LinkedMovement.Log("Vis Tick mouse 1 down");
-                    if (TryGetVisibleObject(out var o)) {
-                        LinkedMovement.Log("Do Remove");
-                        OnSelectedObject(SelectionOperation.Remove, o.HitObject);
-                        mouseDown = true;
-                    }
+                    // TODO: DO REMOVE for current selected object
+                    LinkedMovement.Log("Do Remove");
+                    OnSelectedObject(SelectionOperation.Remove, lastTargetBuildableObject);
+                    mouseDown = true;
+                    //if (TryGetVisibleObject(out var o)) {
+                    //    LinkedMovement.Log("Do Remove");
+                    //    OnSelectedObject(SelectionOperation.Remove, o.HitObject);
+                    //    mouseDown = true;
+                    //}
                 }
-                else if (!objectsChanged) {
-                    selectedObjectChanged = HandleChangeSelectedHiddenObject();
-                }
+                //else if (!objectsChanged) {
+                //    selectedObjectChanged = HandleChangeSelectedHiddenObject();
+                //}
 
-                ShowTooltip(mouseDown, objectsChanged, selectedObjectChanged);
+                ShowTooltip(mouseDown, objectsChanged, objectChanged);
             }
         }
 
@@ -355,47 +407,50 @@ namespace LinkedMovement.Selection {
                     break;
             }
         }
-        private bool HandleChangeSelectedHiddenObject() {
-            if (NumberOfHiddenObjects > 1) {
-                // TODO: enable and rename
-                LinkedMovement.Log("HandleChangeSelectedHiddenObject: TODO");
-                //if (InputManager.getKeyDown(KeyHandler.MoveHiddenCloserKeyIdentifier)) {
-                //    var newIdx = selectedHiddenObjectIndex - 1;
-                //    if (newIdx >= 0) {
-                //        selectedHiddenObjectIndex = newIdx;
-                //        return true;
-                //    }
-                //}
-                //else if (InputManager.getKeyDown(KeyHandler.MoveHiddenAwayIdentifier)) {
-                //    var newIdx = selectedHiddenObjectIndex + 1;
-                //    if (newIdx < NumberOfHiddenObjects) {
-                //        selectedHiddenObjectIndex = newIdx;
-                //        return true;
-                //    }
-                //}
-            }
-            return false;
-        }
 
-        private void UpdateCurrentObjects() {
-            // make new found object hierarchy selected
-            var t = currentObjects;
-            currentObjects = hits;
-            hits = t;
+        //private bool HandleChangeSelectedHiddenObject() {
+        //    // TODO: keep? remove? update
+        //    LinkedMovement.Log("HandleChangeSelectedHiddenObject: TODO");
 
-            // mark closest hidden object as selected
-            // -> last or 2nd last element
-            if (currentObjects.Count > 0) {
-                selectedHiddenObjectIndex = currentObjects.Count - 1;
-                if (HasVisibleObject) {
-                    // only one element that is visible: count = 1 -> idx = 0 -> selected = -1
-                    selectedHiddenObjectIndex--;
-                }
-            }
-            else {
-                selectedHiddenObjectIndex = -1;
-            }
-        }
+        //    //if (NumberOfHiddenObjects > 1) {
+                
+        //        //if (InputManager.getKeyDown(KeyHandler.MoveHiddenCloserKeyIdentifier)) {
+        //        //    var newIdx = selectedHiddenObjectIndex - 1;
+        //        //    if (newIdx >= 0) {
+        //        //        selectedHiddenObjectIndex = newIdx;
+        //        //        return true;
+        //        //    }
+        //        //}
+        //        //else if (InputManager.getKeyDown(KeyHandler.MoveHiddenAwayIdentifier)) {
+        //        //    var newIdx = selectedHiddenObjectIndex + 1;
+        //        //    if (newIdx < NumberOfHiddenObjects) {
+        //        //        selectedHiddenObjectIndex = newIdx;
+        //        //        return true;
+        //        //    }
+        //        //}
+        //    //}
+        //    return false;
+        //}
+
+        //private void UpdateCurrentObjects() {
+        //    // make new found object hierarchy selected
+        //    var t = currentObjects;
+        //    currentObjects = hits;
+        //    hits = t;
+
+        //    // mark closest hidden object as selected
+        //    // -> last or 2nd last element
+        //    if (currentObjects.Count > 0) {
+        //        selectedHiddenObjectIndex = currentObjects.Count - 1;
+        //        if (HasVisibleObject) {
+        //            // only one element that is visible: count = 1 -> idx = 0 -> selected = -1
+        //            selectedHiddenObjectIndex--;
+        //        }
+        //    }
+        //    else {
+        //        selectedHiddenObjectIndex = -1;
+        //    }
+        //}
 
         //todo: change from time to mouse moved?
         private float updateTooltipTimeout = 0.0f;
@@ -440,24 +495,37 @@ namespace LinkedMovement.Selection {
                         void Name(BuildableObject o) => tooltip.Append(GetName(o));
                         void EOL() => tooltip.AppendLine();
 
-                        // first show visible object
-                        {
-                            if (TryGetVisibleObject(out var o)) {
-                                Indent(); Name(o.HitObject); EOL();
-                            }
-                        }
-                        tooltip.Append('-', 7); EOL();
-                        // then all hidden objects and mark selected one
-                        for (int i = NumberOfHiddenObjects - 1; i >= 0; i--) {
-                            if (selectedHiddenObjectIndex == i) {
+                        // TODO: Add ">" to selected obj
+                        foreach (var obj in currentObjects) {
+                            if (obj.HitObject == lastTargetBuildableObject) {
+                                // TODO
                                 tooltip.Append("> ");
-                            }
-                            else {
+                            } else {
+                                // TODO
                                 Indent();
                             }
-                            var o = currentObjects[i];
-                            Name(o.HitObject); EOL();
+                            Name(obj.HitObject);
+                            EOL();
                         }
+
+                        // first show visible object
+                        //{
+                        //    if (TryGetVisibleObject(out var o)) {
+                        //        Indent(); Name(o.HitObject); EOL();
+                        //    }
+                        //}
+                        //tooltip.Append('-', 7); EOL();
+                        //// then all hidden objects and mark selected one
+                        //for (int i = NumberOfHiddenObjects - 1; i >= 0; i--) {
+                        //    if (selectedHiddenObjectIndex == i) {
+                        //        tooltip.Append("> ");
+                        //    }
+                        //    else {
+                        //        Indent();
+                        //    }
+                        //    var o = currentObjects[i];
+                        //    Name(o.HitObject); EOL();
+                        //}
 
                         LinkedMovement.Log("ShowTooltip " + tooltip.ToString());
 

@@ -20,18 +20,20 @@ namespace LinkedMovement {
             this._allRegistered.Add(new KeybindManager.Keybind(id, name, this._id, defaultKey, description));
         }
 
-        public void ClearAllKeybinds() => this._allRegistered.Clear();
-
         public void RegisterAll() {
-            ScriptableSingleton<InputManager>.Instance.registerKeyGroup(this._group);
-            foreach (KeybindManager.Keybind keybind in this._allRegistered)
-                ScriptableSingleton<InputManager>.Instance.registerKeyMapping(keybind.mapping);
+            LinkedMovement.Log("KeybindManager.RegisterAll");
+            InputManager.Instance.registerKeyGroup(this._group);
+            foreach (KeybindManager.Keybind keybind in this._allRegistered) {
+                LinkedMovement.Log($"Register id: {keybind.id}, key: {keybind.mapping.keyName}");
+                InputManager.Instance.registerKeyMapping(keybind.mapping);
+            }
         }
 
         public void UnregisterAll() {
-            ScriptableSingleton<InputManager>.Instance.unregisterKeyGroup(this._group);
-            foreach (KeybindManager.Keybind keybind in this._allRegistered)
-                ScriptableSingleton<InputManager>.Instance.unregisterKeyMapping(keybind.mapping);
+            InputManager.Instance.unregisterKeyGroup(this._group);
+            foreach (KeybindManager.Keybind keybind in this._allRegistered) {
+                InputManager.Instance.unregisterKeyMapping(keybind.mapping);
+            }
         }
 
         public class Keybind {

@@ -34,6 +34,7 @@ namespace LinkedMovement.UI.NewContent {
 
                 using (Scope.GuiEnabled(!hasTarget)) {
                     if (Button("Select Target")) {
+                        GUI.FocusControl(null);
                         controller.currentAnimation.startPicking();
                     }
                 }

@@ -39,6 +39,7 @@ namespace LinkedMovement.UI.NewContent {
                         selectButtonText = "Select Children";
 
                     if (Button(selectButtonText)) {
+                        GUI.FocusControl(null);
                         controller.currentLink.startPickingTargets(selectionModes[selectedSelectionMode]);
                     }
                 }
