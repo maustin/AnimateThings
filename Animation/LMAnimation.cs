@@ -215,10 +215,10 @@ namespace LinkedMovement.Animation {
                 var animationParams = getAnimationParams();
                 LMUtils.ResetTransformLocals(targetGameObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
             }
+        }
 
-            // TODO: Should this only happen if sequence is alive?
-            //var animationParams = getAnimationParams();
-            //LMUtils.ResetTransformLocals(targetGameObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
+        public void stopSequenceImmediate() {
+            sequence.emergencyStop();
         }
 
         public void buildSequence(bool passedIsEditing = false) {

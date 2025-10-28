@@ -10,8 +10,6 @@ namespace LinkedMovement {
 
         // TODO: 10-26
         //
-        // Color tweens
-        // - Starting values (esp on park load)
         // UI update
         // Check Delays
         // Check # Tweens being created matches expected
@@ -51,7 +49,10 @@ namespace LinkedMovement {
 
         private void OnDestroy() {
             LinkedMovement.Log("LMController OnDestroy");
-            
+
+            foreach (var animation in animations) {
+                animation.stopSequenceImmediate();
+            }
             animations.Clear();
             links.Clear();
             LinkedMovement.ClearLMController();

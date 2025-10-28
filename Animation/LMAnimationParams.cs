@@ -63,14 +63,15 @@ namespace LinkedMovement {
             startingLocalRotation = startingTransform.localEulerAngles;
             startingLocalScale = startingTransform.localScale;
 
-            LinkedMovement.Log("NEW starting custom colors");
-            var customColors = LMUtils.GetCustomColors(startingTransform.gameObject);
-            if (customColors != null && customColors.Length > 0) {
-                LinkedMovement.Log($"Has {customColors.Length} custom colors");
-                startingCustomColors = new List<Color>(customColors);
-            } else {
-                LinkedMovement.Log("Has NO custom colors");
-                startingCustomColors = null;
+            if (startingCustomColors == null) {
+                LinkedMovement.Log("INIT starting custom colors");
+                var customColors = LMUtils.GetCustomColors(startingTransform.gameObject);
+                if (customColors != null && customColors.Length > 0) {
+                    LinkedMovement.Log($"Has {customColors.Length} custom colors");
+                    startingCustomColors = new List<Color>(customColors);
+                } else {
+                    LinkedMovement.Log("Has NO custom colors");
+                }
             }
         }
 
