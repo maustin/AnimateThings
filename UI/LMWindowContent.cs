@@ -1,5 +1,4 @@
-﻿using LinkedMovement.UI.Utils;
-using RapidGUI;
+﻿using RapidGUI;
 using UnityEngine;
 using static UnityEngine.GUILayout;
 
@@ -9,11 +8,13 @@ namespace LinkedMovement.UI {
         internal LMWindow window;
         internal string title;
 
-        virtual public void DoGUI() {
-            using (Scope.Vertical()) {
-                GUILayout.Label(title, RGUIStyle.popupTitle);
-                Space(10f);
+        public void RenderGUI() {
+            Space(3f);
+            using (new GUILayout.VerticalScope(RGUIStyle.popupWindowContentNew)) {
+                DoGUI();
             }
         }
+
+        virtual public void DoGUI() {}
     }
 }

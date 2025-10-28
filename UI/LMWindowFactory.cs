@@ -25,6 +25,7 @@ namespace LinkedMovement.UI {
 
             switch(type) {
                 case WindowManager.WindowType.ModeDeterminationNew:
+                    title = "Animate Things!";
                     width = 300;
                     position = getWindowPositionCenter(width, 300);
                     content = new ModeDeterminationContentNew();

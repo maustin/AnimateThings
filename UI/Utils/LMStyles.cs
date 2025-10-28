@@ -4,16 +4,16 @@ using UnityEngine;
 namespace LinkedMovement.UI.Utils {
     public static class LMStyles {
         public static GUIStyle DarkWindowTitleBarStyle;
-        private static void InitializeDarkWindowTitleBarStyle() {
-            var style = new GUIStyle(GUI.skin.box);
+        //private static void InitializeDarkWindowTitleBarStyle() {
+        //    var style = new GUIStyle(GUI.skin.box);
 
-            style.normal.background = CreateTexDarkTitleBar(RGUIStyle.darkWindowTexNormal);
-            style.normal.textColor = RGUIStyle.darkWindow.normal.textColor;
-            style.name = "DarkWindowTitleBar";
-            style.alignment = TextAnchor.MiddleCenter;
+        //    style.normal.background = CreateTexDarkTitleBar(RGUIStyle.darkWindowTexNormal);
+        //    style.normal.textColor = RGUIStyle.darkWindow.normal.textColor;
+        //    style.name = "DarkWindowTitleBar";
+        //    style.alignment = TextAnchor.MiddleCenter;
 
-            DarkWindowTitleBarStyle = style;
-        }
+        //    DarkWindowTitleBarStyle = style;
+        //}
 
         public static GUIStyle DarkWindowTitleBarMinimizedStyle;
         private static void InitializeDarkWindowTitleBarMinimizedStyle() {
@@ -35,7 +35,7 @@ namespace LinkedMovement.UI.Utils {
         }
 
         static LMStyles() {
-            InitializeDarkWindowTitleBarStyle();
+            //InitializeDarkWindowTitleBarStyle();
             InitializeDarkWindowTitleBarMinimizedStyle();
             InitializeHorizontalLine();
         }

@@ -13,6 +13,10 @@ namespace RapidGUI
         public static GUIStyle darkWindow;
         public static GUIStyle alignLeftBox;
 
+        public static GUIStyle popupWindowNew;
+        public static GUIStyle popupWindowTitleNew;
+        public static GUIStyle popupWindowContentNew;
+
         public static GUIStyle warningLabel;
         public static GUIStyle warningLabelNoStyle;
 
@@ -23,12 +27,16 @@ namespace RapidGUI
         // GUIStyleState.background will be null 
         // if it set after secound scene load and don't use a few frame
         // to keep textures, set it to other member. at unity2019
-        public static Texture2D flatButtonTex;
-        public static Texture2D flatButtonLeftTex;
-        public static Texture2D popupTex;
-        public static Texture2D darkWindowTexNormal;
-        public static Texture2D darkWindowTexOnNormal;
-        public static Texture2D animationStepTex;
+        private static Texture2D flatButtonTex;
+        private static Texture2D flatButtonLeftTex;
+        private static Texture2D popupTex;
+        private static Texture2D popupTitleTex;
+        private static Texture2D darkWindowTexNormal;
+        private static Texture2D darkWindowTexOnNormal;
+        private static Texture2D animationStepTex;
+
+        private static Texture2D popupTexNew;
+        private static Texture2D popupWindowContentTexNew;
 
         static RGUIStyle()
         {
@@ -50,6 +58,10 @@ namespace RapidGUI
             CreateAnimationStep();
             CreateDimText();
             CreateInfoText();
+
+            CreatePopupWindowNew();
+            CreatePopupWindowTitleNew();
+            CreatePopupWindowContentNew();
         }
 
         static void CreateFlatButton()
@@ -164,9 +176,8 @@ namespace RapidGUI
             };
 
             popupTex = new Texture2D(1, 1);
-            var brightness = 0.2f;
-            var alpha = 0.9f;
-            popupTex.SetPixels(new[] { new Color(brightness, brightness, brightness, alpha) });
+            var brightness = 0.207f;
+            popupTex.SetPixel(0, 0, new Color(brightness, brightness, brightness));
             popupTex.Apply();
 
             style.normal.background = style.hover.background = popupTex;
@@ -177,15 +188,87 @@ namespace RapidGUI
 
         static void CreatePopupTitle() {
             var style = new GUIStyle(GUI.skin.label);
-            style.fontSize = 18;
+
+            //style.fontSize = 18;
             style.alignment = TextAnchor.MiddleCenter;
-            style.fontStyle = FontStyle.Bold;
-            style.normal.textColor = Color.white;
-            style.normal.background = Texture2D.blackTexture;
+            //style.fontStyle = FontStyle.Bold;
+            //style.normal.textColor = Color.white;
+            //style.normal.background = Texture2D.blackTexture;
+
+            popupTitleTex = new Texture2D(1, 1);
+            var bgB = 0.238f;
+            popupTitleTex.SetPixel(0, 0, new Color(bgB, bgB, bgB));
+            popupTitleTex.Apply();
+
+            var textB = 0.129f;
+            style.normal.textColor = new Color(textB, textB, textB);
+            style.normal.background = popupTitleTex;
 
             popupTitle = style;
         }
 
+        static void CreatePopupWindowNew() {
+            var style = new GUIStyle(GUI.skin.window);
+
+            popupTexNew = new Texture2D(1, 1);
+            var colorValue = 0.63f;
+            popupTexNew.SetPixel(0, 0, new Color(colorValue, colorValue, colorValue));
+            popupTexNew.Apply();
+
+            style.normal.background = popupTexNew;
+            style.onNormal.background = popupTexNew;
+
+            style.name = nameof(popupWindowNew);
+            popupWindowNew = style;
+        }
+
+        static void CreatePopupWindowTitleNew() {
+            var style = new GUIStyle(GUI.skin.label);
+            //style.alignment = TextAnchor.MiddleCenter;
+
+            //popupTitleTexNew = new Texture2D(1, 1);
+            //var bgColorVal = 0.63f;
+            //popupTitleTexNew.SetPixel(0, 0, new Color(bgColorVal, bgColorVal, bgColorVal));
+            //popupTitleTexNew.Apply();
+
+            var textColorVal = 0.32f;
+            style.normal.textColor = new Color(textColorVal, textColorVal, textColorVal);
+            //style.normal.background = popupTitleTexNew;
+
+            style.name = nameof(popupWindowTitleNew);
+            popupWindowTitleNew = style;
+        }
+
+        static void CreatePopupWindowContentNew() {
+            //var style = new GUIStyle(GUI.skin.box);
+
+            var style = new GUIStyle(GUI.skin.box);
+            LinkedMovement.LinkedMovement.Log("CreatePopupWindowContentNew");
+            LinkedMovement.LinkedMovement.Log("padding: " + style.padding.ToString());
+            LinkedMovement.LinkedMovement.Log("maring: " + style.margin.ToString());
+            LinkedMovement.LinkedMovement.Log("border: " + style.border.ToString());
+            //style.padding = new RectOffset();
+            style.padding = new RectOffset(0, 0, 10, 0);
+            style.margin = new RectOffset();
+            //style.margin = new RectOffset(0, 0, 10, 0);
+            //style.border = new RectOffset();
+            style.border = new RectOffset(-10, -10, 0, -10);
+            LinkedMovement.LinkedMovement.Log("padding: " + style.padding.ToString());
+            LinkedMovement.LinkedMovement.Log("maring: " + style.margin.ToString());
+            LinkedMovement.LinkedMovement.Log("border: " + style.border.ToString());
+
+            var bgValue = 0.54f;
+            //var bgValue = 0.11f;
+            popupWindowContentTexNew = new Texture2D(1, 1);
+            popupWindowContentTexNew.SetPixel(0, 0, new Color(bgValue, bgValue, bgValue));
+            //popupWindowContentTexNew.SetPixel(0, 0, new Color(0f, 0f, 0.5f));
+            popupWindowContentTexNew.Apply();
+
+            style.normal.background = style.hover.background = popupWindowContentTexNew;
+
+            style.name = nameof(popupWindowContentTexNew);
+            popupWindowContentNew = style;
+        }
 
         static void CreateDarkWindow()
         {

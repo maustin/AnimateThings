@@ -28,26 +28,28 @@ namespace RapidGUI
 
             protected static GUIStyle CheckStyle(GUIStyle style)
             {
-                GUIStyle ret = null;
-                if (style == null)
-                {
-                    ret = defaultStyle;
-                }
-                else if (style.overflow != overflow)
-                {
-                    if (customStyleDic.TryGetValue(style, out var customStyle))
-                    {
-                        ret = customStyle;
-                    }
-                    else
-                    {
-                        ret = new GUIStyle(style);
-                        ret.overflow = overflow;
-                        customStyleDic[style] = ret;
-                    }
-                }
+                return style;
 
-                return ret;
+                //GUIStyle ret = null;
+                //if (style == null)
+                //{
+                //    ret = defaultStyle;
+                //}
+                //else if (style.overflow != overflow)
+                //{
+                //    if (customStyleDic.TryGetValue(style, out var customStyle))
+                //    {
+                //        ret = customStyle;
+                //    }
+                //    else
+                //    {
+                //        ret = new GUIStyle(style);
+                //        ret.overflow = overflow;
+                //        customStyleDic[style] = ret;
+                //    }
+                //}
+
+                //return ret;
             }
 
             protected static Dictionary<int, ResizableWindow_> table = new Dictionary<int, ResizableWindow_>();
@@ -72,6 +74,7 @@ namespace RapidGUI
                 rect = ResizeRect(rect, detectionRange);
                 //return GUILayout.Window(id, rect, func, text, CheckStyle(style), options);
                 return GUILayout.Window(id, rect, func, GUIContent.none, CheckStyle(style), options);
+                //return GUILayout.Window(id, rect, func, GUIContent.none, RGUIStyle.popupWindowContentNew, options);
             }
 
 

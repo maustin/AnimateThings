@@ -12,8 +12,6 @@ namespace LinkedMovement.UI.NewContent {
             base.DoGUI();
 
             using (Scope.Vertical()) {
-                Label("Animation & Links UI");
-                Space(3f);
                 if (Button("Create Animation")) {
                     LinkedMovement.Log("Clicked Create Animation");
                     windowManager.removeWindow(this.window);

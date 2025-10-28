@@ -24,7 +24,8 @@ namespace LinkedMovement.UI {
             }
 
             this.rect.position = position;
-            this.Add(content.DoGUI);
+            //this.Add(content.DoGUI);
+            this.Add(content.RenderGUI);
             this.Open();
             this.onClose += (WindowLauncher launcher) => {
                 //windowManager.removeWindow(launcher as LMWindow);

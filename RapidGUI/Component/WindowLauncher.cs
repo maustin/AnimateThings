@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -79,14 +78,18 @@ namespace RapidGUI
                 rect = RGUI.ResizableWindow(GetHashCode(), rect,
                     (id) =>
                     {
-                        var buttonSize = new Vector2(40f, 15f);
+                        var titleSize = new Vector2(200f, 20f);
+                        var titlePos = new Vector2(10f, 2f);
+                        var titleRect = new Rect(titlePos, titleSize);
+                        GUI.Label(titleRect, name, RGUIStyle.popupWindowTitleNew);
+
+                        var buttonSize = new Vector2(40f, 20f);
                         var buttonPos = new Vector2(rect.size.x - buttonSize.x, 2f);
                         var buttonRect = new Rect(buttonPos, buttonSize);
-                        if (GUI.Button(buttonRect, "✕", RGUIStyle.flatButton))
-                        {
+                        if (GUI.Button(buttonRect, "✕", RGUIStyle.flatButton)) {
                             CloseWindow();
                         }
-                        
+
                         foreach (var func in GetGUIFuncs())
                         {
                             func();
@@ -98,7 +101,7 @@ namespace RapidGUI
                             WindowInvoker.SetFocusedWindow(this);
                         }
                     }
-                    , name, RGUIStyle.darkWindow);
+                    , name, RGUIStyle.popupWindowNew);
 
                 isMoved |= pos != rect.position;
             }
