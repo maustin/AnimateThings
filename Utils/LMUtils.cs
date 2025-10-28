@@ -676,6 +676,7 @@ namespace LinkedMovement.Utils {
         }
 
         public static void AddObjectHighlight(BuildableObject buildableObject, HighlightType highlightType) {
+            if (buildableObject == null) return;
             LinkedMovement.Log($"LMUtils.AddObjectHighlight to {buildableObject.getName()} type {highlightType.ToString()}");
             var highlightComponent = buildableObject.gameObject.GetComponent<LMHighlightComponent>();
             if (highlightComponent == null) {
@@ -686,6 +687,7 @@ namespace LinkedMovement.Utils {
         }
 
         public static void RemoveObjectHighlight(BuildableObject buildableObject, HighlightType highlightType) {
+            if (buildableObject == null) return;
             LinkedMovement.Log($"LMUtils.RemoveObjectHighlight to {buildableObject.getName()} type {highlightType.ToString()}");
             var highlightComponent = buildableObject.gameObject.GetComponent<LMHighlightComponent>();
             if (highlightComponent == null) {

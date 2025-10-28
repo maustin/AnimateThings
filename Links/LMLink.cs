@@ -80,7 +80,9 @@ namespace LinkedMovement.Links {
                     _tempName = _name;
                 } else {
                     // clear temps
-                    LMUtils.RemoveObjectHighlight(tempParentBuildableObject, HighlightType.LinkParent);
+                    if (tempParentBuildableObject != null) {
+                        LMUtils.RemoveObjectHighlight(tempParentBuildableObject, HighlightType.LinkParent);
+                    }
                     if (tempTargetBuildableObjects != null && tempTargetBuildableObjects.Count > 0) {
                         foreach (var buildableObject in tempTargetBuildableObjects) {
                             LMUtils.RemoveObjectHighlight(buildableObject, HighlightType.LinkTarget);
