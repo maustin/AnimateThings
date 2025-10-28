@@ -511,7 +511,19 @@ namespace LinkedMovement.Utils {
             return GetCumulativeParentLocalRotation(parentTransform, cumulativeValue);
         }
 
-        private static void BuildAnimationStep(Transform transform, Sequence sequence, LMAnimationParams animationParams, LMAnimationStep animationStep, ref Vector3 lastLocalRotationTarget) {
+        private static bool StepHasColorChange(LMAnimationStep animationStep, List<Color> lastTargetColors) {
+            var targetColors = animationStep.targetColors;
+            if (targetColors == null) return false;
+
+            for (var i = 0; i < targetColors.Count; i++) {
+                var targetColor = targetColors[i];
+                var lastColor = lastTargetColors[i];
+                if (targetColor != lastColor) return true;
+            }
+            return false;
+        }
+
+        private static void BuildAnimationStep(Transform transform, Sequence sequence, LMAnimationParams animationParams, LMAnimationStep animationStep, ref Vector3 lastLocalRotationTarget, ref List<Color> lastTargetColors) {
             LinkedMovement.Log($"LMUtils.BuildAnimationStep {animationStep.name} for sequence {animationParams.name}");
             LinkedMovement.Log(animationStep.ToString());
 
@@ -519,8 +531,9 @@ namespace LinkedMovement.Utils {
             bool hasPositionChange = !animationStep.targetPosition.Equals(Vector3.zero);
             bool hasRotationChange = !animationStep.targetRotation.Equals(Vector3.zero);
             bool hasScaleChange = !animationStep.targetScale.Equals(Vector3.zero);
+            bool hasColorChange = StepHasColorChange(animationStep, lastTargetColors);
 
-            if (hasPositionChange || hasRotationChange || hasScaleChange) {
+            if (hasPositionChange || hasRotationChange || hasScaleChange || hasColorChange) {
                 LinkedMovement.Log("Has change");
                 if (hasPositionChange) {
                     Vector3 positionTarget = animationStep.targetPosition;
@@ -560,6 +573,26 @@ namespace LinkedMovement.Utils {
                     var newScaleTarget = new Vector3(animationStep.targetScale.x * animationParams.startingLocalScale.x, animationStep.targetScale.y * animationParams.startingLocalScale.y, animationStep.targetScale.z * animationParams.startingLocalScale.z);
                     sequence.Group(Tween.ScaleAdditive(transform, newScaleTarget, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
                 }
+                // TODO: Split color Tween creation out to its own function so the update lamba has less overhead
+                if (hasColorChange) {
+                    var customColorsComponent = transform.gameObject.GetComponent<CustomColors>();
+                    var targetColors = animationStep.targetColors;
+                    for (int i = 0; i < targetColors.Count; i++) {
+                        var colorIndex = i;
+                        var startingColor = lastTargetColors[colorIndex];
+                        var targetColor = targetColors[colorIndex];
+
+                        // Only animation changed colors
+                        if (targetColor != startingColor) {
+                            sequence.Group(
+                            Tween.Custom(startingColor, targetColor, animationStep.duration, newValue => {
+                                customColorsComponent.setColor(newValue, colorIndex);
+                            }, ease, default, default, animationStep.startDelay, animationStep.endDelay)
+                        );
+                        }
+                    }
+                    lastTargetColors = animationStep.targetColors;
+                }
                 // Add ChainDelay to "close" the current Sequence Group
                 sequence.ChainDelay(0f);
             } else {
@@ -595,8 +628,11 @@ namespace LinkedMovement.Utils {
 
             var lastLocalRotationTarget = transform.localEulerAngles;
             LinkedMovement.Log("transform.localEulerAngels: " + lastLocalRotationTarget.ToString());
+
+            var lastTargetColors = animationParams.startingCustomColors;
+
             foreach (var animationStep in animationParams.animationSteps) {
-                BuildAnimationStep(transform, sequence, animationParams, animationStep, ref lastLocalRotationTarget);
+                BuildAnimationStep(transform, sequence, animationParams, animationStep, ref lastLocalRotationTarget, ref lastTargetColors);
             }
 
             if (!isEditing) {
@@ -848,6 +884,14 @@ namespace LinkedMovement.Utils {
                     baseGO.GetComponent<Renderer>().enabled = shouldRender;
                 }
             }
+        }
+
+        public static Color[] GetCustomColors(GameObject gameObject) {
+            var customColorsComponent = gameObject.GetComponent<CustomColors>();
+            if (customColorsComponent != null) {
+                return customColorsComponent.getColors();
+            }
+            return null;
         }
 
     }

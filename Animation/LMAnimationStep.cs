@@ -1,5 +1,6 @@
 ﻿using LinkedMovement.UI.Utils;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
@@ -22,6 +23,9 @@ namespace LinkedMovement.Animation {
         public Vector3 targetRotation = Vector3.zero;
         [Serialized]
         public Vector3 targetScale = Vector3.zero;
+
+        [Serialized]
+        public List<Color> targetColors = null;
 
         [NonSerialized]
         public bool uiIsOpen = true;
@@ -48,7 +52,16 @@ namespace LinkedMovement.Animation {
             newAnimationStep.targetPosition = step.targetPosition;
             newAnimationStep.targetRotation = step.targetRotation;
             newAnimationStep.targetScale = step.targetScale;
+            newAnimationStep.targetColors = step.targetColors != null ? new List<Color>(step.targetColors) : null;
             return newAnimationStep;
+        }
+
+        public LMAnimationStep() { }
+
+        public LMAnimationStep(LMAnimationParams animationParams) {
+            if (animationParams.startingCustomColors != null) {
+                targetColors = new List<Color>(animationParams.startingCustomColors);
+            }
         }
 
         public override string ToString() {
@@ -64,6 +77,7 @@ namespace LinkedMovement.Animation {
                 sb.AppendLine("targetRotation: " + targetRotation.ToString());
             if (targetScale != Vector3.zero)
                 sb.AppendLine("targetScale: " + targetScale.ToString());
+            // TODO: Colors
             return sb.ToString();
         }
     }

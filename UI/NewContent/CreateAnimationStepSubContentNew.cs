@@ -1,6 +1,7 @@
 ﻿using LinkedMovement.Animation;
 using LinkedMovement.UI.Utils;
 using RapidGUI;
+using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GUILayout;
 
@@ -11,11 +12,51 @@ namespace LinkedMovement.UI.NewContent {
         private LMAnimationStep animationStep;
         private int stepIndex;
 
+        // TODO: Cleanup these on UI closed
+        private List<Texture2D> customTextures;
+        private int numCustomColors = 0;
+        private Color[] colors;
+
+        private void startColorPicking() {
+            var colorPicker = controller.launchColorPickerWindow(colors, 0);
+            colorPicker.OnColorsChanged += newColors => {
+                var didChangeColors = false;
+                for (int i = 0; i < numCustomColors; i++) {
+                    if (colors[i] != newColors[i]) {
+                        colors[i] = newColors[i];
+                        didChangeColors = true;
+                    }
+                }
+                
+                if (didChangeColors) {
+                    animationStep.targetColors = new List<Color>(colors);
+                    controller.currentAnimationUpdated();
+                }
+            };
+        }
+
+        private void clearColors() {
+            colors = animationParams.startingCustomColors.ToArray();
+            //animationStep.targetColors = null;
+            animationStep.targetColors = new List<Color>(colors);
+            controller.currentAnimationUpdated();
+        }
+
         public CreateAnimationStepSubContentNew(LMAnimationParams animationParams, LMAnimationStep animationStep, int stepIndex) {
             controller = LinkedMovement.GetLMController();
             this.animationParams = animationParams;
             this.animationStep = animationStep;
             this.stepIndex = stepIndex;
+
+            var staringCustomColors = animationStep.targetColors;// animationStep.targetColors ?? animationParams.startingCustomColors;
+            if (staringCustomColors != null) {
+                this.colors = staringCustomColors.ToArray();
+                numCustomColors = this.colors.Length;
+                customTextures = new List<Texture2D>();
+                for (int i = 0; i < numCustomColors; i++) {
+                    customTextures.Add(new Texture2D(1, 1));
+                }
+            }
         }
 
         public void DoGUI() {
@@ -106,7 +147,8 @@ namespace LinkedMovement.UI.NewContent {
 
             using (Scope.Horizontal()) {
                 InfoPopper.DoInfoPopper(LMStringKey.ANIMATE_CHANGE_POSITION);
-                GUILayout.Label("Position change");
+                GUILayout.Label("Position");
+                FlexibleSpace();
                 var newPosition = RGUI.Field(animationStep.targetPosition);
                 if (!animationStep.targetPosition.Equals(newPosition)) {
                     animationStep.targetPosition = newPosition;
@@ -116,7 +158,8 @@ namespace LinkedMovement.UI.NewContent {
 
             using (Scope.Horizontal()) {
                 InfoPopper.DoInfoPopper(LMStringKey.ANIMATE_CHANGE_ROTATION);
-                GUILayout.Label("Rotation change");
+                GUILayout.Label("Rotation");
+                FlexibleSpace();
                 var newRotation = RGUI.Field(animationStep.targetRotation);
                 if (!animationStep.targetRotation.Equals(newRotation)) {
                     animationStep.targetRotation = newRotation;
@@ -126,11 +169,35 @@ namespace LinkedMovement.UI.NewContent {
 
             using (Scope.Horizontal()) {
                 InfoPopper.DoInfoPopper(LMStringKey.ANIMATE_CHANGE_SCALE);
-                GUILayout.Label("Scale change");
+                GUILayout.Label("Scale");
+                FlexibleSpace();
                 var newScale = RGUI.Field(animationStep.targetScale);
                 if (!animationStep.targetScale.Equals(newScale)) {
                     animationStep.targetScale = newScale;
                     controller.currentAnimationUpdated();
+                }
+            }
+
+            using (Scope.Horizontal()) {
+                // TODO: Info
+                Label("Color");
+                FlexibleSpace();
+                if (colors != null) {
+                    for (int i = 0; i < colors.Length; i++) {
+                        var color = colors[i];
+                        var customTexture = customTextures[i];
+                        Label("     ", LMStyles.GetColoredBackgroundLabelStyle(customTexture, color));
+                        Label(" ");
+                    }
+
+                    using (Scope.GuiEnabled(!controller.colorPickerWindowIsOpen())) {
+                        if (Button("Set")) {
+                            startColorPicking();
+                        }
+                        if (Button("Clear")) {
+                            clearColors();
+                        }
+                    }
                 }
             }
 

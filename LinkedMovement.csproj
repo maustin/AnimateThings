@@ -106,7 +106,7 @@
     <Compile Include="UI\Utils\LMEase.cs" />
     <Compile Include="UI\Utils\LMStringSystem.cs" />
     <Compile Include="UI\Utils\Scope.cs" />
-    <Compile Include="UI\Utils\Styles.cs" />
+    <Compile Include="UI\Utils\LMStyles.cs" />
     <Compile Include="UI\Utils\Tooltip.cs" />
     <Compile Include="InParkHarmonyInjector.cs" />
     <Compile Include="Options.cs" />

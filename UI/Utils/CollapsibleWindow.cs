@@ -90,7 +90,7 @@ namespace LinkedMovement.UI.Utils {
                 const float width = (25.0f * 2) + 2 + (2 * 2);
                 var rect = new Rect(Rect.x + Rect.width - width, Rect.y, width, 17.0f);
                 using (Scope.Area(rect)) {
-                    GUI.Box(new Rect(0.0f, 0.0f, rect.size.x, rect.size.y), MinimizedName, Styles.DarkWindowTitleBarMinimizedStyle);
+                    GUI.Box(new Rect(0.0f, 0.0f, rect.size.x, rect.size.y), MinimizedName, LMStyles.DarkWindowTitleBarMinimizedStyle);
 
                     var preCollapsible = Collapsible;
                     Collapsible = false;
@@ -112,9 +112,9 @@ namespace LinkedMovement.UI.Utils {
                 var prevPos = rect.position;
 
                 using (Scope.Area(rect)) {
-                    var style = Styles.DarkWindowTitleBarStyle;
+                    var style = LMStyles.DarkWindowTitleBarStyle;
                     // style.alignment = TextAnchor.MiddleCenter;
-                    GUI.Box(new Rect(0.0f, 0.0f, rect.size.x, rect.size.y), name, Styles.DarkWindowTitleBarStyle);
+                    GUI.Box(new Rect(0.0f, 0.0f, rect.size.x, rect.size.y), name, LMStyles.DarkWindowTitleBarStyle);
                     DoHeader(rect.width - margin);
                 }
 

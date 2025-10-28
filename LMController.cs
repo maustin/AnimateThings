@@ -1,6 +1,7 @@
 ﻿using LinkedMovement.Animation;
 using LinkedMovement.Links;
 using LinkedMovement.Utils;
+using Parkitect.UI;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,14 +10,13 @@ namespace LinkedMovement {
 
         // TODO: 10-26
         //
-        // Pick hidden objects
-        // Test layering
-        // Delays
+        // Color tweens
+        // - Starting values (esp on park load)
         // UI update
+        // Check Delays
         // Check # Tweens being created matches expected
 
         // Triggers
-        // - Changing triggered animation not updating the existing trigger in EffectsController
         //
         // non fatal exception
         // Appears to happen when selecting a triggered animation in the Effects Controller
@@ -37,6 +37,9 @@ namespace LinkedMovement {
 
         private LMAnimation queuedAnimationToRemove;
         private LMLink queuedLinkToRemove;
+
+        // For lack of better place for this
+        private ColorPickerWindow colorPickerWindow;
         
         private void Awake() {
             LinkedMovement.Log("LMController Awake");
@@ -261,6 +264,8 @@ namespace LinkedMovement {
 
         public void clearEditMode() {
             LinkedMovement.Log("LMController.clearEditMode");
+            closeColorPickerWindow();
+
             if (currentAnimation != null) {
                 currentAnimation.discardChanges();
                 currentAnimation = null;
@@ -443,6 +448,29 @@ namespace LinkedMovement {
             }
             LinkedMovement.Log("No Link found from target");
             return null;
+        }
+
+        public bool colorPickerWindowIsOpen() {
+            return colorPickerWindow != null;
+        }
+
+        public ColorPickerWindow getColorPickerWindow() {
+            return colorPickerWindow;
+        }
+
+        public void closeColorPickerWindow() {
+            if (colorPickerWindow != null) {
+                ColorPickerWindow.closeOpenInstance();
+                colorPickerWindow = null;
+            }
+        }
+
+        public ColorPickerWindow launchColorPickerWindow(Color[] colors, int selectedIndex) {
+            colorPickerWindow = ColorPickerWindow.launch(colors, selectedIndex);
+            colorPickerWindow.onClose += () => {
+                colorPickerWindow = null;
+            };
+            return colorPickerWindow;
         }
 
         private List<LMLinkTarget> getLinkTargetsById(string id, List<LMLinkTarget> targets) {

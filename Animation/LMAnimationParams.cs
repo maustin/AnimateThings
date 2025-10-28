@@ -12,7 +12,9 @@ namespace LinkedMovement {
         public Vector3 startingLocalRotation = Vector3.zero;
         [Serialized]
         public Vector3 startingLocalScale = Vector3.one;
-
+        [Serialized]
+        public List<Color> startingCustomColors = null;
+        
         [Serialized]
         public Quaternion forward = Quaternion.identity;
 
@@ -60,10 +62,20 @@ namespace LinkedMovement {
             startingLocalPosition = startingTransform.localPosition;
             startingLocalRotation = startingTransform.localEulerAngles;
             startingLocalScale = startingTransform.localScale;
+
+            LinkedMovement.Log("NEW starting custom colors");
+            var customColors = LMUtils.GetCustomColors(startingTransform.gameObject);
+            if (customColors != null && customColors.Length > 0) {
+                LinkedMovement.Log($"Has {customColors.Length} custom colors");
+                startingCustomColors = new List<Color>(customColors);
+            } else {
+                LinkedMovement.Log("Has NO custom colors");
+                startingCustomColors = null;
+            }
         }
 
         public void addNewAnimationStep() {
-            addNewAnimationStep(new LMAnimationStep());
+            addNewAnimationStep(new LMAnimationStep(this));
         }
 
         public void addNewAnimationStep(LMAnimationStep newStep) {
@@ -133,6 +145,10 @@ namespace LinkedMovement {
             newAnimationParams.startingLocalPosition = animationParams.startingLocalPosition;
             newAnimationParams.startingLocalRotation = animationParams.startingLocalRotation;
             newAnimationParams.startingLocalScale = animationParams.startingLocalScale;
+
+            if (animationParams.startingCustomColors != null) {
+                newAnimationParams.startingCustomColors = new List<Color>(animationParams.startingCustomColors);
+            }
 
             newAnimationParams.forward = animationParams.forward;
 

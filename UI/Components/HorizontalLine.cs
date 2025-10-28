@@ -6,7 +6,7 @@ namespace LinkedMovement.UI.Components {
         public static void DrawHorizontalLine(Color color) {
             var c = GUI.color;
             GUI.color = color;
-            GUILayout.Box(GUIContent.none, Styles.HorizontalLine);
+            GUILayout.Box(GUIContent.none, LMStyles.HorizontalLine);
             GUI.color = c;
         }
     }
