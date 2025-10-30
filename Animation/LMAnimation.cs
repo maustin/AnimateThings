@@ -266,7 +266,7 @@ namespace LinkedMovement.Animation {
                 string rejectMessage = $"Selection already has Animation '{animation.name}'";
                 LinkedMovement.Log(rejectMessage);
                 // TODO: This call needs much cleaner access
-                LinkedMovement.GetController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
+                LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                 return;
             }
 

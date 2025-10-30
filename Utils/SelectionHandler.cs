@@ -16,8 +16,7 @@ namespace LinkedMovement {
 
         public readonly Options Options = new();
         public bool ShowGui = true;
-        public LinkedMovementController controller;
-
+        
         private void Awake() {
             LinkedMovement.Log("SelectionHandler Awake");
             park = GameController.Instance.park;
@@ -132,9 +131,7 @@ namespace LinkedMovement {
             }
 
             LinkedMovement.Log($"OnAdd: {o.GetType().Name} -- {o.getName()}");
-            if (controller != null)
-                controller.handleAddObjectSelection(o);
-
+            
             OnAddBuildableObject?.Invoke(o);
         }
         private void OnRemovedSelectedObject(BuildableObject o) {
@@ -144,9 +141,7 @@ namespace LinkedMovement {
             }
 
             LinkedMovement.Log($"OnRemove: {o.GetType().Name} -- {o.getName()}");
-            if (controller != null)
-                controller.handleRemoveObjectSelection(o);
-
+            
             OnRemoveBuildableObject?.Invoke(o);
         }
         public void DeselectAll() {

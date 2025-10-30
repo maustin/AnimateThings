@@ -451,7 +451,7 @@ namespace LinkedMovement.Links {
             if (link != null) {
                 string rejectMessage = $"Selection is already the Parent object of Link '{link.name}'";
                 LinkedMovement.Log(rejectMessage);
-                LinkedMovement.GetController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
+                LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                 return;
             }
 
@@ -480,7 +480,7 @@ namespace LinkedMovement.Links {
                 string rejectMessage = $"Selection is already a child of Link '{otherLink.name}'";
                 LinkedMovement.Log(rejectMessage);
                 // TODO: This call needs much cleaner access
-                LinkedMovement.GetController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
+                LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                 return;
             }
             // Ensure Target is not parent of this link (circular link)
@@ -491,7 +491,7 @@ namespace LinkedMovement.Links {
                     string rejectMessage = "Circular link! Selection is already the parent of this link.";
                     LinkedMovement.Log(rejectMessage);
                     // TODO: This call needs much cleaner access
-                    LinkedMovement.GetController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
+                    LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                     return;
                 }
             }

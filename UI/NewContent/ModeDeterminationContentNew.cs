@@ -1,7 +1,4 @@
-﻿using LinkedMovement.UI.Components;
-using LinkedMovement.UI.Utils;
-using LinkedMovement.Utils;
-using UnityEngine;
+﻿using LinkedMovement.UI.Utils;
 using static UnityEngine.GUILayout;
 
 namespace LinkedMovement.UI.NewContent {
@@ -40,36 +37,6 @@ namespace LinkedMovement.UI.NewContent {
                     LinkedMovement.Log("Clicked View Links");
                     windowManager.removeWindow(this.window);
                     windowManager.createWindow(WindowManager.WindowType.ViewLinksNew, null);
-                }
-
-                Space(5f);
-                HorizontalLine.DrawHorizontalLine(Color.grey);
-                Space(10f);
-                using (Scope.GuiEnabled(PairingConverter.HasPairingsToConvert())) {
-                    Label("CONVERSION");
-                    if (Button("CONVERT Old Pairings to Anims & Links")) {
-                        windowManager.removeWindow(this.window);
-                        PairingConverter.ConvertPairings();
-                    }
-                }
-                Space(10f);
-                HorizontalLine.DrawHorizontalLine(Color.grey);
-                Space(5f);
-                Label("OLD target-origin UI");
-                Space(3f);
-
-                if (Button("Create New Animatronic")) {
-                    LinkedMovement.Log("Clicked Create New");
-                    windowManager.removeWindow(this.window);
-                    windowManager.createWindow(WindowManager.WindowType.CreateNewAnimatronic, null);
-                }
-
-                Space(10f);
-
-                if (Button("View Existing Animatronics")) {
-                    LinkedMovement.Log("Clicked View Existing");
-                    windowManager.removeWindow(this.window);
-                    windowManager.createWindow(WindowManager.WindowType.ShowExistingAnimatronics, null);
                 }
             }
         }

@@ -5,7 +5,7 @@ namespace LinkedMovement.UI.Utils {
     public class InfoPopper {
         public static void DoInfoPopper(LMStringKey key) {
             if (Button("ⓘ", RGUIStyle.infoPopperButtonNew, Width(15f))) {
-                LinkedMovement.GetController().windowManager.createWindow(WindowManager.WindowType.Information, LMStringSystem.GetText(key));
+                LinkedMovement.GetLMController().windowManager.createWindow(WindowManager.WindowType.Information, LMStringSystem.GetText(key));
             }
         }
     }

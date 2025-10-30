@@ -2,7 +2,6 @@
 using LinkedMovement.Links;
 using LinkedMovement.UI.Content;
 using LinkedMovement.UI.NewContent;
-using Parkitect.UI;
 using System;
 using UnityEngine;
 
@@ -71,45 +70,6 @@ namespace LinkedMovement.UI {
                 //
                 //
                 //
-                case WindowManager.WindowType.ModeDetermination:
-                    width = 300;
-                    position = getWindowPositionCenter(width, 100);
-                    content = new ModeDeterminationContent();
-                    break;
-                case WindowManager.WindowType.CreateNewAnimatronic:
-                    title = "Create Animatronic";
-                    width = 450;
-                    position = getWindowPositionRight(width);
-                    content = new CreateAnimatronicContent();
-                    break;
-                case WindowManager.WindowType.ShowExistingAnimatronics:
-                    title = "Existing Animatronics";
-                    width = 400;
-                    fixedHeight = 500;
-                    position = getWindowPositionCenter(width, fixedHeight);
-                    content = new ExistingAnimatronicsContent();
-                    break;
-                case WindowManager.WindowType.EditAnimatronic:
-                    var pairing = data as Pairing;
-                    // TODO: Throw if pairing null
-                    title = "Edit Animatronic: " + pairing.getPairingName();
-                    width = 450;
-                    fixedHeight = 500;
-                    //position = getWindowPositionCenter(width, fixedHeight);
-                    position = getWindowPositionRight(width);
-                    //alwaysRender = true;
-                    //allowMultiple = true;
-                    content = new EditAnimatronicContent(pairing);
-                    break;
-                case WindowManager.WindowType.EditAnimation:
-                    title = "Edit Animation";
-                    width = 400;
-                    fixedHeight = 500;
-                    position = getWindowPositionCenter(width, (int)(fixedHeight * 0.5));
-                    //alwaysRender = true;
-                    //allowMultiple = false;
-                    //content = 
-                    break;
                 case WindowManager.WindowType.Information:
                     title = "Information";
                     width = 400;

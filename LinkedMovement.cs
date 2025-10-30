@@ -24,29 +24,13 @@ namespace LinkedMovement {
 
         public static LinkedMovement Instance;
         public static Harmony Harmony;
-        private static LinkedMovementController Controller;
         private static LMController LMController;
         private static bool KeybindsRegistered;
 
         public static Texture2D roundedRectTexture;
 
-        public static bool HasController() {
-            return Controller != null;
-        }
-
         public static bool HasLMController() {
             return LMController != null;
-        }
-
-        public static LinkedMovementController GetController() {
-            // TODO: This needs to prevent creation of controller when not appropriate
-            if (Controller == null) {
-                Log("Create Controller!");
-                GameObject go = new GameObject();
-                go.name = "LinkedMovementController";
-                Controller = go.AddComponent<LinkedMovementController>();
-            }
-            return Controller;
         }
 
         public static LMController GetLMController() {
@@ -57,14 +41,6 @@ namespace LinkedMovement {
                 LMController = go.AddComponent<LMController>();
             }
             return LMController;
-        }
-
-        public static void ClearController() {
-            Log("ClearController");
-            if (Controller != null) {
-                GameObject.Destroy(Controller);
-                Controller = null;
-            }
         }
 
         public static void ClearLMController() {
@@ -118,7 +94,6 @@ namespace LinkedMovement {
         public override void onDisabled() {
             Log("onDisabled");
             unregisterHotkeys();
-            ClearController();
             ClearLMController();
 
             if (Harmony == null)

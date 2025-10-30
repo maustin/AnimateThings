@@ -4,7 +4,6 @@ using LinkedMovement.Links;
 using PrimeTween;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace LinkedMovement.Utils {
@@ -61,36 +60,6 @@ namespace LinkedMovement.Utils {
             return bo != null && bo.getName().Contains(LinkedMovement.HELPER_OBJECT_NAME);
         }
 
-        public static List<SerializedMonoBehaviour> FindPairTargetSOs(PairBase pairBase) {
-            LinkedMovement.Log("FindPairTargetSOs with pairId: " + pairBase.pairId);
-            var targets = new List<SerializedMonoBehaviour>();
-            var sos = GameController.Instance.getSerializedObjects();
-            foreach (var so in sos) {
-                PairTarget pairTarget = GetPairTargetFromSerializedMonoBehaviour(so);
-                if (pairTarget != null) {
-                    if (pairTarget.pairId == pairBase.pairId) {
-                        targets.Add(so);
-                    }
-                }
-            }
-            LinkedMovement.Log($"Found {targets.Count.ToString()} targets");
-            return targets;
-        }
-
-        // Currently only used when building animated Blueprints
-        public static void BuildingBlueprintTryToBuildPairingFromBuiltObjects(List<BuildableObject> builtObjectInstances, Vector3 forward) {
-            LinkedMovement.Log("LMUtils.BuildingBlueprintTryToBuildPairingFromBuiltObjects");
-            var createdPairings = new List<Pairing>();
-            foreach (var buildableObject in builtObjectInstances) {
-                BuildingBlueprintTryToBuildPairingFromBuildableObject(buildableObject, builtObjectInstances, forward, ref createdPairings);
-            }
-            LinkedMovement.Log($"Built {createdPairings.Count} pairings, now creating sequences");
-            var sortedPairings = SortPairings(createdPairings);
-            foreach (var pairing in sortedPairings) {
-                pairing.createSequence();
-            }
-        }
-
         public static void BuildLinksAndAnimationsFromBlueprint(List<BuildableObject> builtObjectInstances, Vector3 forward) {
             LinkedMovement.Log("LMUtils.BuildLinksAndAnimationsFromBlueprint");
 
@@ -125,45 +94,6 @@ namespace LinkedMovement.Utils {
 
             foreach (var animation in createdAnimations) {
                 animation.setup();
-            }
-        }
-
-        private static void BuildingBlueprintTryToBuildPairingFromBuildableObject(BuildableObject possibleOriginBO, List<BuildableObject> builtObjectInstances, Vector3 forward, ref List<Pairing> createdPairings) {
-            PairBase pairBase = GetPairBaseFromSerializedMonoBehaviour(possibleOriginBO);
-            if (pairBase == null) return;
-
-            BuildableObject originObject = possibleOriginBO;
-            LinkedMovement.Log("TryToBuildPairingFromBuildableObject for " + originObject.getName());
-
-            List<BuildableObject> targets = new List<BuildableObject>();
-            List<PairTarget> pairTargets = new List<PairTarget>();
-
-            foreach (var bo in builtObjectInstances) {
-                var pairTarget = GetPairTargetFromSerializedMonoBehaviour(bo);
-                if (pairTarget != null && pairTarget.pairId == pairBase.pairId) {
-                    targets.Add(bo);
-                    pairTargets.Add(pairTarget);
-                }
-            }
-
-            LinkedMovement.Log($"Found {targets.Count} targets");
-
-            if (targets.Count > 0) {
-                LinkedMovement.Log("Create Pairing " + pairBase.pairName);
-                pairBase.animParams.setStartingValues(originObject.transform);
-                pairBase.animParams.forward = Quaternion.LookRotation(forward);
-
-                // create new pairing ID so we don't collide with existing pairings
-                var newPairingId = GetNewId();
-                pairBase.pairId = newPairingId;
-                foreach (var pairTarget in pairTargets) {
-                    pairTarget.pairId = newPairingId;
-                }
-                var targetGameObjects = targets.Select(t => t.gameObject).ToList();
-
-                var pairing = new Pairing(originObject.gameObject, targetGameObjects, newPairingId, pairBase.pairName);
-                pairing.connect(false);
-                createdPairings.Add(pairing);
             }
         }
 
@@ -263,18 +193,6 @@ namespace LinkedMovement.Utils {
             return linkTarget;
         }
 
-        public static PairBase GetPairBaseFromSerializedMonoBehaviour(SerializedMonoBehaviour smb) {
-            PairBase pairBase;
-            smb.tryGetCustomData(out pairBase);
-            return pairBase;
-        }
-
-        public static PairTarget GetPairTargetFromSerializedMonoBehaviour(SerializedMonoBehaviour smb) {
-            PairTarget pairTarget;
-            smb.tryGetCustomData(out pairTarget);
-            return pairTarget;
-        }
-
         public static List<BuildableObject> GetBuildableObjectsFromGameObjects(List<GameObject> gameObjects) {
             List<BuildableObject> buildableObjects = new List<BuildableObject>();
             foreach (GameObject go in gameObjects) {
@@ -363,77 +281,33 @@ namespace LinkedMovement.Utils {
 
         private static void StopAssociatedAnimation(GameObject gameObject) {
             LinkedMovement.Log("LMUtils.StopAssociatedAnimation for " + gameObject.name);
-            // NEW
+            
             var animation = LinkedMovement.GetLMController().findAnimationByGameObject(gameObject);
             if (animation != null) {
                 LinkedMovement.Log("Found Animation");
                 animation.stopSequence();
-                // TODO: Think this should use LMAnimation.stopSequence()
-                //if (animation.sequence.isAlive) {
-                //    LinkedMovement.Log("Stop sequence");
-                //    animation.sequence.progress = 0;
-                //    animation.sequence.Stop();
-                //}
             } else {
                 LinkedMovement.Log("No Animation found");
-            }
-
-            // OLD
-            var pairing = LinkedMovement.GetController().findPairingByBaseGameObject(gameObject);
-            if (pairing != null) {
-                LinkedMovement.Log($"Found pairing name: {pairing.pairingName}, id: {pairing.pairingId}");
-                if (pairing.pairBase.sequence.isAlive) {
-                    LinkedMovement.Log("Stop sequence");
-                    pairing.pairBase.sequence.progress = 0f;
-                    pairing.pairBase.sequence.Stop();
-                } else {
-                    LinkedMovement.Log("Sequence not alive");
-                }
-            } else {
-                LinkedMovement.Log("No Pairing found");
             }
         }
 
         private static void StartAssociatedAnimation(GameObject gameObject, bool isEditing) {
             LinkedMovement.Log("LMUtils.StartAssociatedAnimation for " + gameObject.name);
 
-            // NEW
             var animation = LinkedMovement.GetLMController().findAnimationByGameObject(gameObject);
             if (animation != null) {
                 LinkedMovement.Log("Found Animation");
-                // TODO: Is this actually needed?
-                //LinkedMovement.Log("DO RECALC");
                 animation.getAnimationParams().setStartingValues(gameObject.transform);
 
                 animation.buildSequence(isEditing);
-
-                // TODO: Think this should use LMAnimation.buildSequence()
-
-                // TODO: Is this actually needed?
-                //LinkedMovement.Log("DO RECALC");
-                //animation.getAnimationParams().setStartingValues(gameObject.transform);
             } else {
                 LinkedMovement.Log("No Animation found");
-            }
-
-            // OLD
-            var pairing = LinkedMovement.GetController().findPairingByBaseGameObject(gameObject);
-            if (pairing != null) {
-                LinkedMovement.Log($"Found pairing name: {pairing.pairingName}, id: {pairing.pairingId}");
-
-                LinkedMovement.Log("DO RECALC");
-                pairing.pairBase.animParams.setStartingValues(gameObject.transform);
-
-                pairing.pairBase.sequence = LMUtils.BuildAnimationSequence(pairing.baseGO.transform, pairing.pairBase.animParams);
-            } else {
-                LinkedMovement.Log("No Pairing found");
             }
         }
 
         private static void RestartAssociatedAnimation(GameObject gameObject) {
             LinkedMovement.Log("LMUtils.RestartAssociatedAnimation for " + gameObject.name);
 
-            // NEW
             var animation = LinkedMovement.GetLMController().findAnimationByGameObject(gameObject);
             if (animation != null) {
                 LinkedMovement.Log("Found Animation");
@@ -446,23 +320,8 @@ namespace LinkedMovement.Utils {
             } else {
                 LinkedMovement.Log("No Animation found");
             }
-
-            // OLD
-            var pairing = LinkedMovement.GetController().findPairingByBaseGameObject(gameObject);
-            if (pairing != null) {
-                LinkedMovement.Log($"Found pairing name: {pairing.pairingName}, id: {pairing.pairingId}");
-                if (pairing.pairBase.sequence.isAlive) {
-                    LinkedMovement.Log("Reset sequence progress!");
-                    pairing.pairBase.sequence.progress = 0f;
-                } else {
-                    LinkedMovement.Log("Sequence not alive");
-                }
-            } else {
-                LinkedMovement.Log("No Pairing exists");
-            }
         }
 
-        // CONV: Reused as-is
         public static void ResetTransformLocals(Transform transform, Vector3 localPosition, Vector3 localRotation, Vector3 localScale) {
             LinkedMovement.Log("LMUtils.ResetTransformLocals for: " + transform.gameObject.name);
             
@@ -604,7 +463,6 @@ namespace LinkedMovement.Utils {
 
         }
 
-        // CONV: Reused as-is
         public static Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams, bool isEditing = false) {
             LinkedMovement.Log("LMUtils.BuildAnimationSequence name: " + animationParams.name);
 
@@ -649,32 +507,7 @@ namespace LinkedMovement.Utils {
             return sequence;
         }
         
-        public static Vector3 FindBuildObjectsCenterPosition(List<BuildableObject> objects) {
-            var firstPos = objects[0].transform.position;
-            var minX = firstPos.x;
-            var maxX = firstPos.x;
-            var minY = firstPos.y;
-            var maxY = firstPos.y;
-            var minZ = firstPos.z;
-            var maxZ = firstPos.z;
-
-            foreach (var target in objects) {
-                var tp = target.transform.position;
-                if (tp.x < minX) minX = tp.x;
-                if (tp.x > maxX) maxX = tp.x;
-                if (tp.y < minY) minY = tp.y;
-                if (tp.y > maxY) maxY = tp.y;
-                if (tp.z < minZ) minZ = tp.z;
-                if (tp.z > maxZ) maxZ = tp.z;
-            }
-
-            var midX = minX + ((maxX - minX) * 0.5f);
-            var midY = minY + ((maxY - minY) * 0.5f);
-            var midZ = minZ + ((maxZ - minZ) * 0.5f);
-
-            return new Vector3(midX, midY, midZ);
-        }
-
+        // TODO: Swap to flag highlights system
         public static void AddObjectHighlight(BuildableObject buildableObject, HighlightType highlightType) {
             if (buildableObject == null) return;
             LinkedMovement.Log($"LMUtils.AddObjectHighlight to {buildableObject.getName()} type {highlightType.ToString()}");
@@ -741,151 +574,43 @@ namespace LinkedMovement.Utils {
             return duration;
         }
 
-        public static int GetPairingDepth(Pairing pairing) {
-            int depth = 0;
-
-            CountPairingParent(pairing, ref depth);
-
-            return depth;
-        }
-
-        private static void CountPairingParent(Pairing pairing, ref int depth) {
-            if (pairing.baseGO.transform.parent == null || pairing.baseGO.transform.parent.gameObject == null) return;
-
-            var parentPairing = LinkedMovement.GetController().findPairingByBaseGameObject(pairing.baseGO.transform.parent.gameObject);
-            if (parentPairing != null) {
-                depth++;
-                CountPairingParent(parentPairing, ref depth);
-            }
-        }
-
-        public static List<Pairing> SortPairings(List<Pairing> pairings) {
-            LinkedMovement.Log("LMUtils.SortPairings");
-            var sortedPairings = new List<Pairing>();
-            foreach (var pairing in pairings) {
-                var lowestPairing = FindLowestPairing(pairing);
-                AddPairingAndTargets(lowestPairing, sortedPairings);
-            }
-            // Return Bottom-Up order
-            sortedPairings = sortedPairings.AsEnumerable().Reverse().ToList();
-            return sortedPairings;
-        }
-
-        private static Pairing FindLowestPairing(Pairing pairing) {
-            LinkedMovement.Log("LMUtils.FindLowestPairing from " + pairing.pairingName);
-            var baseGO = pairing.baseGO;
-            var parentPairing = LinkedMovement.GetController().findPairingByTargetGameObject(baseGO);
-            if (parentPairing != null) {
-                return FindLowestPairing(parentPairing);
-            }
-            LinkedMovement.Log("Lowest pairing " + pairing.pairingName);
-            return pairing;
-        }
-
-        private static void AddPairingAndTargets(Pairing pairing, List<Pairing> pairings) {
-            LinkedMovement.Log("LMUtils.AddPairingAndTargets from " + pairing.pairingName);
-            if (!pairings.Contains(pairing)) {
-                pairings.Add(pairing);
-            }
-            // TODO: Skip all targets if pairing already added?
-            foreach (var targetGO in pairing.targetGOs) {
-                //var parentPairing = LinkedMovement.GetController().findPairingByTargetGameObject(targetGO);
-                var parentPairing = LinkedMovement.GetController().findPairingByBaseGameObject(targetGO);
-                if (parentPairing != null) {
-                    AddPairingAndTargets(parentPairing, pairings);
-                }
-            }
-        }
-
-        public static void RemovePairTargetFromUnusedTargets(List<GameObject> oldTargetGOs, List<BuildableObject> newTargetObjects) {
-            LinkedMovement.Log("LMUtils.RemovePairTargetFromUnusedTargets");
-            foreach (var oldTargetGO in oldTargetGOs) {
-                var oldTargetObject = GetBuildableObjectFromGameObject(oldTargetGO);
-                if (!newTargetObjects.Contains(oldTargetObject)) {
-                    LinkedMovement.Log("Try to remove PairTarget from " + oldTargetObject.name);
-                    var didRemove = oldTargetObject.removeCustomData<PairTarget>();
-                    LinkedMovement.Log("Did remove: " + didRemove.ToString());
-                }
-            }
-        }
-
-        // BuildableObjects in the old list that are not in the new list need to have their parent reset
-        
-        public static void ResetUnusedTargets(List<BuildableObject> oldTargetObjects, List<BuildableObject> newTargetObjects) {
-            LinkedMovement.Log("LMUtils.ResetUnusedTargets");
+        //public static void ResetUnusedTargets(List<BuildableObject> oldTargetObjects, List<BuildableObject> newTargetObjects) {
+        //    LinkedMovement.Log("LMUtils.ResetUnusedTargets");
             
-            foreach (var oldTargetObject in oldTargetObjects) {
-                if (!newTargetObjects.Contains(oldTargetObject)) {
-                    LinkedMovement.Log("Reset old target " + oldTargetObject.gameObject.name);
-                    oldTargetObject.transform.SetParent(null);
-                    SetChunkedMeshEnalbedIfPresent(oldTargetObject, true);
-                }
-            }
-        }
+        //    foreach (var oldTargetObject in oldTargetObjects) {
+        //        if (!newTargetObjects.Contains(oldTargetObject)) {
+        //            LinkedMovement.Log("Reset old target " + oldTargetObject.gameObject.name);
+        //            oldTargetObject.transform.SetParent(null);
+        //            SetChunkedMeshEnalbedIfPresent(oldTargetObject, true);
+        //        }
+        //    }
+        //}
 
-        public static bool HitTargetIsDisqualified(BuildableObject bo) {
-            var controller = LinkedMovement.GetController();
-            // Check that the hit target is not already selected
-            if (controller.originObject == bo || controller.targetObjects.Contains(bo)) {
-                // Already selected, disqualify
-                return true;
-            }
-
-            if (controller.pickingMode == LinkedMovementController.PickingMode.Origin) {
-                // Picking origin/base, check hit target is not already a PairBase
-                if (GetPairBaseFromSerializedMonoBehaviour(bo) != null) {
-                    // Already has PairBase, disqualify
-                    return true;
-                }
-            } else {
-                // Picking targets, check hit target is not already a PairTarget
-                if (GetPairTargetFromSerializedMonoBehaviour(bo) != null) {
-                    // Already has PairTarget, disqualify
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public static List<GameObject> GetAssociatedGameObjects(BuildableObject originObject, List<BuildableObject> targetObjects) {
-            LinkedMovement.Log("LMUtils.GetAssociatedGameObjects");
-            var associated = new List<GameObject>();
-            if (originObject != null && originObject.gameObject != null) {
-                LinkedMovement.Log("Add associated origin " + originObject.gameObject.name);
-                associated.Add(originObject.gameObject);
-            }
-            if (targetObjects != null && targetObjects.Count > 0) {
-                foreach (var targetObject in targetObjects) {
-                    if (targetObject.gameObject != null) {
-                        LinkedMovement.Log("Add associated target " + targetObject.gameObject.name);
-                        associated.Add(targetObject.gameObject);
-                    }
-                }
-            }
-            LinkedMovement.Log($"LMUtils.GetAssociatedGameObjects got {associated.Count} associated objects");
-            return associated;
-        }
+        //public static List<GameObject> GetAssociatedGameObjects(BuildableObject originObject, List<BuildableObject> targetObjects) {
+        //    LinkedMovement.Log("LMUtils.GetAssociatedGameObjects");
+        //    var associated = new List<GameObject>();
+        //    if (originObject != null && originObject.gameObject != null) {
+        //        LinkedMovement.Log("Add associated origin " + originObject.gameObject.name);
+        //        associated.Add(originObject.gameObject);
+        //    }
+        //    if (targetObjects != null && targetObjects.Count > 0) {
+        //        foreach (var targetObject in targetObjects) {
+        //            if (targetObject.gameObject != null) {
+        //                LinkedMovement.Log("Add associated target " + targetObject.gameObject.name);
+        //                associated.Add(targetObject.gameObject);
+        //            }
+        //        }
+        //    }
+        //    LinkedMovement.Log($"LMUtils.GetAssociatedGameObjects got {associated.Count} associated objects");
+        //    return associated;
+        //}
 
         public static void UpdateGameMouseMode(bool mouseToolActive) {
             // Mouse tool changes can happen before the park has fully loaded. Skip updates in this case.
-            if (!LinkedMovement.HasController()) return;
+            if (!LinkedMovement.HasLMController()) return;
 
             LinkedMovement.Log("LMUtils.UpdateGameMouseMode: " + mouseToolActive);
-            LinkedMovement.GetController().showGeneratedOrigins = mouseToolActive;
-            UpdateGeneratedOriginRendering();
-        }
-
-        public static void UpdateGeneratedOriginRendering() {
-            var shouldRender = LinkedMovement.GetController().showGeneratedOrigins;
-            var pairings = LinkedMovement.GetController().getPairings();
-
-            foreach (var pairing in pairings) {
-                var baseGO = pairing.baseGO;
-                var baseBO = GetBuildableObjectFromGameObject(baseGO);
-                if (IsGeneratedOrigin(baseBO)) {
-                    baseGO.GetComponent<Renderer>().enabled = shouldRender;
-                }
-            }
+            LinkedMovement.GetLMController().showAnimationHelperObjects = mouseToolActive;
         }
 
         public static Color[] GetCustomColors(GameObject gameObject) {

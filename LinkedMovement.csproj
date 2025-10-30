@@ -74,16 +74,6 @@
     <Compile Include="PrimeTween\TweenSettings.cs" />
     <Compile Include="PrimeTween\TweenSettingsT.cs" />
     <Compile Include="UI\Components\HorizontalLine.cs" />
-    <Compile Include="UI\Content\CreateAnimationSubContent.cs" />
-    <Compile Include="UI\Content\CreateAnimatronicContent.cs" />
-    <Compile Include="UI\Content\CreateAnimatronicSelectSubContent.cs" />
-    <Compile Include="UI\Content\CreateBaseSubContent.cs" />
-    <Compile Include="UI\Content\EditAnimationStepSubContent.cs" />
-    <Compile Include="UI\Content\EditAnimatronicAnimationSubContent.cs" />
-    <Compile Include="UI\Content\EditAnimatronicContent.cs" />
-    <Compile Include="UI\Content\EditAnimatronicSelectSubContent.cs" />
-    <Compile Include="UI\Content\ExistingAnimatronicsContent.cs" />
-    <Compile Include="UI\Content\ModeDeterminationContent.cs" />
     <Compile Include="UI\Content\InfoContent.cs" />
     <Compile Include="UI\LMWindow.cs" />
     <Compile Include="UI\LMWindowContent.cs" />
@@ -110,9 +100,6 @@
     <Compile Include="UI\Utils\Tooltip.cs" />
     <Compile Include="InParkHarmonyInjector.cs" />
     <Compile Include="Options.cs" />
-    <Compile Include="PairBase.cs" />
-    <Compile Include="Pairing.cs" />
-    <Compile Include="PairTarget.cs" />
     <Compile Include="Patches\BlueprintBuilderImplementationOnAfterBuildPostfix.cs" />
     <Compile Include="Patches\ChunkedMeshEventStartPrefix.cs" />
     <Compile Include="Patches\ParkEventFixedStartPostfix.cs" />
@@ -120,7 +107,6 @@
     <Compile Include="Utils\Calc.cs" />
     <Compile Include="KeybindManager.cs" />
     <Compile Include="LinkedMovement.cs" />
-    <Compile Include="LinkedMovementController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RapidGUI\Component\FastScrollView.cs" />
     <Compile Include="RapidGUI\Component\Fold.cs" />
@@ -170,7 +156,6 @@
     <Compile Include="RapidGUI\RGUI\Slider.cs" />
     <Compile Include="RapidGUI\RGUI\Slider\RecursiveSlider.cs" />
     <Compile Include="Utils\LMHighlightComponent.cs" />
-    <Compile Include="Utils\PairingConverter.cs" />
     <Compile Include="Utils\SelectionHandler.cs" />
     <Compile Include="Selection\HitUtility.cs" />
     <Compile Include="Selection\VisibilityObjectSelectionTool.cs" />

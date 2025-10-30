@@ -24,11 +24,9 @@ namespace LinkedMovement.UI {
             }
 
             this.rect.position = position;
-            //this.Add(content.DoGUI);
             this.Add(content.RenderGUI);
             this.Open();
             this.onClose += (WindowLauncher launcher) => {
-                //windowManager.removeWindow(launcher as LMWindow);
                 LinkedMovement.Log("LMWindow.onClose");
                 
                 // TODO: Refactor so controller subscribes to onClose and handles this
@@ -48,16 +46,6 @@ namespace LinkedMovement.UI {
                 if (type == WindowManager.WindowType.EditLinkNew) {
                     LinkedMovement.Log("CLOSE EditLinkNew window");
                     LinkedMovement.GetLMController().clearEditMode();
-                }
-
-                // OLD UI
-                if (type == WindowManager.WindowType.CreateNewAnimatronic) {
-                    LinkedMovement.Log("CLOSE CreateNewAnimatronic window");
-                    LinkedMovement.GetController().discardChanges();
-                }
-                if (type == WindowManager.WindowType.EditAnimatronic) {
-                    LinkedMovement.Log("CLOSE EditAnimatronic window");
-                    LinkedMovement.GetController().discardChanges();
                 }
 
                 windowManager.removeWindow(launcher as LMWindow);

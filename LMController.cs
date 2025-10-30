@@ -1,5 +1,6 @@
 ﻿using LinkedMovement.Animation;
 using LinkedMovement.Links;
+using LinkedMovement.UI;
 using LinkedMovement.Utils;
 using Parkitect.UI;
 using System.Collections.Generic;
@@ -25,9 +26,13 @@ namespace LinkedMovement {
         // This happens with OLD system as well. Possibly ignore.
         // NullReferenceException: Object reference not set to an instance of an object
         //   at AnimationTriggerEffectEditorPanel.initialize()[0x00011] in <eefe76887ca042e485a07fadc6c705a6>:0 
-        
+
         // Once saw issue with animations, when at end of sequence, having 1 frame of child object mispositioned
         // Haven't seen since first occurrence.
+
+        public WindowManager windowManager;
+
+        public bool showAnimationHelperObjects = false;
 
         public LMAnimation currentAnimation { get; private set; }
         public LMLink currentLink { get; private set; }
@@ -45,6 +50,8 @@ namespace LinkedMovement {
         
         private void Awake() {
             LinkedMovement.Log("LMController Awake");
+
+            windowManager = new WindowManager();
         }
 
         private void OnDisable() {
@@ -53,6 +60,11 @@ namespace LinkedMovement {
 
         private void OnDestroy() {
             LinkedMovement.Log("LMController OnDestroy");
+
+            if (windowManager != null) {
+                windowManager.destroy();
+                windowManager = null;
+            }
 
             foreach (var animation in animations) {
                 animation.stopSequenceImmediate();
@@ -74,6 +86,11 @@ namespace LinkedMovement {
                 return;
             }
 
+            if (InputManager.getKeyUp("LM_toggleGUI") && !windowManager.uiPresent()) {
+                LinkedMovement.Log("Toggle GUI");
+                windowManager.createWindow(WindowManager.WindowType.ModeDeterminationNew, null);
+            }
+
             // If there is no mouse tool active, we don't need to update mouse colliders
             var mouseTool = GameController.Instance.getActiveMouseTool();
             if (mouseTool == null) {
@@ -90,6 +107,15 @@ namespace LinkedMovement {
             foreach (var bo in buildableObjectsToUpdate) {
                 LMUtils.UpdateMouseColliders(bo);
             }
+        }
+
+        private void OnGUI() {
+            if (OptionsMenu.instance != null) return;
+
+            float uiScale = Settings.Instance.uiScale;
+            GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(uiScale, uiScale, 1f));
+            windowManager.DoGUI();
+            GUI.matrix = Matrix4x4.identity;
         }
 
         public List<LMAnimation> getAnimations() {
