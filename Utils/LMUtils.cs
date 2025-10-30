@@ -56,7 +56,6 @@ namespace LinkedMovement.Utils {
         }
 
         public static bool IsGeneratedOrigin(BuildableObject bo) {
-            //return bo != null && bo.getName().Contains("LMOriginBase");
             return bo != null && bo.getName().Contains(LinkedMovement.HELPER_OBJECT_NAME);
         }
 
@@ -579,10 +578,7 @@ namespace LinkedMovement.Utils {
             if (!LinkedMovement.HasLMController()) return;
 
             LinkedMovement.Log("LMUtils.UpdateGameMouseMode: " + mouseToolActive);
-            LinkedMovement.GetLMController().showAnimationHelperObjects = mouseToolActive;
-
-            // TODO: Update helper objects to render/not render
-            // Keep list of Animation Helpers?
+            LinkedMovement.GetLMController().setMouseToolActive(mouseToolActive);
         }
 
         public static Color[] GetCustomColors(GameObject gameObject) {

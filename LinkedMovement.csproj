@@ -42,6 +42,8 @@
     <Compile Include="Links\LMLinkParent.cs" />
     <Compile Include="Links\LMLinkTarget.cs" />
     <Compile Include="LMController.cs" />
+    <Compile Include="Patches\DecoDestructPostfix.cs" />
+    <Compile Include="Patches\DecoInitializePostfix.cs" />
     <Compile Include="Patches\GameControllerEnableMouseToolPostfix.cs" />
     <Compile Include="Patches\GameControllerRemoveMouseToolPostfix.cs" />
     <Compile Include="Patches\SerializedMonoBehaviourOnDestroyPostfix.cs" />
@@ -101,7 +103,6 @@
     <Compile Include="InParkHarmonyInjector.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Patches\BlueprintBuilderImplementationOnAfterBuildPostfix.cs" />
-    <Compile Include="Patches\ChunkedMeshEventStartPrefix.cs" />
     <Compile Include="Patches\ParkEventFixedStartPostfix.cs" />
     <Compile Include="Patches\ParkInitializePostfix.cs" />
     <Compile Include="Utils\Calc.cs" />

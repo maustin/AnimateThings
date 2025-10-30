@@ -32,8 +32,6 @@ namespace LinkedMovement {
 
         public WindowManager windowManager;
 
-        public bool showAnimationHelperObjects = false;
-
         public LMAnimation currentAnimation { get; private set; }
         public LMLink currentLink { get; private set; }
         
@@ -41,6 +39,9 @@ namespace LinkedMovement {
         private List<LMLink> links = new List<LMLink>();
 
         private HashSet<BuildableObject> buildableObjectsToUpdate = new HashSet<BuildableObject>();
+
+        private bool mouseToolActive = false;
+        private HashSet<BuildableObject> animationHelperObjects = new HashSet<BuildableObject>();
 
         private LMAnimation queuedAnimationToRemove;
         private LMLink queuedLinkToRemove;
@@ -71,6 +72,7 @@ namespace LinkedMovement {
             }
             animations.Clear();
             links.Clear();
+            animationHelperObjects.Clear();
             LinkedMovement.ClearLMController();
         }
 
@@ -124,6 +126,40 @@ namespace LinkedMovement {
 
         public List<LMLink> getLinks() {
             return links;
+        }
+
+        public void setMouseToolActive(bool active) {
+            mouseToolActive = active;
+            updateAnimationHelperVisibility();
+        }
+
+        public void addAnimationHelper(BuildableObject buildableObject) {
+            LinkedMovement.Log("Add animationHelper " + buildableObject.name);
+            animationHelperObjects.Add(buildableObject);
+            var renderer = buildableObject.gameObject.GetComponent<Renderer>();
+            if (renderer != null) {
+                renderer.enabled = shouldShowAnimationHelperObjects();
+            }
+        }
+
+        public void removeAnimationHelper(BuildableObject buildableObject) {
+            LinkedMovement.Log("Remove animationHelper " + buildableObject.name);
+            animationHelperObjects.Remove(buildableObject);
+        }
+
+        private bool shouldShowAnimationHelperObjects() {
+            return mouseToolActive || currentAnimation != null || currentLink != null;
+        }
+
+        private void updateAnimationHelperVisibility() {
+            var show = shouldShowAnimationHelperObjects();
+
+            foreach (var animationHelperObject in animationHelperObjects) {
+                var renderer = animationHelperObject.gameObject.GetComponent<Renderer>();
+                if (renderer != null) {
+                    renderer.enabled = show;
+                }
+            }
         }
 
         // Called via ParkEventStartPostFix
@@ -305,6 +341,8 @@ namespace LinkedMovement {
                 currentLink.discardChanges();
                 currentLink = null;
             }
+
+            updateAnimationHelperVisibility();
         }
 
         public LMAnimation findAnimationByGameObject(GameObject gameObject) {
@@ -367,6 +405,8 @@ namespace LinkedMovement {
             if (animation != null) {
                 currentAnimation.buildSequence();
             }
+
+            updateAnimationHelperVisibility();
         }
 
         public void editLink(LMLink link = null) {
@@ -383,6 +423,8 @@ namespace LinkedMovement {
             }
 
             currentLink.IsEditing = true;
+
+            updateAnimationHelperVisibility();
         }
 
         public void queueAnimationToRemove(LMAnimation animation) {
