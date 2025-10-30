@@ -26,9 +26,8 @@ namespace RapidGUI
         public static GUIStyle popupWindowContentNew;
         public static GUIStyle popupTextNew;
         public static GUIStyle closeWindowButton;
-        public static GUIStyle flatButtonNew;
-        public static GUIStyle flatButtonLeftNew;
-        // TODO: flatButtonLeft
+        public static GUIStyle roundedFlatButton;
+        public static GUIStyle roundedFlatButtonLeft;
         public static GUIStyle infoPopperButtonNew;
 
         // GUIStyleState.background will be null 
@@ -46,8 +45,7 @@ namespace RapidGUI
         private static Texture2D popupTextureNew;
         private static Texture2D popupWindowContentTextureNew;
         private static Texture2D closeWindowButtonTexture;
-        private static Texture2D flatButtonNormalTextureNew;
-        private static Texture2D flatButtonHoverTextureNew;
+        private static Texture2D roundedFlatButtonTexture;
 
 
         static RGUIStyle()
@@ -77,8 +75,10 @@ namespace RapidGUI
             CreatePopupWindowContentNew();
             CreatePopupTextNew();
             CreateCloseWindowButton();
-            CreateFlatButtonNew();
-            CreateFlatButtonLeftNew();
+            //CreateFlatButtonNew();
+            //CreateFlatButtonLeftNew();
+            CreateRoundedFlatButton();
+            CreateRoundedFlatButtonLeft();
             CreateInfoPopperNew();
         }
 
@@ -103,36 +103,31 @@ namespace RapidGUI
             flatButton = style;
         }
 
-        static void CreateFlatButtonNew() {
-            var style = new GUIStyle(GUI.skin.label) {
-                wordWrap = false,
-                alignment = TextAnchor.MiddleCenter,
-            };
+        static void CreateRoundedFlatButton() {
+            var style = new GUIStyle(GUI.skin.button);
+            //var style = new GUIStyle(GUI.skin.label);
 
+            style.wordWrap = false;
+            style.alignment = TextAnchor.MiddleCenter;
             style.normal.textColor = style.hover.textColor = new Color(0.32f, 0.32f, 0.32f);
 
-            flatButtonNormalTextureNew = new Texture2D(1, 1);
-            flatButtonNormalTextureNew.SetPixel(0, 0, new Color(0.87f, 0.87f, 0.87f));
-            flatButtonNormalTextureNew.Apply();
-            flatButtonHoverTextureNew = new Texture2D(1, 1);
-            flatButtonHoverTextureNew.SetPixel(0, 0, new Color(0.82f, 0.82f, 0.82f));
-            flatButtonHoverTextureNew.Apply();
+            roundedFlatButtonTexture = GetRoundedRectTexture();
+            style.normal.background = style.hover.background = roundedFlatButtonTexture;
 
-            style.normal.background = flatButtonNormalTextureNew;
-            style.hover.background = flatButtonHoverTextureNew;
-
-            style.name = nameof(flatButtonNew);
-            flatButtonNew = style;
+            style.border = new RectOffset(3, 3, 3, 3);
+            
+            style.name = nameof(roundedFlatButton);
+            roundedFlatButton = style;
         }
 
-        static void CreateFlatButtonLeftNew() {
-            var style = new GUIStyle(flatButtonNew);
-            style.alignment = TextAnchor.MiddleLeft;
+        static void CreateRoundedFlatButtonLeft() {
+            var style = new GUIStyle(roundedFlatButton);
+            style.alignment= TextAnchor.MiddleLeft;
             var oldPadding = style.padding;
             style.padding = new RectOffset(oldPadding.left + 10, oldPadding.right, oldPadding.top, oldPadding.bottom);
-            
-            style.name = nameof(flatButtonLeftNew);
-            flatButtonLeftNew = style;
+
+            style.name = nameof(roundedFlatButtonLeft);
+            roundedFlatButtonLeft = style;
         }
 
         static void CreateCloseWindowButton() {
@@ -447,6 +442,50 @@ namespace RapidGUI
             };
 
             warningLabelNoStyle = style;
+        }
+
+        static Texture2D GetRoundedRectTexture() {
+            var texture = LinkedMovement.LinkedMovement.roundedRectTexture;
+            if (texture == null) texture = CreateRoundedTexture();
+            return texture;
+        }
+
+        static Texture2D CreateRoundedTexture() {
+            int width = 12;
+            int height = 12;
+            int radius = 3;
+            Color color = new Color(0.87f, 0.87f, 0.87f);
+
+            Texture2D texture = new Texture2D(width, height);
+            Color[] pixels = new Color[width * height];
+
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    if (IsInsideRoundedRect(x, y, width, height, radius)) {
+                        pixels[y * width + x] = color;
+                    } else {
+                        pixels[y * width + x] = Color.clear;
+                    }
+                }
+            }
+
+            texture.SetPixels(pixels);
+            texture.Apply();
+            return texture;
+        }
+
+        static bool IsInsideRoundedRect(int x, int y, int width, int height, int radius) {
+            // Check if in corner regions
+            if (x < radius && y < radius)
+                return Vector2.Distance(new Vector2(x, y), new Vector2(radius, radius)) <= radius;
+            if (x >= width - radius && y < radius)
+                return Vector2.Distance(new Vector2(x, y), new Vector2(width - radius - 1, radius)) <= radius;
+            if (x < radius && y >= height - radius)
+                return Vector2.Distance(new Vector2(x, y), new Vector2(radius, height - radius - 1)) <= radius;
+            if (x >= width - radius && y >= height - radius)
+                return Vector2.Distance(new Vector2(x, y), new Vector2(width - radius - 1, height - radius - 1)) <= radius;
+
+            return true; // Inside the rectangle body
         }
     }
 }

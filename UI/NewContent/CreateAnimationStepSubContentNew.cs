@@ -66,31 +66,31 @@ namespace LinkedMovement.UI.NewContent {
                         animationStep.uiIsOpen = !animationStep.uiIsOpen;
                     }
                     
-                    if (Button("↑", RGUIStyle.flatButtonNew, Width(26f))) {
+                    if (Button("↑", RGUIStyle.roundedFlatButton, Width(26f))) {
                         LinkedMovement.Log("Move AnimationStep UP");
                         var didChange = animationParams.moveAnimationStepUp(animationStep);
                         if (didChange)
                             controller.currentAnimationUpdated();
                     }
-                    if (Button("↓", RGUIStyle.flatButtonNew, Width(26f))) {
+                    if (Button("↓", RGUIStyle.roundedFlatButton, Width(26f))) {
                         LinkedMovement.Log("Move AnimationStep DOWN");
                         var didChange = animationParams.moveAnimationStepDown(animationStep);
                         if (didChange)
                             controller.currentAnimationUpdated();
                     }
                     Label("|", RGUIStyle.dimText, Width(3f));
-                    if (Button("+Dup", RGUIStyle.flatButtonNew, Width(42f))) {
+                    if (Button("+Dup", RGUIStyle.roundedFlatButton, Width(42f))) {
                         LinkedMovement.Log("Add duplicate step");
                         animationParams.addDuplicateAnimationStep(animationStep);
                         controller.currentAnimationUpdated();
                     }
-                    if (Button("+Inv", RGUIStyle.flatButtonNew, Width(40f))) {
+                    if (Button("+Inv", RGUIStyle.roundedFlatButton, Width(40f))) {
                         LinkedMovement.Log("Add inverse step");
                         animationParams.addInverseAnimationStep(animationStep);
                         controller.currentAnimationUpdated();
                     }
                     Label("|", RGUIStyle.dimText, Width(3f));
-                    if (Button("✕", RGUIStyle.flatButtonNew, Width(25f))) {
+                    if (Button("✕", RGUIStyle.roundedFlatButton, Width(25f))) {
                         LinkedMovement.Log("Delete AnimationStep");
                         animationParams.deleteAnimationStep(animationStep);
                         controller.currentAnimationUpdated();

@@ -21,7 +21,7 @@ namespace LinkedMovement.UI.NewContent {
 
                 foreach (var animation in animations) {
                     using (Scope.Horizontal()) {
-                        if (Button(animation.name, RGUIStyle.flatButtonLeftNew)) {
+                        if (Button(animation.name, RGUIStyle.roundedFlatButtonLeft)) {
                             windowManager.removeWindow(this.window);
                             windowManager.createWindow(WindowManager.WindowType.EditAnimationNew, animation);
                         }

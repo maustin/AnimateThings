@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using PrimeTween;
 using System;
+using System.IO;
 using System.Reflection;
 using UnityEngine;
 
@@ -26,6 +27,8 @@ namespace LinkedMovement {
         private static LinkedMovementController Controller;
         private static LMController LMController;
         private static bool KeybindsRegistered;
+
+        public static Texture2D roundedRectTexture;
 
         public static bool HasController() {
             return Controller != null;
@@ -95,10 +98,62 @@ namespace LinkedMovement {
             registerHotkeys();
             Log("Done register hotkeys");
 
-            // TODO: Remove. Currently unnecessary as we're using built-in object for generated origin object.
-            Log("Attempt to load assets");
             var currentModDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             Log("Mod directory: " + currentModDirectory);
+
+            loadLooseAssets(currentModDirectory);
+
+            loadAssetpack(currentModDirectory);
+            
+            Log("Assets load complete");
+            // TODO: Disable LM UI and only show error if unable to load assets
+
+            Log("Initialize PrimeTween");
+            PrimeTweenConfig.ManualInitialize();
+            PrimeTweenConfig.warnZeroDuration = false;
+
+            Log("Startup complete");
+        }
+
+        public override void onDisabled() {
+            Log("onDisabled");
+            unregisterHotkeys();
+            ClearController();
+            ClearLMController();
+
+            if (Harmony == null)
+                return;
+            Harmony.UnpatchAll(getIdentifier());
+            Harmony = null;
+        }
+
+        private void loadLooseAssets(string currentModDirectory) {
+            Log("Attempt to load loose assets");
+            try {
+                var roundedRectPath = System.IO.Path.Combine(currentModDirectory, "assets\\roundedRect12.png");
+                Log("roundedRectPath: " + roundedRectPath);
+                byte[] fileData;
+                if (File.Exists(roundedRectPath)) {
+                    fileData = File.ReadAllBytes(roundedRectPath);
+                    roundedRectTexture = new Texture2D(2, 2);
+                    roundedRectTexture.LoadImage(fileData);
+                    roundedRectTexture.wrapMode = TextureWrapMode.Clamp;
+                    roundedRectTexture.filterMode = FilterMode.Bilinear;
+                    Log("Loaded roundedRect texture");
+                } else {
+                    Log("ERROR: Couldn't find roundedRect path");
+                }
+            }
+            catch (Exception e) {
+                Log("FAILED to load loose assets");
+                Log(e.ToString());
+            }
+            Log("Finished loading loose assets");
+        }
+
+        private void loadAssetpack(string currentModDirectory) {
+            // TODO: try/catch
+            Log("Attempt to load assetpack");
             var assetProjectPath = System.IO.Path.Combine(currentModDirectory, "assets\\LinkedMovement.assetProject");
             Log("assetProject: " + assetProjectPath);
 
@@ -140,26 +195,7 @@ namespace LinkedMovement {
                     }
                 }
             }
-            Log("Assets load complete");
-            // TODO: Disable LM UI and only show error if unable to load assets
-
-            Log("Initialize PrimeTween");
-            PrimeTweenConfig.ManualInitialize();
-            PrimeTweenConfig.warnZeroDuration = false;
-
-            Log("Startup complete");
-        }
-
-        public override void onDisabled() {
-            Log("onDisabled");
-            unregisterHotkeys();
-            ClearController();
-            ClearLMController();
-
-            if (Harmony == null)
-                return;
-            Harmony.UnpatchAll(getIdentifier());
-            Harmony = null;
+            Log("Finished loading assetpack");
         }
 
         private void registerHotkeys() {

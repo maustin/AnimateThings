@@ -63,7 +63,7 @@ namespace LinkedMovement.UI.NewContent {
                     Label("Animation Steps", RGUIStyle.popupTextNew);
                 }
 
-                if (Button("Add Step", RGUIStyle.flatButtonNew)) {
+                if (Button("Add Step", RGUIStyle.roundedFlatButton)) {
                     animationParams.addNewAnimationStep();
                     controller.currentAnimationUpdated();
                 }
