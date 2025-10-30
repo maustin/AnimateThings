@@ -574,43 +574,15 @@ namespace LinkedMovement.Utils {
             return duration;
         }
 
-        //public static void ResetUnusedTargets(List<BuildableObject> oldTargetObjects, List<BuildableObject> newTargetObjects) {
-        //    LinkedMovement.Log("LMUtils.ResetUnusedTargets");
-            
-        //    foreach (var oldTargetObject in oldTargetObjects) {
-        //        if (!newTargetObjects.Contains(oldTargetObject)) {
-        //            LinkedMovement.Log("Reset old target " + oldTargetObject.gameObject.name);
-        //            oldTargetObject.transform.SetParent(null);
-        //            SetChunkedMeshEnalbedIfPresent(oldTargetObject, true);
-        //        }
-        //    }
-        //}
-
-        //public static List<GameObject> GetAssociatedGameObjects(BuildableObject originObject, List<BuildableObject> targetObjects) {
-        //    LinkedMovement.Log("LMUtils.GetAssociatedGameObjects");
-        //    var associated = new List<GameObject>();
-        //    if (originObject != null && originObject.gameObject != null) {
-        //        LinkedMovement.Log("Add associated origin " + originObject.gameObject.name);
-        //        associated.Add(originObject.gameObject);
-        //    }
-        //    if (targetObjects != null && targetObjects.Count > 0) {
-        //        foreach (var targetObject in targetObjects) {
-        //            if (targetObject.gameObject != null) {
-        //                LinkedMovement.Log("Add associated target " + targetObject.gameObject.name);
-        //                associated.Add(targetObject.gameObject);
-        //            }
-        //        }
-        //    }
-        //    LinkedMovement.Log($"LMUtils.GetAssociatedGameObjects got {associated.Count} associated objects");
-        //    return associated;
-        //}
-
         public static void UpdateGameMouseMode(bool mouseToolActive) {
             // Mouse tool changes can happen before the park has fully loaded. Skip updates in this case.
             if (!LinkedMovement.HasLMController()) return;
 
             LinkedMovement.Log("LMUtils.UpdateGameMouseMode: " + mouseToolActive);
             LinkedMovement.GetLMController().showAnimationHelperObjects = mouseToolActive;
+
+            // TODO: Update helper objects to render/not render
+            // Keep list of Animation Helpers?
         }
 
         public static Color[] GetCustomColors(GameObject gameObject) {
