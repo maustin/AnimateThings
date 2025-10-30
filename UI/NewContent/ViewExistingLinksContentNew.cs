@@ -21,7 +21,7 @@ namespace LinkedMovement.UI.NewContent {
 
                 foreach (var link in links) {
                     using (Scope.Horizontal()) {
-                        if (Button(link.name, RGUIStyle.flatButtonLeft)) {
+                        if (Button(link.name, RGUIStyle.flatButtonLeftNew)) {
                             windowManager.removeWindow(this.window);
                             windowManager.createWindow(WindowManager.WindowType.EditLinkNew, link);
                         }

@@ -27,6 +27,8 @@ namespace RapidGUI
         public static GUIStyle popupTextNew;
         public static GUIStyle closeWindowButton;
         public static GUIStyle flatButtonNew;
+        public static GUIStyle flatButtonLeftNew;
+        // TODO: flatButtonLeft
         public static GUIStyle infoPopperButtonNew;
 
         // GUIStyleState.background will be null 
@@ -76,6 +78,7 @@ namespace RapidGUI
             CreatePopupTextNew();
             CreateCloseWindowButton();
             CreateFlatButtonNew();
+            CreateFlatButtonLeftNew();
             CreateInfoPopperNew();
         }
 
@@ -120,6 +123,16 @@ namespace RapidGUI
 
             style.name = nameof(flatButtonNew);
             flatButtonNew = style;
+        }
+
+        static void CreateFlatButtonLeftNew() {
+            var style = new GUIStyle(flatButtonNew);
+            style.alignment = TextAnchor.MiddleLeft;
+            var oldPadding = style.padding;
+            style.padding = new RectOffset(oldPadding.left + 10, oldPadding.right, oldPadding.top, oldPadding.bottom);
+            
+            style.name = nameof(flatButtonLeftNew);
+            flatButtonLeftNew = style;
         }
 
         static void CreateCloseWindowButton() {
