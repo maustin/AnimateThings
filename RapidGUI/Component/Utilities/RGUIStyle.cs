@@ -45,7 +45,8 @@ namespace RapidGUI
         private static Texture2D popupTextureNew;
         private static Texture2D popupWindowContentTextureNew;
         private static Texture2D closeWindowButtonTexture;
-        private static Texture2D roundedFlatButtonTexture;
+        private static Texture2D roundedFlatButtonWhiteTexture;
+        private static Texture2D roundedFlatButtonOffWhiteTexture;
 
 
         static RGUIStyle()
@@ -109,10 +110,12 @@ namespace RapidGUI
 
             style.wordWrap = false;
             style.alignment = TextAnchor.MiddleCenter;
-            style.normal.textColor = style.hover.textColor = new Color(0.32f, 0.32f, 0.32f);
+            style.normal.textColor = style.hover.textColor = style.active.textColor = new Color(0.2f, 0.2f, 0.2f);
 
-            roundedFlatButtonTexture = GetRoundedRectTexture();
-            style.normal.background = style.hover.background = roundedFlatButtonTexture;
+            roundedFlatButtonWhiteTexture = GetRoundedRectTexture(LinkedMovement.LinkedMovement.LOOSE_TEXTURES.ROUNDED_RECT_WHITE);
+            style.normal.background = style.hover.background = roundedFlatButtonWhiteTexture;
+            roundedFlatButtonOffWhiteTexture = GetRoundedRectTexture(LinkedMovement.LinkedMovement.LOOSE_TEXTURES.ROUNDED_RECT_OFFWHITE);
+            style.active.background = roundedFlatButtonOffWhiteTexture;
 
             style.border = new RectOffset(3, 3, 3, 3);
             
@@ -444,17 +447,20 @@ namespace RapidGUI
             warningLabelNoStyle = style;
         }
 
-        static Texture2D GetRoundedRectTexture() {
-            var texture = LinkedMovement.LinkedMovement.roundedRectTexture;
-            if (texture == null) texture = CreateRoundedTexture();
+        static Texture2D GetRoundedRectTexture(LinkedMovement.LinkedMovement.LOOSE_TEXTURES looseTextureType) {
+            var texture = LinkedMovement.LinkedMovement.GetLooseTexture(looseTextureType);
+            if (texture == null) texture = CreateDefaultRoundedTexture(looseTextureType);
             return texture;
         }
 
-        static Texture2D CreateRoundedTexture() {
+        static Texture2D CreateDefaultRoundedTexture(LinkedMovement.LinkedMovement.LOOSE_TEXTURES looseTextureType) {
             int width = 12;
             int height = 12;
             int radius = 3;
-            Color color = new Color(0.87f, 0.87f, 0.87f);
+
+            float brightness = looseTextureType == LinkedMovement.LinkedMovement.LOOSE_TEXTURES.ROUNDED_RECT_WHITE ? 1.0f : 0.87f;
+            //Color color = new Color(0.87f, 0.87f, 0.87f);
+            Color color = new Color(brightness, brightness, brightness);
 
             Texture2D texture = new Texture2D(width, height);
             Color[] pixels = new Color[width * height];

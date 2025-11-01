@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using PrimeTween;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
@@ -27,7 +28,20 @@ namespace LinkedMovement {
         private static LMController LMController;
         private static bool KeybindsRegistered;
 
-        public static Texture2D roundedRectTexture;
+        // TODO: Get rid of this mess
+        public enum LOOSE_TEXTURES {
+            ROUNDED_RECT_WHITE,
+            ROUNDED_RECT_OFFWHITE,
+        };
+        private static Dictionary<LOOSE_TEXTURES, string> looseTextureFilenames = new Dictionary<LOOSE_TEXTURES, string>() {
+            { LOOSE_TEXTURES.ROUNDED_RECT_WHITE, "roundedRect12-white.png" },
+            { LOOSE_TEXTURES.ROUNDED_RECT_OFFWHITE, "roundedRect12-offwhite.png" },
+        };
+        private static Dictionary<LOOSE_TEXTURES, Texture2D> looseTextures = new Dictionary<LOOSE_TEXTURES, Texture2D>();
+        public static Texture2D GetLooseTexture(LOOSE_TEXTURES looseTextureType) {
+            if (looseTextures.ContainsKey(looseTextureType)) return looseTextures[looseTextureType];
+            return null;
+        }
 
         public static bool HasLMController() {
             return LMController != null;
@@ -104,26 +118,37 @@ namespace LinkedMovement {
 
         private void loadLooseAssets(string currentModDirectory) {
             Log("Attempt to load loose assets");
+
+            foreach (LOOSE_TEXTURES value in Enum.GetValues(typeof(LOOSE_TEXTURES))) {
+                loadLooseAsset(currentModDirectory, value);
+            }
+
+            Log("Finished loading loose assets");
+        }
+        private void loadLooseAsset(string currentModDirectory, LOOSE_TEXTURES looseTextureType) {
+            var filename = looseTextureFilenames[looseTextureType];
+            Log("Attempt to load loose asset: " + filename);
+
             try {
-                var roundedRectPath = System.IO.Path.Combine(currentModDirectory, "assets\\roundedRect12.png");
-                Log("roundedRectPath: " + roundedRectPath);
+                var filePath = System.IO.Path.Combine(currentModDirectory, "assets\\" + filename);
+                Log("file path: " + filePath);
                 byte[] fileData;
-                if (File.Exists(roundedRectPath)) {
-                    fileData = File.ReadAllBytes(roundedRectPath);
-                    roundedRectTexture = new Texture2D(2, 2);
-                    roundedRectTexture.LoadImage(fileData);
-                    roundedRectTexture.wrapMode = TextureWrapMode.Clamp;
-                    roundedRectTexture.filterMode = FilterMode.Bilinear;
-                    Log("Loaded roundedRect texture");
+                if (File.Exists(filePath)) {
+                    fileData = File.ReadAllBytes(filePath);
+                    var newTexture = new Texture2D(2, 2);
+                    newTexture.LoadImage(fileData);
+                    newTexture.wrapMode = TextureWrapMode.Clamp;
+                    newTexture.filterMode = FilterMode.Bilinear;
+                    looseTextures.Add(looseTextureType, newTexture);
+                    Log("Loaded texture");
                 } else {
-                    Log("ERROR: Couldn't find roundedRect path");
+                    Log("ERROR: Couldn't find texture path");
                 }
             }
             catch (Exception e) {
-                Log("FAILED to load loose assets");
+                Log("FAILED to load loose asset");
                 Log(e.ToString());
             }
-            Log("Finished loading loose assets");
         }
 
         private void loadAssetpack(string currentModDirectory) {
