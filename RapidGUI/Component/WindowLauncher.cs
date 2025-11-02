@@ -78,13 +78,13 @@ namespace RapidGUI
                 rect = RGUI.ResizableWindow(GetHashCode(), rect,
                     (id) =>
                     {
-                        var titleSize = new Vector2(200f, 20f);
-                        var titlePos = new Vector2(10f, 2f);
+                        var titleSize = new Vector2(200f, 25f);
+                        var titlePos = new Vector2(10f, 4f);
                         var titleRect = new Rect(titlePos, titleSize);
                         GUI.Label(titleRect, name, RGUIStyle.popupWindowTitleNew);
 
-                        var buttonSize = new Vector2(40f, 20f);
-                        var buttonPos = new Vector2(rect.size.x - buttonSize.x, 2f);
+                        var buttonSize = new Vector2(30f, 20f);
+                        var buttonPos = new Vector2(rect.size.x - buttonSize.x - 5f, 4f);
                         var buttonRect = new Rect(buttonPos, buttonSize);
                         if (GUI.Button(buttonRect, "✕", RGUIStyle.closeWindowButton)) {
                             CloseWindow();

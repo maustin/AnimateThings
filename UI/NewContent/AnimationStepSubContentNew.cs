@@ -61,7 +61,7 @@ namespace LinkedMovement.UI.NewContent {
         public void DoGUI() {
             using (Scope.Vertical()) {
                 using (Scope.Horizontal()) {
-                    if (Button($"{(animationStep.uiIsOpen ? "▼" : "►")} {(stepIndex + 1).ToString()} : {(animationStep.name == "" ? "Step" : animationStep.name)} ", RGUIStyle.flatButtonLeft)) {
+                    if (Button($"{(animationStep.uiIsOpen ? "▼" : "►")} {stepIndex + 1} : {(animationStep.name == "" ? "Step" : animationStep.name)} ", RGUIStyle.flatButtonLeft)) {
                         animationStep.uiIsOpen = !animationStep.uiIsOpen;
                     }
                     
@@ -196,10 +196,10 @@ namespace LinkedMovement.UI.NewContent {
                     }
 
                     using (Scope.GuiEnabled(!controller.colorPickerWindowIsOpen())) {
-                        if (Button("Set")) {
+                        if (Button("Set", RGUIStyle.roundedFlatButton)) {
                             startColorPicking();
                         }
-                        if (Button("Clear")) {
+                        if (Button("Clear", RGUIStyle.roundedFlatButton)) {
                             clearColors();
                         }
                     }

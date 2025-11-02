@@ -24,6 +24,7 @@ namespace RapidGUI
         public static GUIStyle popupWindowNew;
         public static GUIStyle popupWindowTitleNew;
         public static GUIStyle popupWindowContentNew;
+        public static GUIStyle popupWindowContentInnerNew;
         public static GUIStyle popupTextNew;
         public static GUIStyle closeWindowButton;
         public static GUIStyle roundedFlatButton;
@@ -44,6 +45,7 @@ namespace RapidGUI
         // NEW
         private static Texture2D popupTextureNew;
         private static Texture2D popupWindowContentTextureNew;
+        private static Texture2D popupWindowContentInnerTextureNew;
         private static Texture2D closeWindowButtonTexture;
         private static Texture2D roundedFlatButtonWhiteTexture;
         private static Texture2D roundedFlatButtonOffWhiteTexture;
@@ -74,6 +76,7 @@ namespace RapidGUI
             CreatePopupWindowNew();
             CreatePopupWindowTitleNew();
             CreatePopupWindowContentNew();
+            CreatePopupWindowContentInnerNew();
             CreatePopupTextNew();
             CreateCloseWindowButton();
             //CreateFlatButtonNew();
@@ -137,13 +140,14 @@ namespace RapidGUI
             var style = new GUIStyle(GUI.skin.label) {
                 wordWrap = false,
                 alignment = TextAnchor.MiddleCenter,
+                fontStyle = FontStyle.Bold,
             };
 
             style.normal.textColor = new Color(0.95f, 0.95f, 0.95f);
             style.hover.textColor = new Color(1f, 1f, 1f);
 
             closeWindowButtonTexture = new Texture2D(1, 1);
-            closeWindowButtonTexture.SetPixel(0, 0, new Color(0.79f, 0.21f, 0.15f));
+            closeWindowButtonTexture.SetPixel(0, 0, new Color(0.91f, 0.25f, 0.18f));
             closeWindowButtonTexture.Apply();
             style.normal.background = style.hover.background = closeWindowButtonTexture;
 
@@ -159,7 +163,11 @@ namespace RapidGUI
 
             //style.normal.textColor = new Color(0.95f, 0.95f, 0.95f);
             //style.hover.textColor = new Color(1f, 1f, 1f);
-            style.normal.textColor = new Color(0.32f, 0.32f, 0.32f);
+
+            //style.normal.textColor = new Color(0.32f, 0.32f, 0.32f);
+            //style.hover.textColor = new Color(0.27f, 0.27f, 0.27f);
+
+            style.normal.textColor = new Color(0.2f, 0.2f, 0.2f);
             style.hover.textColor = new Color(0.27f, 0.27f, 0.27f);
 
             style.name = nameof(infoPopperButtonNew);
@@ -184,7 +192,7 @@ namespace RapidGUI
             style.wordWrap = false;
 
             style.alignment = TextAnchor.MiddleLeft;
-            style.normal.textColor = style.hover.textColor = new Color(0.32f, 0.32f, 0.32f);
+            style.normal.textColor = style.hover.textColor = new Color(0.2f, 0.2f, 0.2f);
 
             style.name = nameof(popupTextNew);
             popupTextNew = style;
@@ -251,7 +259,8 @@ namespace RapidGUI
             var style = new GUIStyle(GUI.skin.box);
             
             animationStepTex = new Texture2D(1, 1);
-            animationStepTex.SetPixel(0, 0, new Color(0.75f, 0.75f, 0.75f));
+            animationStepTex.SetPixel(0, 0, new Color(0.87f, 0.87f, 0.87f));
+            //animationStepTex.SetPixel(0, 0, new Color(0.90f, 0.90f, 0.90f));
             animationStepTex.Apply();
 
             style.normal.background = style.hover.background = animationStepTex;
@@ -303,7 +312,7 @@ namespace RapidGUI
             var style = new GUIStyle(GUI.skin.window);
 
             popupTextureNew = new Texture2D(1, 1);
-            var colorValue = 0.63f;
+            var colorValue = 0.70f;
             popupTextureNew.SetPixel(0, 0, new Color(colorValue, colorValue, colorValue));
             popupTextureNew.Apply();
 
@@ -316,14 +325,15 @@ namespace RapidGUI
 
         static void CreatePopupWindowTitleNew() {
             var style = new GUIStyle(GUI.skin.label);
-            //style.alignment = TextAnchor.MiddleCenter;
+            style.fontSize = 14;
+            style.fontStyle = FontStyle.Bold;
 
             //popupTitleTexNew = new Texture2D(1, 1);
             //var bgColorVal = 0.63f;
             //popupTitleTexNew.SetPixel(0, 0, new Color(bgColorVal, bgColorVal, bgColorVal));
             //popupTitleTexNew.Apply();
 
-            var textColorVal = 0.32f;
+            var textColorVal = 0.36f;
             style.normal.textColor = new Color(textColorVal, textColorVal, textColorVal);
             //style.normal.background = popupTitleTexNew;
 
@@ -332,34 +342,37 @@ namespace RapidGUI
         }
 
         static void CreatePopupWindowContentNew() {
-            //var style = new GUIStyle(GUI.skin.box);
-
             var style = new GUIStyle(GUI.skin.box);
-            LinkedMovement.LinkedMovement.Log("CreatePopupWindowContentNew");
-            LinkedMovement.LinkedMovement.Log("padding: " + style.padding.ToString());
-            LinkedMovement.LinkedMovement.Log("maring: " + style.margin.ToString());
-            LinkedMovement.LinkedMovement.Log("border: " + style.border.ToString());
-            //style.padding = new RectOffset();
             style.padding = new RectOffset(0, 0, 10, 0);
             style.margin = new RectOffset();
-            //style.margin = new RectOffset(0, 0, 10, 0);
-            //style.border = new RectOffset();
             style.border = new RectOffset(-10, -10, 0, -10);
-            LinkedMovement.LinkedMovement.Log("padding: " + style.padding.ToString());
-            LinkedMovement.LinkedMovement.Log("maring: " + style.margin.ToString());
-            LinkedMovement.LinkedMovement.Log("border: " + style.border.ToString());
-
-            var bgValue = 0.54f;
-            //var bgValue = 0.11f;
+            
+            var bgValue = 0.60f;
             popupWindowContentTextureNew = new Texture2D(1, 1);
             popupWindowContentTextureNew.SetPixel(0, 0, new Color(bgValue, bgValue, bgValue));
-            //popupWindowContentTexNew.SetPixel(0, 0, new Color(0f, 0f, 0.5f));
             popupWindowContentTextureNew.Apply();
 
-            style.normal.background = style.hover.background = popupWindowContentTextureNew;
+            //style.normal.background = style.hover.background = popupWindowContentTextureNew;
+            style.normal.background = popupWindowContentTextureNew;
 
             style.name = nameof(popupWindowContentTextureNew);
             popupWindowContentNew = style;
+        }
+
+        static void CreatePopupWindowContentInnerNew() {
+            var style = new GUIStyle(GUI.skin.box);
+            style.padding = new RectOffset(5, 5, 5, 5);
+            style.margin = new RectOffset();
+            style.border = new RectOffset();
+
+            popupWindowContentInnerTextureNew = new Texture2D(1, 1);
+            popupWindowContentInnerTextureNew.SetPixel(0, 0, new Color(0.5f, 0.9f, 0.5f));
+            popupWindowContentInnerTextureNew.Apply();
+
+            style.normal.background = popupWindowContentInnerTextureNew;
+
+            style.name = nameof(popupWindowContentInnerNew);
+            popupWindowContentInnerNew = style;
         }
 
         static void CreateDarkWindow()
@@ -459,7 +472,6 @@ namespace RapidGUI
             int radius = 3;
 
             float brightness = looseTextureType == LinkedMovement.LinkedMovement.LOOSE_TEXTURES.ROUNDED_RECT_WHITE ? 1.0f : 0.87f;
-            //Color color = new Color(0.87f, 0.87f, 0.87f);
             Color color = new Color(brightness, brightness, brightness);
 
             Texture2D texture = new Texture2D(width, height);
