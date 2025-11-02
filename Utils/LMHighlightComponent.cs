@@ -39,11 +39,17 @@ namespace LinkedMovement.Utils {
             }
         }
 
-        public void clearHighlight() {
-            LinkedMovement.Log("LMHighlightComponent.clearHighlight");
-            currentFlags = HighlightType.None;
-            rebuildHighlight();
+        public bool hasNoHighlights() {
+            var highlightIsNone = currentFlags == HighlightType.None;
+            //LinkedMovement.Log("LMHighlightComponent.hasNoHighlights: " + highlightIsNone);
+            return highlightIsNone;
         }
+
+        //public void clearHighlight() {
+        //    LinkedMovement.Log("LMHighlightComponent.clearHighlight");
+        //    currentFlags = HighlightType.None;
+        //    rebuildHighlight();
+        //}
 
         private bool hasFlag(HighlightType flag) {
             return (currentFlags & flag) == flag;

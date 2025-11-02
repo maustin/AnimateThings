@@ -507,7 +507,7 @@ namespace LinkedMovement.Utils {
         
         public static void AddObjectHighlight(BuildableObject buildableObject, HighlightType highlightType) {
             if (buildableObject == null) return;
-            LinkedMovement.Log($"LMUtils.AddObjectHighlight to {buildableObject.getName()} type {highlightType.ToString()}");
+            LinkedMovement.Log($"LMUtils.AddObjectHighlight to: {buildableObject.getName()}, type: {highlightType.ToString()}");
             var highlightComponent = buildableObject.gameObject.GetComponent<LMHighlightComponent>();
             if (highlightComponent == null) {
                 LinkedMovement.Log("LMHighlightComponent doesn't exist, creating");
@@ -518,12 +518,16 @@ namespace LinkedMovement.Utils {
 
         public static void RemoveObjectHighlight(BuildableObject buildableObject, HighlightType highlightType) {
             if (buildableObject == null) return;
-            LinkedMovement.Log($"LMUtils.RemoveObjectHighlight to {buildableObject.getName()} type {highlightType.ToString()}");
+            LinkedMovement.Log($"LMUtils.RemoveObjectHighlight from: {buildableObject.getName()}, type: {highlightType.ToString()}");
             var highlightComponent = buildableObject.gameObject.GetComponent<LMHighlightComponent>();
             if (highlightComponent == null) {
                 LinkedMovement.Log("LMHighlightComponent doesn't exist");
             } else {
                 highlightComponent.removeHighlightFlag(highlightType);
+                if (highlightComponent.hasNoHighlights()) {
+                    LinkedMovement.Log("Destroy LMHighlightComponent from object");
+                    GameObject.Destroy(highlightComponent);
+                }
             }
         }
 
