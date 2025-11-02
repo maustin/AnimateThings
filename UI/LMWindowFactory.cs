@@ -32,7 +32,7 @@ namespace LinkedMovement.UI {
                 case WindowManager.WindowType.ViewAnimationsNew:
                     title = "Animations";
                     width = 400;
-                    fixedHeight = 500;
+                    fixedHeight = 400;
                     position = getWindowPositionCenter(width, fixedHeight);
                     content = new ViewExistingAnimationsContentNew();
                     break;
@@ -51,7 +51,7 @@ namespace LinkedMovement.UI {
                 case WindowManager.WindowType.ViewLinksNew:
                     title = "Links";
                     width = 400;
-                    fixedHeight = 500;
+                    fixedHeight = 400;
                     position = getWindowPositionCenter(width, fixedHeight);
                     content = new ViewExistingLinksContentNew();
                     break;
