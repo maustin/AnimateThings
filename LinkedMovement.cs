@@ -95,6 +95,8 @@ namespace LinkedMovement {
 
         public LinkedMovement() {
             Log("Constructor");
+            registerHotkeys();
+            Log("Done register hotkeys");
         }
 
         public override void onEnabled() {
@@ -107,8 +109,8 @@ namespace LinkedMovement {
             Harmony.PatchAll();
             Log("Patching complete");
 
-            registerHotkeys();
-            Log("Done register hotkeys");
+            //registerHotkeys();
+            //Log("Done register hotkeys");
 
             var currentModDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             Log("Mod directory: " + currentModDirectory);
@@ -129,7 +131,7 @@ namespace LinkedMovement {
 
         public override void onDisabled() {
             Log("onDisabled");
-            unregisterHotkeys();
+            //unregisterHotkeys();
             ClearLMController();
 
             if (Harmony == null)
@@ -231,9 +233,9 @@ namespace LinkedMovement {
             }
             Log("register hotkeys");
             _keybindManager = new KeybindManager(getIdentifier(), getName());
-            _keybindManager.AddKeybind("LM_toggleGUI", "Toggle Linker UI", "Toggles whether the Linker UI is visible", KeyCode.Keypad3);
-            _keybindManager.AddKeybind("LM_prevTargetObject", "Previous Target Object", "Previous target object", KeyCode.Minus);
-            _keybindManager.AddKeybind("LM_nextTargetObject", "Next Target Object", "Next target object", KeyCode.Equals);
+            _keybindManager.AddKeybind("LM_toggleGUI", "Show UI", "Show the Animate Things UI", KeyCode.Keypad3);
+            _keybindManager.AddKeybind("LM_prevTargetObject", "Previous Target Object", "When selecting an object, cycle to the Previous object under the mouse", KeyCode.Minus);
+            _keybindManager.AddKeybind("LM_nextTargetObject", "Next Target Object", "When selecting an object, cycle to the Next object under the mouse", KeyCode.Equals);
 
             _keybindManager.RegisterAll();
             KeybindsRegistered = true;
