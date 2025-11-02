@@ -9,9 +9,11 @@ namespace LinkedMovement.UI {
         internal string title;
 
         public void RenderGUI() {
-            Space(3f);
+            Space(8f);
             using (new GUILayout.VerticalScope(RGUIStyle.popupWindowContentNew)) {
-                DoGUI();
+                using (new GUILayout.VerticalScope(RGUIStyle.popupWindowContentInnerNew)) {
+                    DoGUI();
+                }
             }
         }
 

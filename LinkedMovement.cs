@@ -30,17 +30,30 @@ namespace LinkedMovement {
 
         // TODO: Get rid of this mess
         public enum LOOSE_TEXTURES {
-            ROUNDED_RECT_WHITE,
-            ROUNDED_RECT_OFFWHITE,
+            BUTTON_NORMAL,
+            BUTTON_DOWN,
+            EXIT_BUTTON,
+            POPUP_CONTENT,
         };
         private static Dictionary<LOOSE_TEXTURES, string> looseTextureFilenames = new Dictionary<LOOSE_TEXTURES, string>() {
-            { LOOSE_TEXTURES.ROUNDED_RECT_WHITE, "roundedRect12-white.png" },
-            { LOOSE_TEXTURES.ROUNDED_RECT_OFFWHITE, "roundedRect12-offwhite.png" },
+            { LOOSE_TEXTURES.BUTTON_NORMAL, "roundedRect12-white.png" },
+            { LOOSE_TEXTURES.BUTTON_DOWN, "roundedRect12-buttondown.png" },
+            { LOOSE_TEXTURES.EXIT_BUTTON, "roundedRect12-red.png" },
+            { LOOSE_TEXTURES.POPUP_CONTENT, "roundedRect12-popupcontent.png" },
+        };
+        private static Dictionary<LOOSE_TEXTURES, Color> looseTextureDefaultColors = new Dictionary<LOOSE_TEXTURES, Color>() {
+            { LOOSE_TEXTURES.BUTTON_NORMAL, new Color(1f, 1f, 1f) },
+            { LOOSE_TEXTURES.BUTTON_DOWN, new Color(0.78f, 0.78f, 0.78f) },
+            { LOOSE_TEXTURES.EXIT_BUTTON, new Color(0.91f, 0.25f, 0.18f) },
+            { LOOSE_TEXTURES.POPUP_CONTENT, new Color(0.87f, 0.87f, 0.87f) },
         };
         private static Dictionary<LOOSE_TEXTURES, Texture2D> looseTextures = new Dictionary<LOOSE_TEXTURES, Texture2D>();
         public static Texture2D GetLooseTexture(LOOSE_TEXTURES looseTextureType) {
             if (looseTextures.ContainsKey(looseTextureType)) return looseTextures[looseTextureType];
             return null;
+        }
+        public static Color GetLooseTextureDefaultColor(LOOSE_TEXTURES looseTextureType) {
+            return looseTextureDefaultColors[looseTextureType];
         }
 
         public static bool HasLMController() {
@@ -126,6 +139,10 @@ namespace LinkedMovement {
             Log("Finished loading loose assets");
         }
         private void loadLooseAsset(string currentModDirectory, LOOSE_TEXTURES looseTextureType) {
+            if (!looseTextureFilenames.ContainsKey(looseTextureType)) {
+                Log("No filepath for loose texture type: " + looseTextureType);
+                return;
+            }
             var filename = looseTextureFilenames[looseTextureType];
             Log("Attempt to load loose asset: " + filename);
 

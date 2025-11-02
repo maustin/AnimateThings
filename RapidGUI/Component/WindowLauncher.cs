@@ -83,7 +83,7 @@ namespace RapidGUI
                         var titleRect = new Rect(titlePos, titleSize);
                         GUI.Label(titleRect, name, RGUIStyle.popupWindowTitleNew);
 
-                        var buttonSize = new Vector2(30f, 20f);
+                        var buttonSize = new Vector2(20f, 20f);
                         var buttonPos = new Vector2(rect.size.x - buttonSize.x - 5f, 4f);
                         var buttonRect = new Rect(buttonPos, buttonSize);
                         if (GUI.Button(buttonRect, "✕", RGUIStyle.closeWindowButton)) {
