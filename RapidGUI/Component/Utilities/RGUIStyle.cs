@@ -32,6 +32,8 @@ namespace RapidGUI
         public static GUIStyle infoPopperButtonNew;
         public static GUIStyle scrollBackground;
         public static GUIStyle scrollThumb;
+        public static GUIStyle fieldLabel;
+        public static GUIStyle flatButtonLeftNew;
 
         // GUIStyleState.background will be null 
         // if it set after secound scene load and don't use a few frame
@@ -54,6 +56,7 @@ namespace RapidGUI
         private static Texture2D scrollBackgroundTexture;
         private static Texture2D scrollThumbNormalTexture;
         private static Texture2D scrollThumbDownTexture;
+        private static Texture2D flatButtonLeftTextureNew;
 
 
         static RGUIStyle()
@@ -89,6 +92,8 @@ namespace RapidGUI
             CreateInfoPopperNew();
             CreateScrollBackground();
             CreateScrollThumb();
+            CreateFieldLabel();
+            CreateFlatButtonLeftNew();
         }
 
         static void CreateFlatButton()
@@ -202,6 +207,15 @@ namespace RapidGUI
             popupTextNew = style;
         }
 
+        static void CreateFieldLabel() {
+            var style = new GUIStyle(GUI.skin.label);
+
+            style.normal.textColor = new Color(0.2f, 0.2f, 0.2f);
+
+            style.name = nameof(fieldLabel);
+            fieldLabel = style;
+        }
+
         static void CreateInfoText() {
             var style = new GUIStyle(GUI.skin.label) {
                 richText = true,
@@ -232,6 +246,22 @@ namespace RapidGUI
 
             style.name = nameof(flatButtonLeft);
             flatButtonLeft = style;
+        }
+
+        static void CreateFlatButtonLeftNew() {
+            var style = new GUIStyle(GUI.skin.label);
+            style.wordWrap = false;
+            style.alignment = TextAnchor.MiddleLeft;
+
+            style.normal.textColor = style.hover.textColor = new Color(0.2f, 0.2f, 0.2f);
+
+            flatButtonLeftTextureNew = new Texture2D(1, 1);
+            flatButtonLeftTextureNew.SetPixel(0, 0, new Color(0.8f, 0.8f, 0.8f));
+            flatButtonLeftTextureNew.Apply();
+            style.hover.background = flatButtonLeftTextureNew;
+
+            style.name = nameof(flatButtonLeftNew);
+            flatButtonLeftNew = style;
         }
 
         static void CreatePopupFlatButton()

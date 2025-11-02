@@ -22,11 +22,11 @@ namespace RapidGUI
 
                 if (isLong)
                 {
-                    GUILayout.Label(label);
+                    GUILayout.Label(label, RGUIStyle.fieldLabel);
                 }
                 else
                 {
-                    GUILayout.Label(label, GUILayout.Width(PrefixLabelSetting.width));
+                    GUILayout.Label(label, RGUIStyle.fieldLabel, GUILayout.Width(PrefixLabelSetting.width));
                 }
             }
 

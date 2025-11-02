@@ -61,7 +61,8 @@ namespace LinkedMovement.UI.NewContent {
         public void DoGUI() {
             using (Scope.Vertical()) {
                 using (Scope.Horizontal()) {
-                    if (Button($"{(animationStep.uiIsOpen ? "▼" : "►")} {stepIndex + 1} : {(animationStep.name == "" ? "Step" : animationStep.name)} ", RGUIStyle.flatButtonLeft)) {
+                    var stepNameStyle = RGUIStyle.flatButtonLeftNew;
+                    if (Button($"{(animationStep.uiIsOpen ? "▼" : "►")} {stepIndex + 1} : {(animationStep.name == "" ? "Step" : animationStep.name)} ", stepNameStyle)) {
                         animationStep.uiIsOpen = !animationStep.uiIsOpen;
                     }
                     
