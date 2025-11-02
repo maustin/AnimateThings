@@ -30,6 +30,8 @@ namespace RapidGUI
         public static GUIStyle roundedFlatButton;
         public static GUIStyle roundedFlatButtonLeft;
         public static GUIStyle infoPopperButtonNew;
+        public static GUIStyle scrollBackground;
+        public static GUIStyle scrollThumb;
 
         // GUIStyleState.background will be null 
         // if it set after secound scene load and don't use a few frame
@@ -49,6 +51,9 @@ namespace RapidGUI
         private static Texture2D closeWindowButtonTexture;
         private static Texture2D roundedFlatButtonWhiteTexture;
         private static Texture2D roundedFlatButtonOffWhiteTexture;
+        private static Texture2D scrollBackgroundTexture;
+        private static Texture2D scrollThumbNormalTexture;
+        private static Texture2D scrollThumbDownTexture;
 
 
         static RGUIStyle()
@@ -82,6 +87,8 @@ namespace RapidGUI
             CreateRoundedFlatButton();
             CreateRoundedFlatButtonLeft();
             CreateInfoPopperNew();
+            CreateScrollBackground();
+            CreateScrollThumb();
         }
 
         static void CreateFlatButton()
@@ -258,7 +265,7 @@ namespace RapidGUI
             animationStepTex.SetPixel(0, 0, new Color(0.87f, 0.87f, 0.87f));
             animationStepTex.Apply();
 
-            style.normal.background = style.hover.background = animationStepTex;
+            style.normal.background = animationStepTex;
 
             style.name = nameof(animationStep);
             animationStep = style;
@@ -439,6 +446,30 @@ namespace RapidGUI
             };
 
             warningLabelNoStyle = style;
+        }
+
+        static void CreateScrollBackground() {
+            var style = new GUIStyle(GUI.skin.verticalScrollbar);
+
+            scrollBackgroundTexture = GetRoundedRectTexture(LinkedMovement.LinkedMovement.LOOSE_TEXTURES.SCROLL_BACKGROUND);
+            style.border = new RectOffset(3, 3, 3, 3);
+            style.normal.background = scrollBackgroundTexture;
+
+            style.name = nameof(scrollBackground);
+            scrollBackground = style;
+        }
+
+        static void CreateScrollThumb() {
+            var style = new GUIStyle(GUI.skin.verticalScrollbarThumb);
+
+            scrollThumbNormalTexture = GetRoundedRectTexture(LinkedMovement.LinkedMovement.LOOSE_TEXTURES.SCROLL_THUMB_NORMAL);
+            scrollThumbDownTexture = GetRoundedRectTexture(LinkedMovement.LinkedMovement.LOOSE_TEXTURES.SCROLL_THUMB_DOWN);
+            style.border = new RectOffset(3, 3, 3, 3);
+            style.normal.background = style.hover.background = scrollThumbNormalTexture;
+            style.active.background = scrollThumbDownTexture;
+
+            style.name = nameof(scrollThumb);
+            scrollThumb = style;
         }
 
         static Texture2D GetRoundedRectTexture(LinkedMovement.LinkedMovement.LOOSE_TEXTURES looseTextureType) {

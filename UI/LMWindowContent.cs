@@ -9,12 +9,21 @@ namespace LinkedMovement.UI {
         internal string title;
 
         public void RenderGUI() {
+            var originalScrollBackgroundStyle = GUI.skin.verticalScrollbar;
+            var originalScrollThumbStyle = GUI.skin.verticalScrollbarThumb;
+
+            GUI.skin.verticalScrollbar = RGUIStyle.scrollBackground;
+            GUI.skin.verticalScrollbarThumb = RGUIStyle.scrollThumb;
+
             Space(8f);
             using (new GUILayout.VerticalScope(RGUIStyle.popupWindowContentNew)) {
                 using (new GUILayout.VerticalScope(RGUIStyle.popupWindowContentInnerNew)) {
                     DoGUI();
                 }
             }
+
+            GUI.skin.verticalScrollbar = originalScrollBackgroundStyle;
+            GUI.skin.verticalScrollbarThumb = originalScrollThumbStyle;
         }
 
         virtual public void DoGUI() {}

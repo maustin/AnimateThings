@@ -34,18 +34,27 @@ namespace LinkedMovement {
             BUTTON_DOWN,
             EXIT_BUTTON,
             POPUP_CONTENT,
+            SCROLL_BACKGROUND,
+            SCROLL_THUMB_NORMAL,
+            SCROLL_THUMB_DOWN,
         };
         private static Dictionary<LOOSE_TEXTURES, string> looseTextureFilenames = new Dictionary<LOOSE_TEXTURES, string>() {
             { LOOSE_TEXTURES.BUTTON_NORMAL, "roundedRect12-white.png" },
             { LOOSE_TEXTURES.BUTTON_DOWN, "roundedRect12-buttondown.png" },
             { LOOSE_TEXTURES.EXIT_BUTTON, "roundedRect12-red.png" },
             { LOOSE_TEXTURES.POPUP_CONTENT, "roundedRect12-popupcontent.png" },
+            { LOOSE_TEXTURES.SCROLL_BACKGROUND, "roundedRect12-scrollbackground.png" },
+            { LOOSE_TEXTURES.SCROLL_THUMB_NORMAL, "roundedRect12-scrollthumb.png" },
+            { LOOSE_TEXTURES.SCROLL_THUMB_DOWN, "roundedRect12-scrollthumbdown.png" },
         };
         private static Dictionary<LOOSE_TEXTURES, Color> looseTextureDefaultColors = new Dictionary<LOOSE_TEXTURES, Color>() {
             { LOOSE_TEXTURES.BUTTON_NORMAL, new Color(1f, 1f, 1f) },
             { LOOSE_TEXTURES.BUTTON_DOWN, new Color(0.78f, 0.78f, 0.78f) },
             { LOOSE_TEXTURES.EXIT_BUTTON, new Color(0.91f, 0.25f, 0.18f) },
             { LOOSE_TEXTURES.POPUP_CONTENT, new Color(0.87f, 0.87f, 0.87f) },
+            { LOOSE_TEXTURES.SCROLL_BACKGROUND, new Color(0.46f, 0.46f, 0.46f) },
+            { LOOSE_TEXTURES.SCROLL_THUMB_NORMAL, new Color(0.70f, 0.70f, 0.70f) },
+            { LOOSE_TEXTURES.SCROLL_THUMB_DOWN, new Color(0.67f, 0.67f, 0.67f) },
         };
         private static Dictionary<LOOSE_TEXTURES, Texture2D> looseTextures = new Dictionary<LOOSE_TEXTURES, Texture2D>();
         public static Texture2D GetLooseTexture(LOOSE_TEXTURES looseTextureType) {
