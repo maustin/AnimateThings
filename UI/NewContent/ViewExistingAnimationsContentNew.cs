@@ -34,15 +34,11 @@ namespace LinkedMovement.UI.NewContent {
                         Space(2f);
                         
                         if (Button(animation.name, RGUIStyle.roundedFlatButtonLeft)) {
-                            LinkedMovement.Log("TEST CLICKED edit animation");
-                            
                             windowManager.removeWindow(this.window);
                             windowManager.createWindow(WindowManager.WindowType.EditAnimationNew, animation);
                         }
                         Space(3f);
                         if (Button("✕", RGUIStyle.roundedFlatButton, Width(40f))) {
-                            LinkedMovement.Log("TEST CLICKED delete animation");
-                            
                             controller.queueAnimationToRemove(animation);
                         }
                     }

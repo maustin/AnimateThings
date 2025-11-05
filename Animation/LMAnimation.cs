@@ -65,7 +65,6 @@ namespace LinkedMovement.Animation {
             get => _forceShowHighlight;
             set {
                 _forceShowHighlight = value;
-                LinkedMovement.Log("TEST LMAnimation.ForceShowHighlight: " + value);
 
                 if (_forceShowHighlight) {
                     LMUtils.AddObjectHighlight(targetBuildableObject, HighlightType.AnimationTarget);
