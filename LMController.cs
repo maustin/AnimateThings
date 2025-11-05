@@ -9,11 +9,9 @@ using UnityEngine;
 namespace LinkedMovement {
     public class LMController : MonoBehaviour {
 
-        // TODO: 10-30
+        // TODO: 11-05
         //
-        
-        // UI update
-        // Check Delays
+        // Deleting link parent object breaks children
         // Check # Tweens being created matches expected
 
         // Triggers
@@ -244,15 +242,19 @@ namespace LinkedMovement {
             }
         }
 
-        public void handleBuildableObjectDestroyed(BuildableObject buildableObject) {
-            LinkedMovement.Log("LMController.handleBuildableObjectDestroyed");
+        public void handleBuildableObjectDestruct(BuildableObject buildableObject) {
+            LinkedMovement.Log("LMController.handleBuildableObjectDestruct");
             if (buildableObject == null || buildableObject.gameObject == null) {
                 LinkedMovement.Log("Missing object (BO or GO)");
                 return;
             }
+            if (buildableObject.isPreview) {
+                LinkedMovement.Log("Object is preview, skip");
+                return;
+            }
 
             var gameObject = buildableObject.gameObject;
-            LinkedMovement.Log("Deleted object name: " + gameObject.name);
+            LinkedMovement.Log("Destruct object: " + gameObject.name);
 
             var animation = findAnimationByGameObject(gameObject);
             var linkAsParent = findLinkByParentGameObject(gameObject);

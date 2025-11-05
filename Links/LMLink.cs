@@ -372,7 +372,7 @@ namespace LinkedMovement.Links {
             }
 
             foreach (var buildableObject in tempTargetBuildableObjects) {
-                LMUtils.LogComponents(buildableObject);
+                //LMUtils.LogComponents(buildableObject);
                 LMUtils.SetTargetParent(null, buildableObject.transform);
                 LMUtils.UpdateMouseColliders(buildableObject);
             }
@@ -426,7 +426,7 @@ namespace LinkedMovement.Links {
             // Unparent targets
             foreach (var targetLink in linkTargets) {
                 LinkedMovement.Log("Unparent target: " + targetLink.targetGameObject.name);
-                LMUtils.LogComponents(targetLink.targetBuildableObject);
+                //LMUtils.LogComponents(targetLink.targetBuildableObject);
                 LMUtils.SetTargetParent(null, targetLink.targetGameObject.transform);
                 LMUtils.UpdateMouseColliders(targetLink.targetBuildableObject);
             }
