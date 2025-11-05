@@ -72,7 +72,7 @@ namespace LinkedMovement.UI {
                 //
                 case WindowManager.WindowType.Information:
                     title = "Information";
-                    width = 400;
+                    width = 500;
                     position = getWindowPositionCenter(width, 75);
                     //position = modifyPositionByOffset(position, windowManager.getNumberOfWindowsOfType(WindowManager.WindowType.Information));
                     position = modifyPositionByOffset(windowManager, position, WindowManager.WindowType.Information, WindowManager.WindowType.Error);
@@ -88,7 +88,7 @@ namespace LinkedMovement.UI {
 
 
                     title = "Error";
-                    width = 400;
+                    width = 500;
                     position = getWindowPositionCenter(width, 75);
                     //position = modifyPositionByOffset(position, windowManager.getNumberOfWindowsOfType(WindowManager.WindowType.Error));
                     position = modifyPositionByOffset(windowManager, position, WindowManager.WindowType.Information, WindowManager.WindowType.Error);

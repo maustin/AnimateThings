@@ -30,7 +30,7 @@ namespace LinkedMovement.UI.NewContent {
             using (Scope.Vertical()) {
                 // Name
                 using (Scope.Horizontal()) {
-                    InfoPopper.DoInfoPopper(LMStringKey.TODO);
+                    InfoPopper.DoInfoPopper(LMStringKey.LINK_NAME);
                     Label("Link name", RGUIStyle.popupTextNew);
                     var newName = RGUI.Field(controller.currentLink.name);
                     if (newName != controller.currentLink.name) {

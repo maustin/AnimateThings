@@ -13,9 +13,9 @@ namespace LinkedMovement.UI.NewContent {
 
         public void DoGUI() {
             using (Scope.Vertical()) {
-                Label("Select the parent object that the targets will attach to.", RGUIStyle.popupTextNew);
+                Label(LMStringSystem.GetText(LMStringKey.CREATE_LINK_PARENT_INTRO), RGUIStyle.popupTextNew);
 
-                Space(10f);
+                Space(5f);
 
                 var parentBO = controller.currentLink.getParentBuildableObject();
                 var hasParent = parentBO != null;
@@ -28,9 +28,10 @@ namespace LinkedMovement.UI.NewContent {
                             controller.currentLink.removeParentObject();
                         }
                     }
+                    Space(5f);
                 }
 
-                Space(10f);
+                //Space(5f);
 
                 using (Scope.GuiEnabled(!hasParent)) {
                     if (Button("Select Parent", RGUIStyle.roundedFlatButton)) {
@@ -38,6 +39,8 @@ namespace LinkedMovement.UI.NewContent {
                         controller.currentLink.startPickingParent();
                     }
                 }
+
+                Space(3f);
             }
         }
     }

@@ -18,7 +18,7 @@ namespace LinkedMovement.UI.NewContent {
 
         public void DoGUI() {
             using (Scope.Vertical()) {
-                Label("Select the objects to attach to the parent.", RGUIStyle.popupTextNew);
+                Label(LMStringSystem.GetText(LMStringKey.CREATE_LINK_TARGETS_INTRO), RGUIStyle.popupTextNew);
 
                 Space(10f);
 

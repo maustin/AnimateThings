@@ -28,7 +28,7 @@ namespace LinkedMovement.UI.NewContent {
             using (Scope.Vertical()) {
                 // Name
                 using (Scope.Horizontal()) {
-                    InfoPopper.DoInfoPopper(LMStringKey.CREATE_NEW_ANIM_NAME);
+                    InfoPopper.DoInfoPopper(LMStringKey.ANIM_NAME);
                     Label("Animation name", RGUIStyle.popupTextNew);
                     var newName = RGUI.Field(controller.currentAnimation.name);
                     if (newName != controller.currentAnimation.name) {

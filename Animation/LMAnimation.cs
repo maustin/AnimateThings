@@ -1,4 +1,5 @@
-﻿using LinkedMovement.Utils;
+﻿using LinkedMovement.UI.Utils;
+using LinkedMovement.Utils;
 using PrimeTween;
 using UnityEngine;
 
@@ -279,7 +280,8 @@ namespace LinkedMovement.Animation {
             var gameObject = buildableObject.gameObject;
             var animation = LinkedMovement.GetLMController().findAnimationByGameObject(gameObject);
             if (animation != null) {
-                string rejectMessage = $"Selection already has Animation '{animation.name}'";
+                //string rejectMessage = $"Selection already has Animation '{animation.name}'";
+                string rejectMessage = LMStringSystem.GetText(LMStringKey.SELECT_ANIM_TARGET_EXISTS, animation.name);
                 LinkedMovement.Log(rejectMessage);
                 // TODO: This call needs much cleaner access
                 LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);

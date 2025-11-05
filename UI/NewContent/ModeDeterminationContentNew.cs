@@ -10,6 +10,9 @@ namespace LinkedMovement.UI.NewContent {
             base.DoGUI();
 
             using (Scope.Vertical()) {
+                //Label(LMStringSystem.GetText(LMStringKey.MODE_SELECT), RGUIStyle.popupTextNew);
+                //Space(5f);
+
                 if (Button("Create Animation", RGUIStyle.roundedFlatButton)) {
                     LinkedMovement.Log("Clicked Create Animation");
                     windowManager.removeWindow(this.window);

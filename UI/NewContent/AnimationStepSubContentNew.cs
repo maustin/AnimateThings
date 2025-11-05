@@ -110,13 +110,13 @@ namespace LinkedMovement.UI.NewContent {
 
         private void renderStepDetails() {
             using (Scope.Horizontal()) {
-                InfoPopper.DoInfoPopper(LMStringKey.ANIMATE_STEP_NAME);
+                InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEP_NAME);
                 Label("Step name", RGUIStyle.popupTextNew);
                 animationStep.name = RGUI.Field(animationStep.name);
             }
 
             using (Scope.Horizontal()) {
-                InfoPopper.DoInfoPopper(LMStringKey.ANIMATE_START_DELAY);
+                InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEP_START_DELAY);
                 Label("Start delay", RGUIStyle.popupTextNew);
                 var newStartDelay = RGUI.Field(animationStep.startDelay);
                 if (animationStep.startDelay != newStartDelay) {
@@ -126,7 +126,7 @@ namespace LinkedMovement.UI.NewContent {
             }
 
             using (Scope.Horizontal()) {
-                InfoPopper.DoInfoPopper(LMStringKey.ANIMATE_DURATION);
+                InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEP_DURATION);
                 Label("Duration", RGUIStyle.popupTextNew);
                 var newDuration = RGUI.Field(animationStep.duration);
                 if (animationStep.duration != newDuration) {
@@ -136,7 +136,7 @@ namespace LinkedMovement.UI.NewContent {
             }
 
             using (Scope.Horizontal()) {
-                InfoPopper.DoInfoPopper(LMStringKey.ANIMATE_EASE);
+                InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEP_EASE);
                 Label("Ease", RGUIStyle.popupTextNew);
                 var newEase = RGUI.SelectionPopup(animationStep.ease, LMEase.Names);
                 if (animationStep.ease != newEase) {
@@ -146,7 +146,7 @@ namespace LinkedMovement.UI.NewContent {
             }
 
             using (Scope.Horizontal()) {
-                InfoPopper.DoInfoPopper(LMStringKey.ANIMATE_CHANGE_POSITION);
+                InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEP_POSITION);
                 Label("Position", RGUIStyle.popupTextNew);
                 FlexibleSpace();
                 var newPosition = RGUI.Field(animationStep.targetPosition);
@@ -157,7 +157,7 @@ namespace LinkedMovement.UI.NewContent {
             }
 
             using (Scope.Horizontal()) {
-                InfoPopper.DoInfoPopper(LMStringKey.ANIMATE_CHANGE_ROTATION);
+                InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEP_ROTATION);
                 Label("Rotation", RGUIStyle.popupTextNew);
                 FlexibleSpace();
                 var newRotation = RGUI.Field(animationStep.targetRotation);
@@ -168,7 +168,7 @@ namespace LinkedMovement.UI.NewContent {
             }
 
             using (Scope.Horizontal()) {
-                InfoPopper.DoInfoPopper(LMStringKey.ANIMATE_CHANGE_SCALE);
+                InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEP_SCALE);
                 Label("Scale", RGUIStyle.popupTextNew);
                 FlexibleSpace();
                 var newScale = RGUI.Field(animationStep.targetScale);
@@ -179,7 +179,7 @@ namespace LinkedMovement.UI.NewContent {
             }
 
             using (Scope.Horizontal()) {
-                InfoPopper.DoInfoPopper(LMStringKey.TODO);
+                InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEP_COLOR);
                 Label("Color", RGUIStyle.popupTextNew);
                 FlexibleSpace();
                 if (colors != null) {
@@ -206,7 +206,7 @@ namespace LinkedMovement.UI.NewContent {
             }
 
             using (Scope.Horizontal()) {
-                InfoPopper.DoInfoPopper(LMStringKey.ANIMATE_END_DELAY);
+                InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEP_END_DELAY);
                 Label("End delay", RGUIStyle.popupTextNew);
                 var newEndDelay = RGUI.Field(animationStep.endDelay);
                 if (animationStep.endDelay != newEndDelay) {

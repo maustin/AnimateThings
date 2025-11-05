@@ -20,13 +20,11 @@ namespace LinkedMovement.UI.NewContent {
         }
 
         public void DoGUI() {
-            // TODO: Info i
-
             rebuildStepContent();
 
             using (Scope.Vertical()) {
                 using (Scope.Horizontal()) {
-                    InfoPopper.DoInfoPopper(LMStringKey.ANIMATE_IS_TRIGGERABLE);
+                    InfoPopper.DoInfoPopper(LMStringKey.ANIM_IS_TRIGGERABLE);
                     Label("Is Triggerable", RGUIStyle.popupTextNew);
                     var newIsTriggerable = RGUI.Field(animationParams.isTriggerable);
                     if (newIsTriggerable != animationParams.isTriggerable) {
@@ -37,7 +35,7 @@ namespace LinkedMovement.UI.NewContent {
                 }
 
                 using (Scope.Horizontal()) {
-                    InfoPopper.DoInfoPopper(LMStringKey.TODO);
+                    InfoPopper.DoInfoPopper(LMStringKey.ANIM_DELAY_ON_PARK_LOAD);
                     Label("Delay animation on park load", RGUIStyle.popupTextNew);
                     var newUseInitialStartDelay = RGUI.Field(animationParams.useInitialStartDelay);
                     if (animationParams.useInitialStartDelay != newUseInitialStartDelay) {
@@ -47,20 +45,22 @@ namespace LinkedMovement.UI.NewContent {
                 }
 
                 using (Scope.Horizontal()) {
-                    InfoPopper.DoInfoPopper(LMStringKey.TODO);
-                    var newInitialDelayMin = RGUI.Field(animationParams.initialStartDelayMin, "Delay time min");
-                    var newInitialDelayMax = RGUI.Field(animationParams.initialStartDelayMax, "Delay time max");
-                    if (!animationParams.initialStartDelayMin.Equals(newInitialDelayMin) || !animationParams.initialStartDelayMax.Equals(newInitialDelayMax)) {
-                        LinkedMovement.Log("SET initial delay range");
-                        animationParams.initialStartDelayMin = newInitialDelayMin;
-                        animationParams.initialStartDelayMax = newInitialDelayMax;
+                    using (Scope.GuiEnabled(animationParams.useInitialStartDelay)) {
+                        InfoPopper.DoInfoPopper(LMStringKey.ANIM_DELAY_ON_PARK_LOAD_MINMAX);
+                        var newInitialDelayMin = RGUI.Field(animationParams.initialStartDelayMin, "Delay time min");
+                        var newInitialDelayMax = RGUI.Field(animationParams.initialStartDelayMax, "Delay time max");
+                        if (!animationParams.initialStartDelayMin.Equals(newInitialDelayMin) || !animationParams.initialStartDelayMax.Equals(newInitialDelayMax)) {
+                            LinkedMovement.Log("SET initial delay range");
+                            animationParams.initialStartDelayMin = newInitialDelayMin;
+                            animationParams.initialStartDelayMax = newInitialDelayMax;
+                        }
                     }
                 }
 
                 Space(5f);
 
                 using (Scope.Horizontal()) {
-                    InfoPopper.DoInfoPopper(LMStringKey.ANIMATE_STEPS_INTRO);
+                    InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEPS);
                     Label("Animation Steps", RGUIStyle.popupTextNew);
                 }
 
