@@ -4,8 +4,6 @@ namespace RapidGUI
 {
     public static class RGUIStyle
     {
-        public static GUIStyle flatButton;
-        public static GUIStyle flatButtonLeft;
         public static GUIStyle popupFlatButton;
         public static GUIStyle popupFlatButtonSelected;
         public static GUIStyle popup;
@@ -40,15 +38,9 @@ namespace RapidGUI
         public static GUIContent iconEyeContent;
         public static GUIContent iconEyeStrikeContent;
 
-        // GUIStyleState.background will be null 
-        // if it set after secound scene load and don't use a few frame
-        // to keep textures, set it to other member. at unity2019
-        private static Texture2D flatButtonTex;
-        private static Texture2D flatButtonLeftTex;
+        // OLD
         private static Texture2D popupTex;
         private static Texture2D popupTitleTex;
-        private static Texture2D darkWindowTexNormal;
-        private static Texture2D darkWindowTexOnNormal;
         private static Texture2D animationStepTex;
 
         // NEW
@@ -73,10 +65,6 @@ namespace RapidGUI
 
         public static void CreateStyles()
         {
-            CreateFlatButton();
-            CreateFlatButtonLeft();
-            CreatePopupFlatButton();
-            CreatePopupFlatButtonSelected();
             CreatePopup();
             CreatePopupTitle();
             CreateDarkWindow();
@@ -102,27 +90,6 @@ namespace RapidGUI
             CreateFieldLabel();
             CreateFlatButtonLeftNew();
             CreateIconEyeButton();
-        }
-
-        static void CreateFlatButton()
-        {
-            var style = new GUIStyle(GUI.skin.label)
-            {
-                wordWrap = false, 
-                alignment = TextAnchor.MiddleCenter
-            };
-
-            var toggle = GUI.skin.toggle;
-            style.normal.textColor = toggle.normal.textColor;
-            style.hover.textColor = toggle.hover.textColor;
-
-            flatButtonTex = new Texture2D(1, 1);
-            flatButtonTex.SetPixel(0, 0, new Color(0.5f, 0.5f, 0.5f));
-            flatButtonTex.Apply();
-            style.hover.background = flatButtonTex;
-
-            style.name = nameof(flatButton);
-            flatButton = style;
         }
 
         static void CreateRoundedFlatButton() {
@@ -226,25 +193,6 @@ namespace RapidGUI
             infoText = style;
         }
 
-        static void CreateFlatButtonLeft() {
-            var style = new GUIStyle(GUI.skin.label) {
-                wordWrap = false,
-                alignment = TextAnchor.MiddleLeft
-            };
-
-            var toggle = GUI.skin.toggle;
-            style.normal.textColor = toggle.normal.textColor;
-            style.hover.textColor = toggle.hover.textColor;
-
-            flatButtonLeftTex = new Texture2D(1, 1);
-            flatButtonLeftTex.SetPixel(0, 0, new Color(0.5f, 0.5f, 0.5f));
-            flatButtonLeftTex.Apply();
-            style.hover.background = flatButtonLeftTex;
-
-            style.name = nameof(flatButtonLeft);
-            flatButtonLeft = style;
-        }
-
         static void CreateFlatButtonLeftNew() {
             var style = new GUIStyle(GUI.skin.label);
             style.wordWrap = false;
@@ -259,30 +207,6 @@ namespace RapidGUI
 
             style.name = nameof(flatButtonLeftNew);
             flatButtonLeftNew = style;
-        }
-
-        static void CreatePopupFlatButton()
-        {
-            var style = new GUIStyle(flatButton)
-            {
-                alignment = GUI.skin.label.alignment,
-                padding = new RectOffset(24, 48, 2, 2),
-                name = nameof(popupFlatButton)
-            };
-
-            popupFlatButton = style;
-        }
-
-        static void CreatePopupFlatButtonSelected() {
-            var style = new GUIStyle(flatButton) {
-                alignment = GUI.skin.label.alignment,
-                padding = new RectOffset(24, 48, 2, 2),
-                fontStyle = FontStyle.Bold,
-                name = nameof(popupFlatButtonSelected),
-            };
-            style.normal.textColor = Color.yellow;
-
-            popupFlatButtonSelected = style;
         }
 
         static void CreateAnimationStep() {
@@ -394,8 +318,8 @@ namespace RapidGUI
         {
             var style = new GUIStyle(GUI.skin.window);
 
-            style.normal.background = darkWindowTexNormal = CreateTexDark(style.normal.background, 0.6f, 2f);
-            style.onNormal.background = darkWindowTexOnNormal = CreateTexDark(style.onNormal.background, 0.5f, 1.9f);
+            style.normal.background = CreateTexDark(style.normal.background, 0.6f, 2f);
+            style.onNormal.background = CreateTexDark(style.onNormal.background, 0.5f, 1.9f);
 
             style.name = nameof(darkWindow);
 
@@ -413,6 +337,7 @@ namespace RapidGUI
             alignLeftBox = style;
         }
 
+        // TODO: This needs to be cleaned up
         static Texture2D CreateTexDark(Texture2D src, float colorRate, float alphaRate)
         {
             LinkedMovement.LinkedMovement.Log($"RGUIStyle.CreateTexDark w: {src.width}, h: {src.height}");
