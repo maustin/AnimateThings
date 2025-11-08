@@ -4,6 +4,7 @@ namespace RapidGUI
 {
     public static class RGUIStyle
     {
+        public static GUIStyle flatButton;
         public static GUIStyle popupFlatButton;
         public static GUIStyle popupFlatButtonSelected;
         public static GUIStyle popup;
@@ -39,6 +40,7 @@ namespace RapidGUI
         public static GUIContent iconEyeStrikeContent;
 
         // OLD
+        private static Texture2D flatButtonTex;
         private static Texture2D popupTex;
         private static Texture2D popupTitleTex;
         private static Texture2D animationStepTex;
@@ -65,6 +67,9 @@ namespace RapidGUI
 
         public static void CreateStyles()
         {
+            CreateFlatButton();
+            CreatePopupFlatButton();
+            CreatePopupFlatButtonSelected();
             CreatePopup();
             CreatePopupTitle();
             CreateDarkWindow();
@@ -90,6 +95,47 @@ namespace RapidGUI
             CreateFieldLabel();
             CreateFlatButtonLeftNew();
             CreateIconEyeButton();
+        }
+
+        static void CreateFlatButton() {
+            var style = new GUIStyle(GUI.skin.label) {
+                wordWrap = false,
+                alignment = TextAnchor.MiddleCenter
+            };
+
+            var toggle = GUI.skin.toggle;
+            style.normal.textColor = toggle.normal.textColor;
+            style.hover.textColor = toggle.hover.textColor;
+
+            flatButtonTex = new Texture2D(1, 1);
+            flatButtonTex.SetPixel(0, 0, new Color(0.5f, 0.5f, 0.5f));
+            flatButtonTex.Apply();
+            style.hover.background = flatButtonTex;
+
+            style.name = nameof(flatButton);
+            flatButton = style;
+        }
+
+        static void CreatePopupFlatButton() {
+            var style = new GUIStyle(flatButton) {
+                alignment = GUI.skin.label.alignment,
+                padding = new RectOffset(24, 48, 2, 2),
+                name = nameof(popupFlatButton)
+            };
+
+            popupFlatButton = style;
+        }
+
+        static void CreatePopupFlatButtonSelected() {
+            var style = new GUIStyle(flatButton) {
+                alignment = GUI.skin.label.alignment,
+                padding = new RectOffset(24, 48, 2, 2),
+                fontStyle = FontStyle.Bold,
+                name = nameof(popupFlatButtonSelected),
+            };
+            style.normal.textColor = Color.yellow;
+
+            popupFlatButtonSelected = style;
         }
 
         static void CreateRoundedFlatButton() {
