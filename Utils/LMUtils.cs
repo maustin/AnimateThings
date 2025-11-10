@@ -44,8 +44,35 @@ namespace LinkedMovement.Utils {
 
         public static void DeleteChunkedMesh(BuildableObject bo) {
             if (bo == null) return;
+
             LinkedMovement.Log("LMUtils.DeleteChunkedMesh for " + bo.name);
-            UnityEngine.Object.Destroy(bo.GetComponent<ChunkedMesh>());
+            var chunkedMesh = bo.GetComponent<ChunkedMesh>();
+            if (chunkedMesh != null) {
+                UnityEngine.Object.Destroy(chunkedMesh);
+                return;
+            }
+
+            // Object doesn't have ChunkedMesh. Check if it has LODGroup.
+            // If so, the ChunkedMesh components will be in 2nd-level children.
+            var lodGroup = bo.GetComponent<LODGroup>();
+            if (lodGroup == null) return;
+
+            // Object has LODGroup, check children
+            foreach (Transform child in bo.transform) {
+                var childGO = child.gameObject;
+                var childGOName = childGO.name;
+                if (childGOName.Contains("LOD") && child.childCount > 0) {
+                    // Child is an LOD object
+                    var childChild = child.GetChild(0);
+                    if (childChild == null) return;
+                    // LOD object has a child (this is what should have the ChunkedMesh)
+                    var childChildGO = childChild.gameObject;
+                    chunkedMesh = childChildGO.GetComponent<ChunkedMesh>();
+                    if (chunkedMesh != null) {
+                        UnityEngine.Object.Destroy(chunkedMesh);
+                    }
+                }
+            }
         }
 
         // TODO: Eliminate this method (prefer delete ChunkedMesh instead)

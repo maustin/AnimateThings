@@ -631,6 +631,7 @@ namespace LinkedMovement.Selection {
             var boxHits = MouseCollisions.Instance.boxcastAll(bounds);
             LinkedMovement.Log("Box tool hit #: " + boxHits.Length.ToString());
             foreach (MouseCollider.HitInfo hitInfo in boxHits) {
+                //LMUtils.LogComponents(hitInfo.hitObject);
                 //var o = hitInfo.hitObject.GetComponentInParent<BuildableObject>();
                 var o = LMUtils.GetBuildableObjectFromBoxSelectGameObject(hitInfo.hitObject);
                 if (o != null) {
