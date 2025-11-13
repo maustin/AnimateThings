@@ -408,7 +408,6 @@ namespace LinkedMovement.Links {
             }
 
             foreach (var buildableObject in tempTargetBuildableObjects) {
-                //LMUtils.LogComponents(buildableObject);
                 LMUtils.SetTargetParent(null, buildableObject.transform);
                 LMUtils.UpdateMouseColliders(buildableObject);
             }
@@ -464,7 +463,6 @@ namespace LinkedMovement.Links {
 
             foreach (var targetLink in linkTargets) {
                 LMLogger.Debug("Unparent target: " + targetLink.targetGameObject.name);
-                //LMUtils.LogComponents(targetLink.targetBuildableObject);
                 LMUtils.SetTargetParent(null, targetLink.targetGameObject.transform);
                 LMUtils.UpdateMouseColliders(targetLink.targetBuildableObject);
 
@@ -494,7 +492,6 @@ namespace LinkedMovement.Links {
             var gameObject = buildableObject.gameObject;
             var link = LinkedMovement.GetLMController().findLinkByParentGameObject(gameObject);
             if (link != null) {
-                //string rejectMessage = $"Selection is already the Parent object of Link '{link.name}'";
                 string rejectMessage = LMStringSystem.GetText(LMStringKey.SELECT_LINK_PARENT_EXISTS, buildableObject.getName(), link.name);
                 LMLogger.Debug(rejectMessage);
                 LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
