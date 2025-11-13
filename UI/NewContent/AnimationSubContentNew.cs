@@ -62,7 +62,7 @@ namespace LinkedMovement.UI.NewContent {
                 var animationLength = animationParams.getAnimationLength();
                 using (Scope.Horizontal()) {
                     InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEPS);
-                    Label($"Animation Steps (Current animation length {animationLength.ToString("F2")} sec)", RGUIStyle.popupTextNew);
+                    Label($"Animation Steps (Animation length {animationLength.ToString("F2")} sec)", RGUIStyle.popupTextNew);
                 }
 
                 //var currentAnimation = controller.currentAnimation;

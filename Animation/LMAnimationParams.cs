@@ -83,6 +83,19 @@ namespace LinkedMovement {
             return length;
         }
 
+        public void getStepAnimationProgressOffsets(LMAnimationStep animationStep, float animationLength, ref float stepProgressMin, ref float stepProgressMax) {
+            float startTime = 0f;
+            foreach (var step in animationSteps) {
+                if (step != animationStep) {
+                    startTime += step.duration + step.startDelay + step.endDelay;
+                } else {
+                    stepProgressMin = startTime / animationLength;
+                    stepProgressMax = (startTime + step.duration + step.startDelay + step.endDelay) / animationLength;
+                    break;
+                }
+            }
+        }
+
         public void addNewAnimationStep() {
             addNewAnimationStep(new LMAnimationStep(this));
         }

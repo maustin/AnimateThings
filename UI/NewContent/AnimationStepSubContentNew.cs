@@ -17,6 +17,10 @@ namespace LinkedMovement.UI.NewContent {
         private int numCustomColors = 0;
         private Color[] colors;
 
+        private float animationLength;
+        private float stepProgressMin;
+        private float stepProgressMax;
+
         private void startColorPicking() {
             var colorPicker = controller.launchColorPickerWindow(colors, 0);
             colorPicker.OnColorsChanged += newColors => {
@@ -47,6 +51,10 @@ namespace LinkedMovement.UI.NewContent {
             this.animationStep = animationStep;
             this.stepIndex = stepIndex;
 
+            animationLength = animationParams.getAnimationLength();
+            animationParams.getStepAnimationProgressOffsets(animationStep, animationLength, ref stepProgressMin, ref stepProgressMax);
+            LMLogger.Debug($"step progress for: {animationStep.name}, min: {stepProgressMin}, max: {stepProgressMax}");
+
             var staringCustomColors = animationStep.targetColors;
             if (staringCustomColors != null) {
                 this.colors = staringCustomColors.ToArray();
@@ -59,10 +67,14 @@ namespace LinkedMovement.UI.NewContent {
         }
 
         public void DoGUI() {
+            var currentAnimation = controller.currentAnimation;
+            var currentAnimationProgress = currentAnimation.sequence.progress;
+            var animChar = currentAnimationProgress >= stepProgressMin && currentAnimationProgress <= stepProgressMax ? "●" : "○";
+
             using (new GUILayout.VerticalScope(RGUIStyle.animationStep)) {
                 using (Scope.Horizontal()) {
                     var stepNameStyle = RGUIStyle.flatButtonLeftNew;
-                    if (Button($"{(animationStep.uiIsOpen ? "▼" : "►")} {stepIndex + 1} : {(animationStep.name == "" ? "Step" : animationStep.name)} ", stepNameStyle)) {
+                    if (Button($"{(animationStep.uiIsOpen ? "▼" : "►")} {animChar} {stepIndex + 1} : {(animationStep.name == "" ? "Step" : animationStep.name)} ", stepNameStyle)) {
                         animationStep.uiIsOpen = !animationStep.uiIsOpen;
                     }
                     
