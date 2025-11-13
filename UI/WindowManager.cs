@@ -105,5 +105,12 @@ namespace LinkedMovement.UI {
             }
             return count;
         }
+
+        public void closeAllWindows() {
+            var windows = new List<LMWindow>(activeWindows);
+            foreach (var window in windows) {
+                removeWindow(window);
+            }
+        }
     }
 }

@@ -330,6 +330,7 @@ namespace LinkedMovement {
         public void clearEditMode() {
             LMLogger.Debug("LMController.clearEditMode");
             closeColorPickerWindow();
+            windowManager.closeAllWindows();
 
             if (currentAnimation != null) {
                 currentAnimation.discardChanges();
