@@ -65,7 +65,7 @@ namespace LinkedMovement.UI.Utils {
 
         public static string GetText(LMStringKey key, params object[] args) {
             if (!texts.TryGetValue(key, out var template)) {
-                LinkedMovement.Log("LMStringSystem.GetText failed to find key: " + key);
+                LMLogger.Error("LMStringSystem.GetText failed to find key: " + key);
                 return "ERROR: Couldn't find string key: " + key.ToString();
             }
 
@@ -76,8 +76,8 @@ namespace LinkedMovement.UI.Utils {
             try {
                 return string.Format(template, args);
             } catch (FormatException e) {
-                LinkedMovement.Log("ERROR: LMStringSystem.GetText FormatException for key: " + key.ToString());
-                LinkedMovement.Log(e.Message);
+                LMLogger.Error("LMStringSystem.GetText FormatException for key: " + key.ToString());
+                LMLogger.Error(e.Message);
                 return template;
             }
         }

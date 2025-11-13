@@ -18,23 +18,23 @@ namespace LinkedMovement.Utils {
         private static HashSet<GameObject> AssociatedGameObjects;
 
         public static void LogComponents(GameObject go) {
-            LinkedMovement.Log("LMUtils.LogComponents for GameObject: " + go.name);
+            LMLogger.Debug("LMUtils.LogComponents for GameObject: " + go.name);
             Component[] components = go.GetComponents<Component>();
             foreach (var component in components) {
-                LinkedMovement.Log($"Component type: {component.GetType().Name}, name: {component.name}");
+                LMLogger.Debug($"Component type: {component.GetType().Name}, name: {component.name}");
             }
 
             if (go.transform.parent != null) {
-                LinkedMovement.Log("Has parent");
+                LMLogger.Debug("Has parent");
                 LogComponents(go.transform.parent.gameObject);
             }
         }
 
         public static void LogComponents(BuildableObject bo) {
-            LinkedMovement.Log("LMUtils.LogComponents for BuildableObject: " + bo.getName());
+            LMLogger.Debug("LMUtils.LogComponents for BuildableObject: " + bo.getName());
             Component[] components = bo.gameObject.GetComponents<Component>();
             foreach (var component in components) {
-                LinkedMovement.Log($"Component type: {component.GetType().Name}, name: {component.name}");
+                LMLogger.Debug($"Component type: {component.GetType().Name}, name: {component.name}");
             }
         }
 
@@ -45,7 +45,7 @@ namespace LinkedMovement.Utils {
         public static void DeleteChunkedMesh(BuildableObject bo) {
             if (bo == null) return;
 
-            LinkedMovement.Log("LMUtils.DeleteChunkedMesh for " + bo.name);
+            LMLogger.Debug("LMUtils.DeleteChunkedMesh for " + bo.name);
             var chunkedMesh = bo.GetComponent<ChunkedMesh>();
             if (chunkedMesh != null) {
                 UnityEngine.Object.Destroy(chunkedMesh);
@@ -80,17 +80,17 @@ namespace LinkedMovement.Utils {
         // while we're modifying animations that affect their GameObject.
         // Disable when creating and modifying. Re-enable when finished.
         public static void SetChunkedMeshEnalbedIfPresent(BuildableObject bo, bool enalbed) {
-            LinkedMovement.Log($"LMUtils.SetChunkedMeshEnalbedIfPresent for {bo.getName()} set to {enalbed.ToString()}");
+            LMLogger.Debug($"LMUtils.SetChunkedMeshEnalbedIfPresent for {bo.getName()} set to {enalbed.ToString()}");
             //LogComponents(bo);
             
             var chunker = bo.GetComponent<ChunkedMesh>();
             if (chunker != null) {
                 //LinkedMovement.Log($"LMUtils.SetChunkedMeshEnalbedIfPresent for {bo.getName()} set to {enalbed.ToString()}");
-                LinkedMovement.Log("Has ChunkedMesh");
+                LMLogger.Debug("Has ChunkedMesh");
                 chunker.enabled = enalbed;
             } else {
                 //LinkedMovement.Log($"LMUtils.SetChunkedMeshEnalbedIfPresent for {bo.getName()} does NOT have ChunkedMesh component");
-                LinkedMovement.Log("NO ChunkedMesh");
+                LMLogger.Debug("NO ChunkedMesh");
             }
         }
 
@@ -99,7 +99,7 @@ namespace LinkedMovement.Utils {
         }
 
         public static void BuildLinksAndAnimationsFromBlueprint(List<BuildableObject> builtObjectInstances, Vector3 forward) {
-            LinkedMovement.Log("LMUtils.BuildLinksAndAnimationsFromBlueprint");
+            LMLogger.Debug("LMUtils.BuildLinksAndAnimationsFromBlueprint");
 
             var createdLinkParents = new List<LMLinkParent>();
             var createdLinkTargets = new List<LMLinkTarget>();
@@ -125,10 +125,10 @@ namespace LinkedMovement.Utils {
             }
             // TODO: Delete LMLinkParent and LMLinkTarget data from orphaned
 
-            LinkedMovement.Log($"Try to build {createdLinkParents.Count} links");
+            LMLogger.Debug($"Try to build {createdLinkParents.Count} links");
             LinkedMovement.GetLMController().setupLinks(createdLinkParents, createdLinkTargets);
 
-            LinkedMovement.Log($"Built {createdAnimations.Count} animations from blueprint, starting");
+            LMLogger.Debug($"Built {createdAnimations.Count} animations from blueprint, starting");
 
             foreach (var animation in createdAnimations) {
                 animation.setup();
@@ -157,7 +157,7 @@ namespace LinkedMovement.Utils {
                 return;
             }
 
-            LinkedMovement.Log("LMUtils.TryToBuildAnimationFromBlueprintObject for " + buildableObject.getName());
+            LMLogger.Debug("LMUtils.TryToBuildAnimationFromBlueprintObject for " + buildableObject.getName());
 
             LMAnimation animation = new LMAnimation(animationParams, buildableObject.gameObject, true);
             animation.generateNewId();
@@ -168,27 +168,27 @@ namespace LinkedMovement.Utils {
         }
 
         public static void LogDetails(BuildableObject bo) {
-            LinkedMovement.Log($"BO name: {bo.name}, BO getName: {bo.getName()}, GO name: {bo.gameObject.name}");
-            LinkedMovement.Log($"POS: {bo.transform.position.ToString()}, lPOS: {bo.transform.localPosition.ToString()}");
-            LinkedMovement.Log($"ROT: {bo.transform.eulerAngles.ToString()}, lRot: {bo.transform.localEulerAngles.ToString()}");
+            LMLogger.Debug($"BO name: {bo.name}, BO getName: {bo.getName()}, GO name: {bo.gameObject.name}");
+            LMLogger.Debug($"POS: {bo.transform.position.ToString()}, lPOS: {bo.transform.localPosition.ToString()}");
+            LMLogger.Debug($"ROT: {bo.transform.eulerAngles.ToString()}, lRot: {bo.transform.localEulerAngles.ToString()}");
         }
 
         public static void SetTargetParent(Transform parentTransform, Transform targetObject) {
-            LinkedMovement.Log("LMUtils.SetTargetParent");
+            LMLogger.Debug("LMUtils.SetTargetParent");
             var oldParent = targetObject.parent;
             var oldParentName = (oldParent != null) ? oldParent.name : "null";
-            LinkedMovement.Log("OLD PARENT: " + oldParentName);
+            LMLogger.Debug("OLD PARENT: " + oldParentName);
             if (parentTransform == null) {
-                LinkedMovement.Log($"parentTransform is null, clearing target {targetObject.name} parent");
+                LMLogger.Debug($"parentTransform is null, clearing target {targetObject.name} parent");
                 targetObject.SetParent(null);
                 return;
             }
 
             var baseTransform = parentTransform;
             if (targetObject.IsChildOf(baseTransform)) {
-                LinkedMovement.Log("ALREADY A CHILD!");
+                LMLogger.Debug("ALREADY A CHILD!");
             } else {
-                LinkedMovement.Log("Making child");
+                LMLogger.Debug("Making child");
                 targetObject.SetParent(baseTransform);
                 LogDetails(GetBuildableObjectFromGameObject(targetObject.gameObject));
             }
@@ -214,10 +214,10 @@ namespace LinkedMovement.Utils {
         }
 
         public static BuildableObject GetBuildableObjectFromBoxSelectGameObject(GameObject gameObject) {
-            LinkedMovement.Log("LMUtils.GetBuildableObjectFromBoxSelectGameObject for: " + gameObject.name);
+            LMLogger.Debug("LMUtils.GetBuildableObjectFromBoxSelectGameObject for: " + gameObject.name);
             var buildableObject = GetBuildableObjectFromGameObject(gameObject);
             if (buildableObject != null) {
-                LinkedMovement.Log("Has BuildableObject, return it");
+                LMLogger.Debug("Has BuildableObject, return it");
                 return buildableObject;
             }
 
@@ -229,7 +229,7 @@ namespace LinkedMovement.Utils {
 
             var lodParentGameObject = gameObject.transform?.parent?.parent?.gameObject;
             if (lodParentGameObject == null) {
-                LinkedMovement.Log("No LOD parent, return null");
+                LMLogger.Debug("No LOD parent, return null");
                 return null;
             }
 
@@ -237,15 +237,15 @@ namespace LinkedMovement.Utils {
 
             var lodGroup = lodParentGameObject.GetComponent<LODGroup>();
             if (lodGroup == null) {
-                LinkedMovement.Log("No LODGroup, return null");
+                LMLogger.Debug("No LODGroup, return null");
                 return null;
             }
 
             buildableObject = lodParentGameObject.GetComponent<BuildableObject>();
             if (buildableObject != null) {
-                LinkedMovement.Log("LOD parent HAS BuildableObject");
+                LMLogger.Debug("LOD parent HAS BuildableObject");
             } else {
-                LinkedMovement.Log("LOD parent HAS NO BuildableObject");
+                LMLogger.Debug("LOD parent HAS NO BuildableObject");
             }
             return buildableObject;
         }
@@ -277,19 +277,19 @@ namespace LinkedMovement.Utils {
         }
 
         private static void PrepAssociatedGameObjects() {
-            LinkedMovement.Log("LMUtils.PrepAssociatedGameObjects");
+            LMLogger.Debug("LMUtils.PrepAssociatedGameObjects");
             if (AssociatedGameObjects != null) {
                 // SHOULD NEVER GET HERE
                 //throw new Exception("LMUtils.PrepAssociatedGameObjects ALREADY RUNNING!");
                 // For now, just handle gracefully
-                LinkedMovement.Log("ERROR: LMUtils AssociatedGameObjects was not reset!");
+                LMLogger.Debug("ERROR: LMUtils AssociatedGameObjects was not reset!");
                 CleanupAssociateGameObjects();
             }
             AssociatedGameObjects = new HashSet<GameObject>();
         }
 
         private static void CleanupAssociateGameObjects() {
-            LinkedMovement.Log("LMUtils.CleanupAssociatedGameObjects");
+            LMLogger.Debug("LMUtils.CleanupAssociatedGameObjects");
             AssociatedGameObjects.Clear();
             AssociatedGameObjects = null;
         }
@@ -297,7 +297,7 @@ namespace LinkedMovement.Utils {
         // TODO: "editMode" and "isEditing" names are ambiguous here
         // Only Start mode uses isEditing
         public static void EditAssociatedAnimations(List<GameObject> gameObjects, AssociatedAnimationEditMode editMode, bool isEditing) {
-            LinkedMovement.Log($"LMUtils.EditAssociatedAnimations mode {editMode.ToString()} with {gameObjects.Count} gameObjects, isEditing: {isEditing.ToString()}");
+            LMLogger.Debug($"LMUtils.EditAssociatedAnimations mode {editMode.ToString()} with {gameObjects.Count} gameObjects, isEditing: {isEditing.ToString()}");
             PrepAssociatedGameObjects();
             foreach (GameObject go in gameObjects) {
                 if (go == null) continue;
@@ -307,11 +307,11 @@ namespace LinkedMovement.Utils {
         }
 
         private static void EditAssociatedAnimation(GameObject gameObject, AssociatedAnimationEditMode editMode, bool isEditing) {
-            LinkedMovement.Log("LMUtils.EditAssociatedAnimation for " + gameObject.name);
+            LMLogger.Debug("LMUtils.EditAssociatedAnimation for " + gameObject.name);
 
             var gameObjectHasBeenVisited = AssociatedGameObjects.Contains(gameObject);
             if (gameObjectHasBeenVisited) {
-                LinkedMovement.Log("Already visited GameObject " + gameObject.name);
+                LMLogger.Debug("Already visited GameObject " + gameObject.name);
                 return;
             }
 
@@ -334,82 +334,82 @@ namespace LinkedMovement.Utils {
 
             // TODO: Paths have unexpected parent/child relationships. Need to exclude or we reach into all tiles in the park.
 
-            LinkedMovement.Log("Check children for " + gameObject.name);
+            LMLogger.Debug("Check children for " + gameObject.name);
             for (int i = 0; i < gameObject.transform.childCount; i++) {
                 var childTransform = gameObject.transform.GetChild(i);
                 if (childTransform != null) {
                     var childGO = childTransform.gameObject;
                     if (childGO != null) {
-                        LinkedMovement.Log($"Try edit associated child for {gameObject.name}, index {i.ToString()}, name {childGO.name}");
+                        LMLogger.Debug($"Try edit associated child for {gameObject.name}, index {i.ToString()}, name {childGO.name}");
                         EditAssociatedAnimation(childGO, editMode, isEditing);
                     }
                 }
             }
 
-            LinkedMovement.Log("Check parent for " + gameObject.name);
+            LMLogger.Debug("Check parent for " + gameObject.name);
             if (gameObject.transform.parent != null && gameObject.transform.parent.gameObject != null) {
                 var parentGO = gameObject.transform.parent.gameObject;
-                LinkedMovement.Log($"Try edit associated parent for {gameObject.name}, parent: {parentGO.name}");
+                LMLogger.Debug($"Try edit associated parent for {gameObject.name}, parent: {parentGO.name}");
                 EditAssociatedAnimation(parentGO, editMode, isEditing);
             } else {
-                LinkedMovement.Log("No parent");
+                LMLogger.Debug("No parent");
             }
         }
 
         private static void StopAssociatedAnimation(GameObject gameObject) {
-            LinkedMovement.Log("LMUtils.StopAssociatedAnimation for " + gameObject.name);
+            LMLogger.Debug("LMUtils.StopAssociatedAnimation for " + gameObject.name);
             
             var animation = LinkedMovement.GetLMController().findAnimationByGameObject(gameObject);
             if (animation != null) {
-                LinkedMovement.Log("Found Animation");
+                LMLogger.Debug("Found Animation");
                 animation.stopSequence();
             } else {
-                LinkedMovement.Log("No Animation found");
+                LMLogger.Debug("No Animation found");
             }
         }
 
         private static void StartAssociatedAnimation(GameObject gameObject, bool isEditing) {
-            LinkedMovement.Log("LMUtils.StartAssociatedAnimation for " + gameObject.name);
+            LMLogger.Debug("LMUtils.StartAssociatedAnimation for " + gameObject.name);
 
             var animation = LinkedMovement.GetLMController().findAnimationByGameObject(gameObject);
             if (animation != null) {
-                LinkedMovement.Log("Found Animation");
+                LMLogger.Debug("Found Animation");
                 animation.getAnimationParams().setStartingValues(gameObject.transform);
 
                 animation.buildSequence(isEditing);
             } else {
-                LinkedMovement.Log("No Animation found");
+                LMLogger.Debug("No Animation found");
             }
         }
 
         private static void RestartAssociatedAnimation(GameObject gameObject) {
-            LinkedMovement.Log("LMUtils.RestartAssociatedAnimation for " + gameObject.name);
+            LMLogger.Debug("LMUtils.RestartAssociatedAnimation for " + gameObject.name);
 
             var animation = LinkedMovement.GetLMController().findAnimationByGameObject(gameObject);
             if (animation != null) {
-                LinkedMovement.Log("Found Animation");
+                LMLogger.Debug("Found Animation");
                 if (animation.sequence.isAlive) {
-                    LinkedMovement.Log("Reset sequence progress");
+                    LMLogger.Debug("Reset sequence progress");
                     animation.sequence.progress = 0f;
                 } else {
-                    LinkedMovement.Log("Sequence not alive");
+                    LMLogger.Debug("Sequence not alive");
                 }
             } else {
-                LinkedMovement.Log("No Animation found");
+                LMLogger.Debug("No Animation found");
             }
         }
 
         public static void ResetTransformLocals(Transform transform, Vector3 localPosition, Vector3 localRotation, Vector3 localScale) {
-            LinkedMovement.Log("LMUtils.ResetTransformLocals for: " + transform.gameObject.name);
+            LMLogger.Debug("LMUtils.ResetTransformLocals for: " + transform.gameObject.name);
             
-            LinkedMovement.Log($"FROM pos: {transform.position.ToString()}, lPos: {transform.localPosition.ToString()}, rot: {transform.eulerAngles.ToString()}, lRot: {transform.localEulerAngles.ToString()}, scale: {transform.localScale.ToString()}");
-            LinkedMovement.Log($"TO lPos: {localPosition.ToString()}, lRot: {localRotation.ToString()}, scale: {localScale.ToString()}");
+            LMLogger.Debug($"FROM pos: {transform.position.ToString()}, lPos: {transform.localPosition.ToString()}, rot: {transform.eulerAngles.ToString()}, lRot: {transform.localEulerAngles.ToString()}, scale: {transform.localScale.ToString()}");
+            LMLogger.Debug($"TO lPos: {localPosition.ToString()}, lRot: {localRotation.ToString()}, scale: {localScale.ToString()}");
 
             transform.localPosition = localPosition;
             transform.localEulerAngles = localRotation;
             transform.localScale = localScale;
 
-            LinkedMovement.Log($"DONE pos: {transform.position.ToString()}, lPos: {transform.localPosition.ToString()}, rot: {transform.eulerAngles.ToString()}, lRot: {transform.localEulerAngles.ToString()}, scale: {transform.localScale.ToString()}");
+            LMLogger.Debug($"DONE pos: {transform.position.ToString()}, lPos: {transform.localPosition.ToString()}, rot: {transform.eulerAngles.ToString()}, lRot: {transform.localEulerAngles.ToString()}, scale: {transform.localScale.ToString()}");
         }
 
         private static Ease ParseStringToEase(string ease) {
@@ -419,7 +419,7 @@ namespace LinkedMovement.Utils {
                 // OK
             } else {
                 // Couldn't parse, use default
-                LinkedMovement.Log($"ParseStringToEase couldn't parse '{ease}', using default");
+                LMLogger.Debug($"ParseStringToEase couldn't parse '{ease}', using default");
                 parsedEase = Ease.InOutQuad;
             }
 
@@ -435,13 +435,13 @@ namespace LinkedMovement.Utils {
         }
 
         private static Vector3 GetCumulativeParentLocalRotation(Transform startingTransform, Vector3 cumulativeValue) {
-            LinkedMovement.Log("GetCumulativeParentLocalRotation value: " + cumulativeValue.ToString());
+            LMLogger.Debug("GetCumulativeParentLocalRotation value: " + cumulativeValue.ToString());
             var parentTransform = startingTransform.parent;
             if (parentTransform == null) {
                 return cumulativeValue;
             }
 
-            LinkedMovement.Log("Adding: " + parentTransform.localEulerAngles.ToString());
+            LMLogger.Debug("Adding: " + parentTransform.localEulerAngles.ToString());
             cumulativeValue += parentTransform.localEulerAngles;
 
             return GetCumulativeParentLocalRotation(parentTransform, cumulativeValue);
@@ -460,8 +460,8 @@ namespace LinkedMovement.Utils {
         }
 
         private static void BuildAnimationStep(Transform transform, Sequence sequence, LMAnimationParams animationParams, LMAnimationStep animationStep, ref Vector3 lastLocalRotationTarget, ref List<Color> lastTargetColors) {
-            LinkedMovement.Log($"LMUtils.BuildAnimationStep {animationStep.name} for sequence {animationParams.name}");
-            LinkedMovement.Log(animationStep.ToString());
+            LMLogger.Debug($"LMUtils.BuildAnimationStep {animationStep.name} for sequence {animationParams.name}");
+            LMLogger.Debug(animationStep.ToString());
 
             Ease ease = ParseStringToEase(animationStep.ease);
             bool hasPositionChange = !animationStep.targetPosition.Equals(Vector3.zero);
@@ -470,24 +470,24 @@ namespace LinkedMovement.Utils {
             bool hasColorChange = StepHasColorChange(animationStep, lastTargetColors);
 
             if (hasPositionChange || hasRotationChange || hasScaleChange || hasColorChange) {
-                LinkedMovement.Log("Has change");
+                LMLogger.Debug("Has change");
                 if (hasPositionChange) {
                     Vector3 positionTarget = animationStep.targetPosition;
-                    LinkedMovement.Log("Position target: " + positionTarget.ToString());
+                    LMLogger.Debug("Position target: " + positionTarget.ToString());
                     
                     Vector3 forwardEuler = animationParams.forward.eulerAngles;
-                    LinkedMovement.Log("FORWARD euler: " + forwardEuler.ToString());
+                    LMLogger.Debug("FORWARD euler: " + forwardEuler.ToString());
                     
                     Vector3 parentLocalRotationOffset = GetCumulativeParentLocalRotation(transform, Vector3.zero);
-                    LinkedMovement.Log("parenLocalRotationOffset: " + parentLocalRotationOffset.ToString());
+                    LMLogger.Debug("parenLocalRotationOffset: " + parentLocalRotationOffset.ToString());
                     
                     Vector3 combinedOffset = forwardEuler - parentLocalRotationOffset;
-                    LinkedMovement.Log("combinedOffset: " + combinedOffset.ToString());
+                    LMLogger.Debug("combinedOffset: " + combinedOffset.ToString());
                     
                     Vector3 newPositionTarget = Quaternion.Euler(combinedOffset) * positionTarget;
 
                     positionTarget = newPositionTarget;
-                    LinkedMovement.Log("Final positionTarget: " + positionTarget.ToString());
+                    LMLogger.Debug("Final positionTarget: " + positionTarget.ToString());
 
                     sequence.Group(Tween.LocalPositionAdditive(transform, positionTarget, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
                     
@@ -500,7 +500,7 @@ namespace LinkedMovement.Utils {
                 if (hasRotationChange) {
                     // Can't be additive because rotation on multiple axes will cause object to reset to incorrect rotation
                     var newRotationTarget = lastLocalRotationTarget + animationStep.targetRotation;
-                    LinkedMovement.Log($"Rotate target: {animationStep.targetRotation.ToString()}, newTarget: {newRotationTarget.ToString()}");
+                    LMLogger.Debug($"Rotate target: {animationStep.targetRotation.ToString()}, newTarget: {newRotationTarget.ToString()}");
                     sequence.Group(Tween.LocalEulerAngles(transform, lastLocalRotationTarget, newRotationTarget, animationStep.duration, ease, default, default, animationStep.startDelay, animationStep.endDelay));
                     lastLocalRotationTarget = newRotationTarget;
                 }
@@ -532,7 +532,7 @@ namespace LinkedMovement.Utils {
                 // Add ChainDelay to "close" the current Sequence Group
                 sequence.ChainDelay(0f);
             } else {
-                LinkedMovement.Log("No change");
+                LMLogger.Debug("No change");
                 sequence.ChainDelay(animationStep.startDelay);
                 sequence.ChainDelay(animationStep.duration);
                 sequence.ChainDelay(animationStep.endDelay);
@@ -541,7 +541,7 @@ namespace LinkedMovement.Utils {
         }
 
         public static Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams, bool isEditing = false) {
-            LinkedMovement.Log("LMUtils.BuildAnimationSequence name: " + animationParams.name);
+            LMLogger.Debug("LMUtils.BuildAnimationSequence name: " + animationParams.name);
 
             int loops = -1;
             float startingDelay = 0f;
@@ -562,7 +562,7 @@ namespace LinkedMovement.Utils {
             Sequence sequence = Sequence.Create(cycles: loops, cycleMode: CycleMode.Restart);
 
             var lastLocalRotationTarget = transform.localEulerAngles;
-            LinkedMovement.Log("transform.localEulerAngels: " + lastLocalRotationTarget.ToString());
+            LMLogger.Debug("transform.localEulerAngels: " + lastLocalRotationTarget.ToString());
 
             var lastTargetColors = animationParams.startingCustomColors;
 
@@ -586,10 +586,10 @@ namespace LinkedMovement.Utils {
         
         public static void AddObjectHighlight(BuildableObject buildableObject, HighlightType highlightType) {
             if (buildableObject == null) return;
-            LinkedMovement.Log($"LMUtils.AddObjectHighlight to: {buildableObject.getName()}, type: {highlightType.ToString()}");
+            LMLogger.Debug($"LMUtils.AddObjectHighlight to: {buildableObject.getName()}, type: {highlightType.ToString()}");
             var highlightComponent = buildableObject.gameObject.GetComponent<LMHighlightComponent>();
             if (highlightComponent == null) {
-                LinkedMovement.Log("LMHighlightComponent doesn't exist, creating");
+                LMLogger.Debug("LMHighlightComponent doesn't exist, creating");
                 highlightComponent = buildableObject.gameObject.AddComponent<LMHighlightComponent>();
             }
             highlightComponent.addHighlightFlag(highlightType);
@@ -597,14 +597,14 @@ namespace LinkedMovement.Utils {
 
         public static void RemoveObjectHighlight(BuildableObject buildableObject, HighlightType highlightType) {
             if (buildableObject == null) return;
-            LinkedMovement.Log($"LMUtils.RemoveObjectHighlight from: {buildableObject.getName()}, type: {highlightType.ToString()}");
+            LMLogger.Debug($"LMUtils.RemoveObjectHighlight from: {buildableObject.getName()}, type: {highlightType.ToString()}");
             var highlightComponent = buildableObject.gameObject.GetComponent<LMHighlightComponent>();
             if (highlightComponent == null) {
-                LinkedMovement.Log("LMHighlightComponent doesn't exist");
+                LMLogger.Debug("LMHighlightComponent doesn't exist");
             } else {
                 highlightComponent.removeHighlightFlag(highlightType);
                 if (highlightComponent.hasNoHighlights()) {
-                    LinkedMovement.Log("Destroy LMHighlightComponent from object");
+                    LMLogger.Debug("Destroy LMHighlightComponent from object");
                     GameObject.Destroy(highlightComponent);
                 }
             }
@@ -624,7 +624,7 @@ namespace LinkedMovement.Utils {
             // Mouse tool changes can happen before the park has fully loaded. Skip updates in this case.
             if (!LinkedMovement.HasLMController()) return;
 
-            LinkedMovement.Log("LMUtils.UpdateGameMouseMode: " + mouseToolActive);
+            LMLogger.Debug("LMUtils.UpdateGameMouseMode: " + mouseToolActive);
             LinkedMovement.GetLMController().setMouseToolActive(mouseToolActive);
         }
 

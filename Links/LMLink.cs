@@ -140,14 +140,14 @@ namespace LinkedMovement.Links {
         }
 
         public LMLink() {
-            LinkedMovement.Log("LMLink base constructor");
+            LMLogger.Debug("LMLink base constructor");
             linkTargets = new List<LMLinkTarget>();
             _name = "New Link";
             _id = LMUtils.GetNewId();
         }
 
         public LMLink(LMLinkParent linkParent, List<LMLinkTarget> linkTargets) {
-            LinkedMovement.Log("LMLink constructor with LinkParent and LinkTargets");
+            LMLogger.Debug("LMLink constructor with LinkParent and LinkTargets");
 
             this.linkParent = linkParent;
             this.linkTargets = linkTargets;
@@ -157,7 +157,7 @@ namespace LinkedMovement.Links {
         }
 
         public LMLink(string name, string id, BuildableObject parentBuildableObject, List<BuildableObject> targetBuildableObjects) {
-            LinkedMovement.Log("LMLink constructor with id, name, and buildable objects");
+            LMLogger.Debug("LMLink constructor with id, name, and buildable objects");
             _name = name;
             _id = id;
 
@@ -165,7 +165,7 @@ namespace LinkedMovement.Links {
         }
 
         private void initializeWith(BuildableObject parentBuildableObject, List<BuildableObject> targetBuildableObjects) {
-            LinkedMovement.Log("LMLink.initializeWith");
+            LMLogger.Debug("LMLink.initializeWith");
 
             removeCustomData();
 
@@ -248,13 +248,13 @@ namespace LinkedMovement.Links {
         }
 
         public void stopPicking() {
-            LinkedMovement.Log("LMLink.stopPicking");
+            LMLogger.Debug("LMLink.stopPicking");
 
             clearSelectionHandler();
         }
 
         public void startPickingParent() {
-            LinkedMovement.Log("LMLink.startPickingParent");
+            LMLogger.Debug("LMLink.startPickingParent");
 
             clearSelectionHandler();
 
@@ -268,7 +268,7 @@ namespace LinkedMovement.Links {
         }
 
         public void startPickingTargets(Selection.Mode selectionMode) {
-            LinkedMovement.Log("LMLink.startPickingTargets");
+            LMLogger.Debug("LMLink.startPickingTargets");
 
             clearSelectionHandler();
 
@@ -282,7 +282,7 @@ namespace LinkedMovement.Links {
         }
 
         public void setParentObject(BuildableObject buildableObject) {
-            LinkedMovement.Log("LMLink.setParentObject");
+            LMLogger.Debug("LMLink.setParentObject");
 
             if (IsEditing) {
                 tempParentBuildableObject = buildableObject;
@@ -297,7 +297,7 @@ namespace LinkedMovement.Links {
         }
 
         public void removeParentObject() {
-            LinkedMovement.Log("LMLink.removeParentObject");
+            LMLogger.Debug("LMLink.removeParentObject");
 
             if (tempParentBuildableObject != null) {
                 LMUtils.RemoveObjectHighlight(tempParentBuildableObject, HighlightType.LinkParent);
@@ -312,7 +312,7 @@ namespace LinkedMovement.Links {
         }
 
         public void addTargetObject(BuildableObject buildableObject) {
-            LinkedMovement.Log("LMLink.addTargetObject");
+            LMLogger.Debug("LMLink.addTargetObject");
 
             tempTargetBuildableObjects.Add(buildableObject);
             tempTargetGameObjects.Add(buildableObject.gameObject);
@@ -327,12 +327,12 @@ namespace LinkedMovement.Links {
 
         // Called when an object is deleted from the park
         public void deleteTargetObject(GameObject gameObject) {
-            LinkedMovement.Log("LMLink.deleteTargetObject");
+            LMLogger.Debug("LMLink.deleteTargetObject");
 
             LMLinkTarget foundLinkTarget = null;
             foreach (var linkTarget in linkTargets) {
                 if (linkTarget.targetGameObject == gameObject) {
-                    LinkedMovement.Log("Found LinkTarget");
+                    LMLogger.Debug("Found LinkTarget");
                     foundLinkTarget = linkTarget;
                     LMUtils.SetTargetParent(null, foundLinkTarget.targetBuildableObject.transform);
                     break;
@@ -342,14 +342,14 @@ namespace LinkedMovement.Links {
             if (foundLinkTarget != null) {
                 linkTargets.Remove(foundLinkTarget);
             } else {
-                LinkedMovement.Log("Couldn't find LinkTarget from gameObject");
+                LMLogger.Debug("Couldn't find LinkTarget from gameObject");
             }
 
         }
 
         // Called via UI action ('X' from UI or right-click deselect)
         public void removeSingleTargetObject(BuildableObject buildableObject) {
-            LinkedMovement.Log("LMLink.removeSingleTargetObject");
+            LMLogger.Debug("LMLink.removeSingleTargetObject");
 
             if (!tempTargetBuildableObjects.Contains(buildableObject)) {
                 // Not a target
@@ -370,7 +370,7 @@ namespace LinkedMovement.Links {
 
         // Called from UI
         public void removeAllTargetObjects() {
-            LinkedMovement.Log("LMLink.removeAllTargetObjects");
+            LMLogger.Debug("LMLink.removeAllTargetObjects");
 
             LMUtils.EditAssociatedAnimations(new List<GameObject>() { tempParentGameObject }, LMUtils.AssociatedAnimationEditMode.Stop, true);
 
@@ -391,7 +391,7 @@ namespace LinkedMovement.Links {
         }
 
         public void discardChanges() {
-            LinkedMovement.Log("LMLink.discardChanges");
+            LMLogger.Debug("LMLink.discardChanges");
 
             stopPicking();
 
@@ -441,7 +441,7 @@ namespace LinkedMovement.Links {
         }
 
         public void saveChanges() {
-            LinkedMovement.Log("LMLink.saveChanges");
+            LMLogger.Debug("LMLink.saveChanges");
 
             stopPicking();
 
@@ -458,12 +458,12 @@ namespace LinkedMovement.Links {
         }
 
         public void destroyLink() {
-            LinkedMovement.Log($"LMLink.destroyLink name: {name}, id: {id}");
+            LMLogger.Debug($"LMLink.destroyLink name: {name}, id: {id}");
 
             LMUtils.RemoveObjectHighlight(linkParent.targetBuildableObject, HighlightType.LinkParent);
 
             foreach (var targetLink in linkTargets) {
-                LinkedMovement.Log("Unparent target: " + targetLink.targetGameObject.name);
+                LMLogger.Debug("Unparent target: " + targetLink.targetGameObject.name);
                 //LMUtils.LogComponents(targetLink.targetBuildableObject);
                 LMUtils.SetTargetParent(null, targetLink.targetGameObject.transform);
                 LMUtils.UpdateMouseColliders(targetLink.targetBuildableObject);
@@ -479,7 +479,7 @@ namespace LinkedMovement.Links {
         }
 
         public void rebuildLink() {
-            LinkedMovement.Log("LMLink.rebuildLink");
+            LMLogger.Debug("LMLink.rebuildLink");
 
             var parentTransform = linkParent.targetGameObject.transform;
             foreach (var targetLink in linkTargets) {
@@ -488,7 +488,7 @@ namespace LinkedMovement.Links {
         }
 
         private void handlePickerAddObjectAsParent(BuildableObject buildableObject) {
-            LinkedMovement.Log("LMLink.handlePickerAddObjectAsParent");
+            LMLogger.Debug("LMLink.handlePickerAddObjectAsParent");
 
             // Validate - ensure target is not already a LinkParent
             var gameObject = buildableObject.gameObject;
@@ -496,7 +496,7 @@ namespace LinkedMovement.Links {
             if (link != null) {
                 //string rejectMessage = $"Selection is already the Parent object of Link '{link.name}'";
                 string rejectMessage = LMStringSystem.GetText(LMStringKey.SELECT_LINK_PARENT_EXISTS, buildableObject.getName(), link.name);
-                LinkedMovement.Log(rejectMessage);
+                LMLogger.Debug(rejectMessage);
                 LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                 return;
             }
@@ -506,21 +506,21 @@ namespace LinkedMovement.Links {
         }
 
         private void handlePickerAddObjectAsTarget(BuildableObject buildableObject) {
-            LinkedMovement.Log("LMLink.handlePickerAddObjectAsTarget");
+            LMLogger.Debug("LMLink.handlePickerAddObjectAsTarget");
             var targetName = buildableObject.getName();
 
             // Validate
             // Ensure target is not already selected as parent
             if (getParentBuildableObject() == buildableObject) {
                 string rejectMessage = LMStringSystem.GetText(LMStringKey.SELECT_LINK_TARGET_IS_PARENT, targetName);
-                LinkedMovement.Log(rejectMessage);
+                LMLogger.Debug(rejectMessage);
                 LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                 return;
             }
             // Ensure Target is not already selected as target (silent fail)
             if (getTargetBuildableObjects().Contains(buildableObject)) {
                 string rejectMessage = LMStringSystem.GetText(LMStringKey.SELECT_LINK_TARGET_IS_TARGET, targetName);
-                LinkedMovement.Log(rejectMessage);
+                LMLogger.Debug(rejectMessage);
                 //LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                 return;
             }
@@ -529,7 +529,7 @@ namespace LinkedMovement.Links {
             var otherLink = LinkedMovement.GetLMController().findLinkByTargetGameObject(gameObject);
             if (otherLink != null) {
                 string rejectMessage = LMStringSystem.GetText(LMStringKey.SELECT_LINK_TARGET_EXISTS, targetName, otherLink.name);
-                LinkedMovement.Log(rejectMessage);
+                LMLogger.Debug(rejectMessage);
                 // TODO: This call needs much cleaner access
                 LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                 return;
@@ -540,7 +540,7 @@ namespace LinkedMovement.Links {
                 var parentTargets = parentLink.getTargetGameObjects();
                 if (parentTargets.Contains(getParentGameObject())) {
                     string rejectMessage = LMStringSystem.GetText(LMStringKey.SELECT_LINK_CIRCULAR, targetName);
-                    LinkedMovement.Log(rejectMessage);
+                    LMLogger.Debug(rejectMessage);
                     // TODO: This call needs much cleaner access
                     LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                     return;
@@ -551,7 +551,7 @@ namespace LinkedMovement.Links {
         }
 
         private void handlePickerRemoveObjectAsTarget(BuildableObject buildableObject) {
-            LinkedMovement.Log("LMLink.handlePickerRemoveObjectAsTarget");
+            LMLogger.Debug("LMLink.handlePickerRemoveObjectAsTarget");
 
             removeSingleTargetObject(buildableObject);
         }
@@ -569,7 +569,7 @@ namespace LinkedMovement.Links {
         }
 
         private void setCustomData() {
-            LinkedMovement.Log("LMLink.setCustomData");
+            LMLogger.Debug("LMLink.setCustomData");
 
             linkParent.targetBuildableObject.addCustomData(linkParent);
 
@@ -579,7 +579,7 @@ namespace LinkedMovement.Links {
         }
 
         private void removeCustomData() {
-            LinkedMovement.Log("LMLink.removeCustomData");
+            LMLogger.Debug("LMLink.removeCustomData");
 
             if (linkParent != null && linkParent.targetBuildableObject != null) {
                 linkParent.targetBuildableObject.removeCustomData<LMLinkParent>();

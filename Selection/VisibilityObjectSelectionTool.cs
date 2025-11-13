@@ -54,7 +54,7 @@ namespace LinkedMovement.Selection {
             }
         }
         private void OnModeChanged(Mode newMode, Mode prevMode) {
-            LinkedMovement.Log($"OnModeChanged Switching mode from {prevMode} to {newMode}");
+            LMLogger.Debug($"OnModeChanged Switching mode from {prevMode} to {newMode}");
             DisableTool(prevMode);
             EnableTool(newMode);
         }
@@ -124,23 +124,23 @@ namespace LinkedMovement.Selection {
         
         public bool DeselectOnRemove = false;
         public void Add(BuildableObject o) {
-            LinkedMovement.Log("CustomSelectionTool Add");
+            LMLogger.Debug("CustomSelectionTool Add");
             OnAdd(o);
         }
         private void OnAdd(BuildableObject o) {
-            LinkedMovement.Log("CustomSelectionTool OnAdd");
+            LMLogger.Debug("CustomSelectionTool OnAdd");
             OnAddedSelectedObject?.Invoke(o);
         }
         public void Remove(BuildableObject o) {
-            LinkedMovement.Log("CustomSelectionTool Remove");
+            LMLogger.Debug("CustomSelectionTool Remove");
             OnRemove(o);
         }
         private void OnRemove(BuildableObject o) {
-            LinkedMovement.Log("CustomSelectionTool OnRemove");
+            LMLogger.Debug("CustomSelectionTool OnRemove");
             OnRemovedSelectedObject?.Invoke(o);
         }
         public void DeselectAll() {
-            LinkedMovement.Log("CustomSelectionTool DeselectAll");
+            LMLogger.Debug("CustomSelectionTool DeselectAll");
             // TODO: ?
         }
 
@@ -308,15 +308,15 @@ namespace LinkedMovement.Selection {
             if (UIUtility.isMouseUsable()) {
                 // add objects
                 if (Input.GetMouseButtonDown(0)) {
-                    LinkedMovement.Log("Vis Tick mouse 0 down");
-                    LinkedMovement.Log("Do Add");
+                    LMLogger.Debug("Vis Tick mouse 0 down");
+                    LMLogger.Debug("Do Add");
                     OnSelectedObject(SelectionOperation.Add, lastTargetBuildableObject);
                     mouseDown = true;
                 }
                 // remove
                 else if (Input.GetMouseButtonDown(1)) {
-                    LinkedMovement.Log("Vis Tick mouse 1 down");
-                    LinkedMovement.Log("Do Remove");
+                    LMLogger.Debug("Vis Tick mouse 1 down");
+                    LMLogger.Debug("Do Remove");
                     OnSelectedObject(SelectionOperation.Remove, lastTargetBuildableObject);
                     mouseDown = true;
                 }
@@ -326,7 +326,7 @@ namespace LinkedMovement.Selection {
         }
 
         private void OnSelectedObject(SelectionOperation op, BuildableObject o) {
-            LinkedMovement.Log("OnSelectedObject");
+            LMLogger.Debug("OnSelectedObject");
             switch (CalcAction(op, o)) {
                 case SelectionAction.Add:
                     OnAdd(o);
@@ -389,7 +389,7 @@ namespace LinkedMovement.Selection {
                             EOL();
                         }
 
-                        LinkedMovement.Log("ShowTooltip " + tooltip.ToString());
+                        LMLogger.Debug("ShowTooltip " + tooltip.ToString());
 
                         UITooltipController.Instance.showTooltip(tooltip.ToString(), true, updateTooltipTimeout * 1.1f);
                         tooltip.Clear();
@@ -629,7 +629,7 @@ namespace LinkedMovement.Selection {
             bounds.max = max;
             //LinkedMovement.Log("Bounds: " + bounds.ToString());
             var boxHits = MouseCollisions.Instance.boxcastAll(bounds);
-            LinkedMovement.Log("Box tool hit #: " + boxHits.Length.ToString());
+            LMLogger.Debug("Box tool hit #: " + boxHits.Length.ToString());
             foreach (MouseCollider.HitInfo hitInfo in boxHits) {
                 //LMUtils.LogComponents(hitInfo.hitObject);
                 //var o = hitInfo.hitObject.GetComponentInParent<BuildableObject>();

@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LinkedMovement;
 using LinkedMovement.Utils;
 using System;
 using System.Collections.Generic;
@@ -12,32 +13,32 @@ class BlueprintBuilderImplementationOnAfterBuildPostfix {
         Type[] p = new[] { typeof(List<BuildableObject>) };
         MethodBase methodBase = (MethodBase)AccessTools.Method(typeof(BlueprintBuilderImplementation), "onAfterBuild", p);
         if (methodBase != null) {
-            LinkedMovement.LinkedMovement.Log("BlueprintBuilderImplementation.onAfterBuild method found");
+            LMLogger.Info("BlueprintBuilderImplementation.onAfterBuild method found");
         } else {
-            LinkedMovement.LinkedMovement.Log("BlueprintBuilderImplementation.onAfterBuild method NOT FOUND");
+            LMLogger.Info("BlueprintBuilderImplementation.onAfterBuild method NOT FOUND");
         }
         return methodBase;
     }
 
     [HarmonyPostfix]
     static void onAfterBuild(BlueprintBuilderImplementation __instance, List<BuildableObject> builtObjectInstances) {
-        LinkedMovement.LinkedMovement.Log("BlueprintBuilderImplementation.onAfterBuild post @ " + DateTime.Now);
+        LMLogger.Debug("BlueprintBuilderImplementation.onAfterBuild post @ " + DateTime.Now);
         
         var forward = __instance.data.forward;
         Quaternion Angle = Quaternion.LookRotation(forward);
-        LinkedMovement.LinkedMovement.Log("FORWARD: " + forward.ToString());
-        LinkedMovement.LinkedMovement.Log("ANGLE: " + Angle.ToString());
-        LinkedMovement.LinkedMovement.Log("ANGLE euler: " + Angle.eulerAngles.ToString());
+        LMLogger.Debug("FORWARD: " + forward.ToString());
+        LMLogger.Debug("ANGLE: " + Angle.ToString());
+        LMLogger.Debug("ANGLE euler: " + Angle.eulerAngles.ToString());
         if (builtObjectInstances == null) {
-            LinkedMovement.LinkedMovement.Log("NULL BUILT INSTANCES");
+            LMLogger.Debug("NULL BUILT INSTANCES");
             return;
         }
         if (builtObjectInstances.Count == 0) {
-            LinkedMovement.LinkedMovement.Log("Empty built instances!");
+            LMLogger.Debug("Empty built instances!");
             return;
         }
 
-        LinkedMovement.LinkedMovement.Log("# created instances: " + builtObjectInstances.Count);
+        LMLogger.Debug("# created instances: " + builtObjectInstances.Count);
         
         LMUtils.BuildLinksAndAnimationsFromBlueprint(builtObjectInstances, forward);
     }

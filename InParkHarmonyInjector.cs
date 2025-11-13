@@ -28,7 +28,7 @@ namespace LinkedMovement
                 return;
             }
 
-            LinkedMovement.Log("Injector initialize patches");
+            LMLogger.Info("Injector initialize patches");
 
             // deco
             {

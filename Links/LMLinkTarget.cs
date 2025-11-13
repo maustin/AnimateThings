@@ -13,7 +13,7 @@ namespace LinkedMovement.Links {
         public BuildableObject targetBuildableObject;
 
         public LMLinkTarget() {
-            LinkedMovement.Log("LMLinkTarget constructor");
+            LMLogger.Debug("LMLinkTarget constructor");
         }
 
         public LMLinkTarget(string id, BuildableObject buildableObject) {

@@ -25,11 +25,11 @@ namespace LinkedMovement.UI {
         private bool dirtyActiveWindows = true;
 
         public WindowManager() {
-            LinkedMovement.Log("WindowManager constructor");
+            LMLogger.Debug("WindowManager constructor");
         }
 
         public void destroy() {
-            LinkedMovement.Log("WindowManager destructor");
+            LMLogger.Debug("WindowManager destructor");
         }
 
         public bool uiPresent() {
@@ -40,13 +40,13 @@ namespace LinkedMovement.UI {
         }
 
         public void createWindow(WindowType type, object data) {
-            LinkedMovement.Log($"WindowManager.createWindow {type.ToString()}");
+            LMLogger.Debug($"WindowManager.createWindow {type.ToString()}");
             LMWindow window = LMWindowFactory.BuildWindow(type, data, this);
             if (window != null) {
                 activeWindows.Add(window);
                 dirtyActiveWindows = true;
             } else {
-                LinkedMovement.Log("Failed to create window");
+                LMLogger.Debug("Failed to create window");
             }
         }
 

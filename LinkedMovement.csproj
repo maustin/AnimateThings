@@ -38,10 +38,12 @@
     <Compile Include="Animation\LMAnimationParams.cs" />
     <Compile Include="Animation\LMAnimationStep.cs" />
     <Compile Include="Animation\LMTrigger.cs" />
+    <Compile Include="LinkedMovementSettings.cs" />
     <Compile Include="Links\LMLink.cs" />
     <Compile Include="Links\LMLinkParent.cs" />
     <Compile Include="Links\LMLinkTarget.cs" />
     <Compile Include="LMController.cs" />
+    <Compile Include="LMLogger.cs" />
     <Compile Include="Patches\DecoDestructPostfix.cs" />
     <Compile Include="Patches\DecoInitializePostfix.cs" />
     <Compile Include="Patches\DestructCommandConstructorPrefix.cs" />

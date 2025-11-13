@@ -28,7 +28,7 @@ namespace LinkedMovement.UI.NewContent {
                     Label("Is Triggerable", RGUIStyle.popupTextNew);
                     var newIsTriggerable = RGUI.Field(animationParams.isTriggerable);
                     if (newIsTriggerable != animationParams.isTriggerable) {
-                        LinkedMovement.Log("SET isTriggerable");
+                        LMLogger.Debug("SET isTriggerable");
                         animationParams.isTriggerable = newIsTriggerable;
                         controller.currentAnimationUpdated();
                     }
@@ -39,7 +39,7 @@ namespace LinkedMovement.UI.NewContent {
                     Label("Delay animation on park load", RGUIStyle.popupTextNew);
                     var newUseInitialStartDelay = RGUI.Field(animationParams.useInitialStartDelay);
                     if (animationParams.useInitialStartDelay != newUseInitialStartDelay) {
-                        LinkedMovement.Log("SET use initial start delay");
+                        LMLogger.Debug("SET use initial start delay");
                         animationParams.useInitialStartDelay = newUseInitialStartDelay;
                     }
                 }
@@ -50,7 +50,7 @@ namespace LinkedMovement.UI.NewContent {
                         var newInitialDelayMin = RGUI.Field(animationParams.initialStartDelayMin, "Delay time min");
                         var newInitialDelayMax = RGUI.Field(animationParams.initialStartDelayMax, "Delay time max");
                         if (!animationParams.initialStartDelayMin.Equals(newInitialDelayMin) || !animationParams.initialStartDelayMax.Equals(newInitialDelayMax)) {
-                            LinkedMovement.Log("SET initial delay range");
+                            LMLogger.Debug("SET initial delay range");
                             animationParams.initialStartDelayMin = newInitialDelayMin;
                             animationParams.initialStartDelayMax = newInitialDelayMax;
                         }

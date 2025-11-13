@@ -20,7 +20,7 @@ namespace LinkedMovement.Utils {
         private HighlightOverlayController.HighlightHandle highlightHandle;
 
         public void addHighlightFlag(HighlightType flag) {
-            LinkedMovement.Log("LMHighlightComponent.addHighlightFlag " + flag.ToString());
+            LMLogger.Debug("LMHighlightComponent.addHighlightFlag " + flag.ToString());
             HighlightType oldFlags = currentFlags;
             currentFlags |= flag;
 
@@ -30,7 +30,7 @@ namespace LinkedMovement.Utils {
         }
 
         public void removeHighlightFlag(HighlightType flag) {
-            LinkedMovement.Log("LMHighlightComponent.removeHighlightFlag " + flag.ToString());
+            LMLogger.Debug("LMHighlightComponent.removeHighlightFlag " + flag.ToString());
             HighlightType oldFlags = currentFlags;
             currentFlags &= ~flag;
 
@@ -57,9 +57,9 @@ namespace LinkedMovement.Utils {
 
         // TODO: This can be simplified. Many of these combinations are not possible with current UI flow.
         private void rebuildHighlight() {
-            LinkedMovement.Log("LMHighlightComponent.rebuildHighlight");
+            LMLogger.Debug("LMHighlightComponent.rebuildHighlight");
             if (highlightHandle != null) {
-                LinkedMovement.Log("Remove existing");
+                LMLogger.Debug("Remove existing");
                 highlightHandle.remove();
                 highlightHandle = null;
             }
@@ -109,7 +109,7 @@ namespace LinkedMovement.Utils {
         }
 
         private void buildHighlightWithColor(Color color) {
-            LinkedMovement.Log("LMHighlightComponent.buildHighlightWithColor " + color.ToString());
+            LMLogger.Debug("LMHighlightComponent.buildHighlightWithColor " + color.ToString());
             var buildableObject = LMUtils.GetBuildableObjectFromGameObject(this.gameObject);
             List<Renderer> renderers = new List<Renderer>();
             buildableObject.retrieveRenderersToHighlight(renderers);

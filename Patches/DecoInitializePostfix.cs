@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LinkedMovement;
 using System.Reflection;
 
 #nullable disable
@@ -7,9 +8,9 @@ class DecoInitializePostfix {
     static MethodBase TargetMethod() {
         MethodBase methodBase = (MethodBase)AccessTools.Method(typeof(Deco), "Initialize");
         if (methodBase != null) {
-            LinkedMovement.LinkedMovement.Log("Deco.Initialize method found");
+            LMLogger.Info("Deco.Initialize method found");
         } else {
-            LinkedMovement.LinkedMovement.Log("Deco.Initialize method NOT FOUND");
+            LMLogger.Info("Deco.Initialize method NOT FOUND");
         }
         return methodBase;
     }

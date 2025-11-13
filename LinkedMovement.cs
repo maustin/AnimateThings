@@ -7,7 +7,7 @@ using System.Reflection;
 using UnityEngine;
 
 namespace LinkedMovement {
-    public class LinkedMovement : AbstractMod {
+    public class LinkedMovement : AbstractMod, IModSettings {
         public const string VERSION_NUMBER = "RC 2 (11-10)";
         public const string HELPER_OBJECT_NAME = "Animation Helper (autohides)";
         public override string getIdentifier() => "com.themeparkitect.LinkedMovementCode";
@@ -24,6 +24,7 @@ namespace LinkedMovement {
         //public override bool isRequiredByAllPlayersInMultiplayerMode() => false;
 
         public static LinkedMovement Instance;
+        public static LinkedMovementSettings Settings;
         public static Harmony Harmony;
         private static LMController LMController;
         private static bool KeybindsRegistered;
@@ -75,7 +76,7 @@ namespace LinkedMovement {
 
         public static LMController GetLMController() {
             if (LMController == null) {
-                Log("Create LMController");
+                LMLogger.Info("Create LMController");
                 GameObject go = new GameObject();
                 go.name = "LMController";
                 LMController = go.AddComponent<LMController>();
@@ -84,7 +85,7 @@ namespace LinkedMovement {
         }
 
         public static void ClearLMController() {
-            Log("ClearLMController");
+            LMLogger.Info("ClearLMController");
             if (LMController != null) {
                 GameObject.Destroy(LMController);
                 LMController = null;
@@ -93,48 +94,48 @@ namespace LinkedMovement {
 
         private KeybindManager _keybindManager;
 
-        public static void Log(string msg) {
-            Debug.Log("LinkedMovement: " + msg);
-        }
-
         public LinkedMovement() {
-            Log("Constructor");
+            LMLogger.Info("Constructor");
             registerHotkeys();
-            Log("Done register hotkeys");
+            LMLogger.Info("Done register hotkeys");
         }
 
         public override void onEnabled() {
-            Log("Starting v" + VERSION_NUMBER);
+            LMLogger.Info("Starting v" + VERSION_NUMBER);
             Instance = this;
+
+            LMLogger.Info("Load settings");
+            loadSettings();
+            LMLogger.Info("Loaded settings");
 
             Harmony = new Harmony(getIdentifier());
 
-            Log("Patching...");
+            LMLogger.Info("Patching...");
             Harmony.PatchAll();
-            Log("Patching complete");
+            LMLogger.Info("Patching complete");
 
             //registerHotkeys();
             //Log("Done register hotkeys");
 
             var currentModDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            Log("Mod directory: " + currentModDirectory);
+            LMLogger.Info("Mod directory: " + currentModDirectory);
 
             loadLooseAssets(currentModDirectory);
 
             loadAssetpack(currentModDirectory);
             
-            Log("Assets load complete");
+            LMLogger.Info("Assets load complete");
             // TODO: Disable LM UI and only show error if unable to load assets
 
-            Log("Initialize PrimeTween");
+            LMLogger.Info("Initialize PrimeTween");
             PrimeTweenConfig.ManualInitialize();
             PrimeTweenConfig.warnZeroDuration = false;
 
-            Log("Startup complete");
+            LMLogger.Info("Startup complete");
         }
 
         public override void onDisabled() {
-            Log("onDisabled");
+            LMLogger.Info("onDisabled");
             //unregisterHotkeys();
             ClearLMController();
 
@@ -144,26 +145,75 @@ namespace LinkedMovement {
             Harmony = null;
         }
 
+        public void onDrawSettingsUI() {
+            GUILayout.BeginVertical();
+
+            Settings.debugLogging = GUILayout.Toggle(Settings.debugLogging, " Enable debug logging");
+
+            GUILayout.EndVertical();
+        }
+
+        public void onSettingsOpened() {
+            loadSettings();
+        }
+
+        public void onSettingsClosed() {
+            saveSettings();
+            GUI.FocusControl(null);
+        }
+
+        private string getSettingsPath() {
+            return System.IO.Path.Combine(ModManager.Instance.getMod(getIdentifier()).path, "animate_things.json");
+        }
+
+        private void loadSettings() {
+            if (File.Exists(getSettingsPath())) {
+                LMLogger.Info("Loading settings");
+                Settings = JsonUtility.FromJson<LinkedMovementSettings>(File.ReadAllText(getSettingsPath()));
+            } else {
+                LMLogger.Info("Initialize settings");
+                Settings = new LinkedMovementSettings();
+                this.saveSettings();
+            }
+
+            updateLogger();
+        }
+
+        private void saveSettings() {
+            LMLogger.Info("Saving settings");
+
+            File.WriteAllText(getSettingsPath(), JsonUtility.ToJson(Settings, true));
+            updateLogger();
+        }
+
+        private void updateLogger() {
+            if (Settings.debugLogging) {
+                LMLogger.SetLogLevel(LogLevel.Debug);
+            } else {
+                LMLogger.SetLogLevel(LogLevel.Info);
+            }
+        }
+
         private void loadLooseAssets(string currentModDirectory) {
-            Log("Attempt to load loose assets");
+            LMLogger.Info("Attempt to load loose assets");
 
             foreach (LOOSE_TEXTURES value in Enum.GetValues(typeof(LOOSE_TEXTURES))) {
                 loadLooseAsset(currentModDirectory, value);
             }
 
-            Log("Finished loading loose assets");
+            LMLogger.Info("Finished loading loose assets");
         }
         private void loadLooseAsset(string currentModDirectory, LOOSE_TEXTURES looseTextureType) {
             if (!looseTextureFilenames.ContainsKey(looseTextureType)) {
-                Log("No filepath for loose texture type: " + looseTextureType);
+                LMLogger.Info("No filepath for loose texture type: " + looseTextureType);
                 return;
             }
             var filename = looseTextureFilenames[looseTextureType];
-            Log("Attempt to load loose asset: " + filename);
+            LMLogger.Info("Attempt to load loose asset: " + filename);
 
             try {
                 var filePath = System.IO.Path.Combine(currentModDirectory, "assets/" + filename);
-                Log("file path: " + filePath);
+                LMLogger.Info("file path: " + filePath);
                 byte[] fileData;
                 if (File.Exists(filePath)) {
                     fileData = File.ReadAllBytes(filePath);
@@ -172,30 +222,30 @@ namespace LinkedMovement {
                     newTexture.wrapMode = TextureWrapMode.Clamp;
                     newTexture.filterMode = FilterMode.Bilinear;
                     looseTextures.Add(looseTextureType, newTexture);
-                    Log("Loaded texture");
+                    LMLogger.Info("Loaded texture");
                 } else {
-                    Log("ERROR: Couldn't find texture path");
+                    LMLogger.Info("ERROR: Couldn't find texture path");
                 }
             }
             catch (Exception e) {
-                Log("FAILED to load loose asset");
-                Log(e.ToString());
+                LMLogger.Info("FAILED to load loose asset");
+                LMLogger.Info(e.ToString());
             }
         }
 
         private void loadAssetpack(string currentModDirectory) {
             // TODO: try/catch
-            Log("Attempt to load assetpack");
+            LMLogger.Info("Attempt to load assetpack");
             var assetProjectPath = System.IO.Path.Combine(currentModDirectory, "assets/LinkedMovement.assetProject");
-            Log("assetProject: " + assetProjectPath);
+            LMLogger.Info("assetProject: " + assetProjectPath);
 
             var assembly = Assembly.Load("Parkitect");
             var type = assembly.GetType("Parkitect.Mods.AssetPacks.AssetPackMod");
 
             if (type == null) {
-                Log("failed to get type");
+                LMLogger.Info("failed to get type");
             } else {
-                Log("got type");
+                LMLogger.Info("got type");
 
                 //var isCampaign = GameController.Instance.isCampaignScenario;
                 //GameController.Instance.isCampaignScenario = false;
@@ -205,21 +255,21 @@ namespace LinkedMovement {
                 Type[] parameterTypes = new Type[] { typeof(string) };
                 var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public, null, parameterTypes, null);
                 if (ctor == null) {
-                    Log("failed to get constructor");
+                    LMLogger.Info("failed to get constructor");
                 } else {
-                    Log("got constructor");
+                    LMLogger.Info("got constructor");
                     var instance = ctor.Invoke(new object[] { assetProjectPath }) as AbstractMod;
                     if (ModManager.Instance.hasMod(instance.getIdentifier(), instance.getVersionIdentifier())) {
-                        Log("already loaded assets");
+                        LMLogger.Info("already loaded assets");
                     } else {
                         var folderPath = System.IO.Path.GetDirectoryName(assetProjectPath);
                         var orderPriority = instance.getOrderPriority();
-                        Log($"folder path: {folderPath}, order: {orderPriority}");
+                        LMLogger.Info($"folder path: {folderPath}, order: {orderPriority}");
                         var modEntry = ModManager.Instance.addMod(instance, folderPath, AbstractGameContent.ContentSource.USER_CREATED, orderPriority);
                         if (modEntry != null) {
-                            Log("Added mod, enabling");
-                            Log("Is enabled: " + modEntry.isEnabled);
-                            Log("Is active: " + modEntry.isActive());
+                            LMLogger.Info("Added mod, enabling");
+                            LMLogger.Info("Is enabled: " + modEntry.isEnabled);
+                            LMLogger.Info("Is active: " + modEntry.isActive());
                             var existingModEntry = ScriptableSingleton<AssetManager>.Instance.modContext;
 
                             modEntry.setActive(true);
@@ -228,7 +278,7 @@ namespace LinkedMovement {
                             ScriptableSingleton<AssetManager>.Instance.modContext = existingModEntry;
                             ScriptableSingleton<InputManager>.Instance.modContext = existingModEntry;
                         } else {
-                            Log("Failed to add mod");
+                            LMLogger.Info("Failed to add mod");
                         }
                     }
                 }
@@ -236,15 +286,15 @@ namespace LinkedMovement {
                 //GameController.Instance.isCampaignScenario = isCampaign;
                 //GameController.Instance.modsBlocked = modsBlocked;
             }
-            Log("Finished loading assetpack");
+            LMLogger.Info("Finished loading assetpack");
         }
 
         private void registerHotkeys() {
             if (KeybindsRegistered) {
-                Log("keybinds already registered");
+                LMLogger.Info("keybinds already registered");
                 return;
             }
-            Log("register hotkeys");
+            LMLogger.Info("register hotkeys");
             _keybindManager = new KeybindManager(getIdentifier(), getName());
             _keybindManager.AddKeybind("LM_toggleGUI", "Show UI", "Show the Animate Things UI", KeyCode.Keypad3);
             _keybindManager.AddKeybind("LM_prevTargetObject", "Previous Target Object", "When selecting an object, cycle to the Previous object under the mouse", KeyCode.Minus);
@@ -255,7 +305,7 @@ namespace LinkedMovement {
         }
 
         private void unregisterHotkeys() {
-            Log("unregister hotkeys");
+            LMLogger.Info("unregister hotkeys");
             _keybindManager.UnregisterAll();
             KeybindsRegistered = false;
         }

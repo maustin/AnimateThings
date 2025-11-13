@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LinkedMovement;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -8,9 +9,9 @@ class DestructorDestructPrefix {
     static MethodBase TargetMethod() {
         MethodBase methodBase = (MethodBase)AccessTools.Method(typeof(Destructor), "destruct");
         if (methodBase != null) {
-            LinkedMovement.LinkedMovement.Log("Destructor.destruct method found");
+            LMLogger.Info("Destructor.destruct method found");
         } else {
-            LinkedMovement.LinkedMovement.Log("Destructor.destruct method NOT FOUND");
+            LMLogger.Info("Destructor.destruct method NOT FOUND");
         }
         return methodBase;
     }

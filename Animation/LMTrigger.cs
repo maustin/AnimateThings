@@ -14,16 +14,16 @@ namespace LinkedMovement {
         public LMAnimationParams animationParams;
 
         public LMTrigger() {
-            LinkedMovement.Log("LMTrigger constructor");
+            LMLogger.Debug("LMTrigger constructor");
         }
 
         private void Awake() {
-            LinkedMovement.Log("LMTrigger.Awake");
+            LMLogger.Debug("LMTrigger.Awake");
             effectBehaviour = GetComponent<SerializedMonoBehaviour>();
         }
 
         public void update(LMAnimationParams animationParams) {
-            LinkedMovement.Log("LMTrigger.update");
+            LMLogger.Debug("LMTrigger.update");
             this.animationParams = animationParams;
             if (effectEntry != null) {
                 initializeOnFirstAssignment(effectEntry);
@@ -33,10 +33,10 @@ namespace LinkedMovement {
         public SerializedMonoBehaviour getEffectBehaviour() => this.effectBehaviour;
 
         public EffectRunner.ExecutionHandle execute(EffectEntry effectEntry) {
-            LinkedMovement.Log($"LMTrigger.execute sequence name: {animationParams.name}");
+            LMLogger.Debug($"LMTrigger.execute sequence name: {animationParams.name}");
             this.effectEntry = effectEntry;
             if (sequence.isAlive) {
-                LinkedMovement.Log("Sequence is already running, reset");
+                LMLogger.Debug("Sequence is already running, reset");
                 sequence.SetRemainingCycles(false);
                 sequence.Complete();
             }
@@ -47,7 +47,7 @@ namespace LinkedMovement {
         }
 
         public EffectBoxHandle linkEffectBox(EffectBox effectBox) {
-            LinkedMovement.Log("LMTrigger.linkEffectBox");
+            LMLogger.Debug("LMTrigger.linkEffectBox");
             if (effectBoxHandles == null)
                 effectBoxHandles = new List<EffectBoxHandle>();
             EffectBoxHandle effectBoxHandle = new EffectBoxHandle(effectBox);
@@ -56,7 +56,7 @@ namespace LinkedMovement {
         }
 
         public void unlinkEffectBox(EffectBoxHandle effectBoxHandle) {
-            LinkedMovement.Log("LMTrigger.unlinkEffectBox");
+            LMLogger.Debug("LMTrigger.unlinkEffectBox");
             if (effectBoxHandles == null)
                 return;
             effectBoxHandles.Remove(effectBoxHandle);
@@ -66,7 +66,7 @@ namespace LinkedMovement {
         }
 
         public AbstractEditorPanel createEditorPanel(EffectEntry effectEntry, RectTransform parentRectTransform) {
-            LinkedMovement.Log("LMTrigger.createEditorPanel");
+            LMLogger.Debug("LMTrigger.createEditorPanel");
             this.effectEntry = effectEntry;
             AnimationTriggerEffectEditorPanel editorPanel = Instantiate<AnimationTriggerEffectEditorPanel>(ScriptableSingleton<UIAssetManager>.Instance.animationTriggerEffectEditorPanel, (Transform)parentRectTransform);
             editorPanel.setEffectEntry(effectEntry);
@@ -74,7 +74,7 @@ namespace LinkedMovement {
         }
 
         public void initializeOnFirstAssignment(EffectEntry effectEntry) {
-            LinkedMovement.Log("LMTrigger.initializeOnFirstAssignment");
+            LMLogger.Debug("LMTrigger.initializeOnFirstAssignment");
             this.effectEntry = effectEntry;
             effectEntry.setDuration(LMUtils.GetSequenceDuration(animationParams));
         }
@@ -83,13 +83,13 @@ namespace LinkedMovement {
 
         public Sprite getSprite(EffectEntry effectEntry) {
             // TODO: Could we have a custom icon?
-            LinkedMovement.Log("LMTrigger.getSprite");
+            LMLogger.Debug("LMTrigger.getSprite");
             this.effectEntry = effectEntry;
             return ScriptableSingleton<UIAssetManager>.Instance.effectIconGeneric;
         }
 
         private IEnumerator playEffect() {
-            LinkedMovement.Log($"LMTrigger.playEffect sequence name: {animationParams.name}");
+            LMLogger.Debug($"LMTrigger.playEffect sequence name: {animationParams.name}");
             sequence = LMUtils.BuildAnimationSequence(gameObject.transform, animationParams);
             
             yield return null;

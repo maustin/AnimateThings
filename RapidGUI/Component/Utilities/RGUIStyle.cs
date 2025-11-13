@@ -386,7 +386,6 @@ namespace RapidGUI
         // TODO: This needs to be cleaned up
         static Texture2D CreateTexDark(Texture2D src, float colorRate, float alphaRate)
         {
-            LinkedMovement.LinkedMovement.Log($"RGUIStyle.CreateTexDark w: {src.width}, h: {src.height}");
             // copy texture trick.
             // Graphics.CopyTexture(src, dst) must same format src and dst.
             // but src format can't call GetPixels().

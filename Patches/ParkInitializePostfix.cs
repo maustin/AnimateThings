@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LinkedMovement;
 using System.Reflection;
 
 #nullable disable
@@ -7,10 +8,10 @@ class ParkInitializePostfix {
     static MethodBase TargetMethod() {
         MethodBase methodBase = (MethodBase)AccessTools.Method(typeof(Park), "Initialize");
         if (methodBase != null) {
-            LinkedMovement.LinkedMovement.Log("Park.Initialize method found");
+            LMLogger.Info("Park.Initialize method found");
         }
         else {
-            LinkedMovement.LinkedMovement.Log("Park.Initialize method NOT FOUND");
+            LMLogger.Info("Park.Initialize method NOT FOUND");
         }
         return methodBase;
     }
@@ -19,7 +20,7 @@ class ParkInitializePostfix {
     // TODO: Is this needed? If the controller is always created elsewhere, can eliminate this patch.
     [HarmonyPostfix]
     static void Initialize() {
-        LinkedMovement.LinkedMovement.Log("Park.Initialize Postfix");
+        LMLogger.Debug("Park.Initialize Postfix");
         // Ensure Controller has been created
         LinkedMovement.LinkedMovement.GetLMController();
     }

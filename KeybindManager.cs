@@ -21,10 +21,10 @@ namespace LinkedMovement {
         }
 
         public void RegisterAll() {
-            LinkedMovement.Log("KeybindManager.RegisterAll");
+            LMLogger.Info("KeybindManager.RegisterAll");
             InputManager.Instance.registerKeyGroup(this._group);
             foreach (KeybindManager.Keybind keybind in this._allRegistered) {
-                LinkedMovement.Log($"Register id: {keybind.id}, key: {keybind.mapping.keyName}");
+                LMLogger.Info($"Register id: {keybind.id}, key: {keybind.mapping.keyName}");
                 InputManager.Instance.registerKeyMapping(keybind.mapping);
             }
         }

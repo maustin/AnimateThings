@@ -48,11 +48,11 @@ namespace LinkedMovement {
             }
 
             if (isPath && park.hidePathsEnabled) {
-                LinkedMovement.Log("HidePathEnabled on Paths");
+                LMLogger.Debug("HidePathEnabled on Paths");
                 return HiddenByParkitect;
             }
             if (isDeco && park.hideSceneryEnabled) {
-                LinkedMovement.Log("HideSceneryEnabled on Deco");
+                LMLogger.Debug("HideSceneryEnabled on Deco");
                 return HiddenByParkitect;
             }
 

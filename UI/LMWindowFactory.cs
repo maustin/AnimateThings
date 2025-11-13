@@ -12,7 +12,7 @@ namespace LinkedMovement.UI {
         private const int EXISTING_WINDOW_OFFSET = 15;
 
         public static LMWindow BuildWindow(WindowManager.WindowType type, object data, WindowManager windowManager) {
-            LinkedMovement.Log("LMWindowFactory build " + type.ToString());
+            LMLogger.Debug("LMWindowFactory build " + type.ToString());
             //title, position, always render, data, content
             string title = "";
             Vector2 position = Vector2.zero;
@@ -104,7 +104,7 @@ namespace LinkedMovement.UI {
             }
 
             if (!allowMultiple && windowManager.hasWindowOfType(type)) {
-                LinkedMovement.Log("Window type " + type.ToString() + " already exists and multiple not allowed.");
+                LMLogger.Debug("Window type " + type.ToString() + " already exists and multiple not allowed.");
                 return null;
             }
 

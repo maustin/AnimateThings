@@ -40,7 +40,7 @@ namespace LinkedMovement {
         public long timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
         public LMAnimationParams() {
-            LinkedMovement.Log("LMAnimationParams base constructor");
+            LMLogger.Debug("LMAnimationParams base constructor");
 
             // TODO: Incremental naming
             name = "New Animation";
@@ -48,29 +48,29 @@ namespace LinkedMovement {
         }
 
         public void setStartingValues(Transform startingTransform) {
-            LinkedMovement.Log("LMAnimationParams.setStartingValues for " + name);
+            LMLogger.Debug("LMAnimationParams.setStartingValues for " + name);
 
-            LinkedMovement.Log("OLD starting localPosition: " + startingLocalPosition.ToString());
-            LinkedMovement.Log("OLD starting localRotation: " + startingLocalRotation.ToString());
-            LinkedMovement.Log("OLD starting scale: " + startingLocalScale.ToString());
+            LMLogger.Debug("OLD starting localPosition: " + startingLocalPosition.ToString());
+            LMLogger.Debug("OLD starting localRotation: " + startingLocalRotation.ToString());
+            LMLogger.Debug("OLD starting scale: " + startingLocalScale.ToString());
 
-            LinkedMovement.Log("NEW starting localPosition: " + startingTransform.localPosition.ToString());
-            LinkedMovement.Log("NEW starting rotation: " + startingTransform.eulerAngles.ToString());
-            LinkedMovement.Log("NEW starting localRotation: " + startingTransform.localEulerAngles.ToString());
-            LinkedMovement.Log("NEW starting scale: " + startingTransform.localScale.ToString());
+            LMLogger.Debug("NEW starting localPosition: " + startingTransform.localPosition.ToString());
+            LMLogger.Debug("NEW starting rotation: " + startingTransform.eulerAngles.ToString());
+            LMLogger.Debug("NEW starting localRotation: " + startingTransform.localEulerAngles.ToString());
+            LMLogger.Debug("NEW starting scale: " + startingTransform.localScale.ToString());
 
             startingLocalPosition = startingTransform.localPosition;
             startingLocalRotation = startingTransform.localEulerAngles;
             startingLocalScale = startingTransform.localScale;
 
             if (startingCustomColors == null) {
-                LinkedMovement.Log("INIT starting custom colors");
+                LMLogger.Debug("INIT starting custom colors");
                 var customColors = LMUtils.GetCustomColors(startingTransform.gameObject);
                 if (customColors != null && customColors.Length > 0) {
-                    LinkedMovement.Log($"Has {customColors.Length} custom colors");
+                    LMLogger.Debug($"Has {customColors.Length} custom colors");
                     startingCustomColors = new List<Color>(customColors);
                 } else {
-                    LinkedMovement.Log("Has NO custom colors");
+                    LMLogger.Debug("Has NO custom colors");
                 }
             }
         }

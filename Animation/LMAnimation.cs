@@ -90,13 +90,13 @@ namespace LinkedMovement.Animation {
         //}
 
         public LMAnimation(LMAnimationParams animationParams) {
-            LinkedMovement.Log("LMAnimation constructor as NEW");
+            LMLogger.Debug("LMAnimation constructor as NEW");
             this.animationParams = animationParams;
             this.isNewAnimation = true;
         }
 
         public LMAnimation(LMAnimationParams animationParams, GameObject target, bool delaySetup = false) {
-            LinkedMovement.Log("LMAnimation constructor as EXISTING");
+            LMLogger.Debug("LMAnimation constructor as EXISTING");
             this.animationParams = animationParams;
 
             var buildableObject = LMUtils.GetBuildableObjectFromGameObject(target);
@@ -112,7 +112,7 @@ namespace LinkedMovement.Animation {
 
         // Remove the animation from the target. Currently assumes sequence is stopped elsewhere.
         public void destroyAnimation() {
-            LinkedMovement.Log($"LMAnimation.destroyAnimation name: {name}, id: {id}");
+            LMLogger.Debug($"LMAnimation.destroyAnimation name: {name}, id: {id}");
 
             LMUtils.RemoveObjectHighlight(targetBuildableObject, HighlightType.AnimationTarget);
 
@@ -142,13 +142,13 @@ namespace LinkedMovement.Animation {
         }
 
         public void stopPicking() {
-            LinkedMovement.Log("LMAnimation.stopPicking");
+            LMLogger.Debug("LMAnimation.stopPicking");
 
             clearSelectionHandler();
         }
 
         public void startPicking() {
-            LinkedMovement.Log("LMAnimation.startPicking");
+            LMLogger.Debug("LMAnimation.startPicking");
 
             clearSelectionHandler();
 
@@ -162,7 +162,7 @@ namespace LinkedMovement.Animation {
         }
 
         public void setTarget(BuildableObject buildableObject, bool delaySetup) {
-            LinkedMovement.Log("LMAnimation.setTarget");
+            LMLogger.Debug("LMAnimation.setTarget");
             removeTarget();
 
             targetBuildableObject = buildableObject;
@@ -179,7 +179,7 @@ namespace LinkedMovement.Animation {
         }
 
         public void removeTarget() {
-            LinkedMovement.Log("LMAnimation.removeTarget");
+            LMLogger.Debug("LMAnimation.removeTarget");
             if (targetGameObject != null) {
                 stopSequence();
                 LMUtils.RemoveObjectHighlight(targetBuildableObject, HighlightType.AnimationTarget);
@@ -189,7 +189,7 @@ namespace LinkedMovement.Animation {
         }
 
         public void discardChanges() {
-            LinkedMovement.Log("LMAnimation.discardChanges");
+            LMLogger.Debug("LMAnimation.discardChanges");
 
             stopPicking();
             
@@ -206,7 +206,7 @@ namespace LinkedMovement.Animation {
         }
 
         public void saveChanges() {
-            LinkedMovement.Log("LMAnimation.saveChanges");
+            LMLogger.Debug("LMAnimation.saveChanges");
 
             stopSequence();
             animationParams = tempAnimationParams;
@@ -222,10 +222,10 @@ namespace LinkedMovement.Animation {
         }
 
         public void stopSequence() {
-            LinkedMovement.Log("LMAnimation.stopSequence");
+            LMLogger.Debug("LMAnimation.stopSequence");
 
             if (sequence.isAlive) {
-                LinkedMovement.Log("Sequence is alive, stop!");
+                LMLogger.Debug("Sequence is alive, stop!");
                 sequence.progress = 0;
                 sequence.Stop();
 
@@ -239,10 +239,10 @@ namespace LinkedMovement.Animation {
         }
 
         public void buildSequence(bool passedIsEditing = false) {
-            LinkedMovement.Log("LMAnimation.buildSequence");
+            LMLogger.Debug("LMAnimation.buildSequence");
 
             if (targetGameObject == null) {
-                LinkedMovement.Log("ERROR: LMAnimation.buildSequence targetGameObject is null!");
+                LMLogger.Debug("ERROR: LMAnimation.buildSequence targetGameObject is null!");
                 return;
             }
 
@@ -252,7 +252,7 @@ namespace LinkedMovement.Animation {
 
             var animationParams = getAnimationParams();
             if (!isEditing && animationParams.isTriggerable) {
-                LinkedMovement.Log("Create trigger");
+                LMLogger.Debug("Create trigger");
                 var existingTrigger = targetGameObject.GetComponent<LMTrigger>();
                 if (existingTrigger == null) {
                     targetGameObject.AddComponent<LMTrigger>().animationParams = animationParams;
@@ -266,7 +266,7 @@ namespace LinkedMovement.Animation {
         }
 
         public void reset() {
-            LinkedMovement.Log("LMAnimation.reset");
+            LMLogger.Debug("LMAnimation.reset");
             // Remove references
             targetGameObject = null;
             targetBuildableObject = null;
@@ -274,7 +274,7 @@ namespace LinkedMovement.Animation {
         }
 
         private void handlePickerAddObject(BuildableObject buildableObject) {
-            LinkedMovement.Log("LMAnimation.handlePickerAddObject");
+            LMLogger.Debug("LMAnimation.handlePickerAddObject");
 
             // Validate
             var gameObject = buildableObject.gameObject;
@@ -282,7 +282,7 @@ namespace LinkedMovement.Animation {
             if (animation != null) {
                 //string rejectMessage = $"Selection already has Animation '{animation.name}'";
                 string rejectMessage = LMStringSystem.GetText(LMStringKey.SELECT_ANIM_TARGET_EXISTS, animation.name);
-                LinkedMovement.Log(rejectMessage);
+                LMLogger.Debug(rejectMessage);
                 // TODO: This call needs much cleaner access
                 LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                 return;
@@ -293,7 +293,7 @@ namespace LinkedMovement.Animation {
         }
 
         private void clearSelectionHandler() {
-            LinkedMovement.Log("LMAnimation.clearSelectionHandler");
+            LMLogger.Debug("LMAnimation.clearSelectionHandler");
             if (selectionHandler != null) {
                 selectionHandler.enabled = false;
                 selectionHandler.OnAddBuildableObject -= handlePickerAddObject;
@@ -304,7 +304,7 @@ namespace LinkedMovement.Animation {
         }
 
         public void setCustomData() {
-            LinkedMovement.Log("LMAnimation.setCustomData");
+            LMLogger.Debug("LMAnimation.setCustomData");
             
             removeCustomData();
 
@@ -312,7 +312,7 @@ namespace LinkedMovement.Animation {
         }
 
         private void removeCustomData() {
-            LinkedMovement.Log("LMAnimation.removeCustomData");
+            LMLogger.Debug("LMAnimation.removeCustomData");
             
             targetBuildableObject.removeCustomData<LMAnimationParams>();
         }

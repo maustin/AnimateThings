@@ -67,31 +67,31 @@ namespace LinkedMovement.UI.NewContent {
                     }
                     
                     if (Button("↑", RGUIStyle.roundedFlatButton, Width(26f))) {
-                        LinkedMovement.Log("Move AnimationStep UP");
+                        LMLogger.Debug("Move AnimationStep UP");
                         var didChange = animationParams.moveAnimationStepUp(animationStep);
                         if (didChange)
                             controller.currentAnimationUpdated();
                     }
                     if (Button("↓", RGUIStyle.roundedFlatButton, Width(26f))) {
-                        LinkedMovement.Log("Move AnimationStep DOWN");
+                        LMLogger.Debug("Move AnimationStep DOWN");
                         var didChange = animationParams.moveAnimationStepDown(animationStep);
                         if (didChange)
                             controller.currentAnimationUpdated();
                     }
                     Label("|", RGUIStyle.dimText, Width(3f));
                     if (Button("+Dup", RGUIStyle.roundedFlatButton, Width(42f))) {
-                        LinkedMovement.Log("Add duplicate step");
+                        LMLogger.Debug("Add duplicate step");
                         animationParams.addDuplicateAnimationStep(animationStep);
                         controller.currentAnimationUpdated();
                     }
                     if (Button("+Inv", RGUIStyle.roundedFlatButton, Width(40f))) {
-                        LinkedMovement.Log("Add inverse step");
+                        LMLogger.Debug("Add inverse step");
                         animationParams.addInverseAnimationStep(animationStep);
                         controller.currentAnimationUpdated();
                     }
                     Label("|", RGUIStyle.dimText, Width(3f));
                     if (Button("✕", RGUIStyle.roundedFlatButton, Width(25f))) {
-                        LinkedMovement.Log("Delete AnimationStep");
+                        LMLogger.Debug("Delete AnimationStep");
                         animationParams.deleteAnimationStep(animationStep);
                         controller.currentAnimationUpdated();
                     }

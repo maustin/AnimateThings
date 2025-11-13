@@ -18,7 +18,7 @@ namespace LinkedMovement {
         public bool ShowGui = true;
         
         private void Awake() {
-            LinkedMovement.Log("SelectionHandler Awake");
+            LMLogger.Debug("SelectionHandler Awake");
             park = GameController.Instance.park;
 
             Options.Changed += OnOptionsChanged;
@@ -31,7 +31,7 @@ namespace LinkedMovement {
         }
 
         private void OnEnable() {
-            LinkedMovement.Log("SelectionHandler OnEnable");
+            LMLogger.Debug("SelectionHandler OnEnable");
             
             Injector.Instance.Apply(calc.BuildableObjectVisibility);
             tool.CalcIndividualVisibility = calc.BuildableObjectVisibility;
@@ -39,7 +39,7 @@ namespace LinkedMovement {
         }
 
         private void OnDisable() {
-            LinkedMovement.Log("SelectionHandler OnDisable");
+            LMLogger.Debug("SelectionHandler OnDisable");
             GameController.Instance.removeMouseTool(tool);
 
             tool.CalcIndividualVisibility = IndividualSelectionTool.DefaultVisibility;
@@ -49,7 +49,7 @@ namespace LinkedMovement {
         }
 
         private void OnDestroy() {
-            LinkedMovement.Log("SelectionHandler OnDestroy");
+            LMLogger.Debug("SelectionHandler OnDestroy");
             Options.Changed -= OnOptionsChanged;
             tool.OnAddedSelectedObject -= OnAddedSelectedObject;
             tool.OnRemovedSelectedObject -= OnRemovedSelectedObject;
@@ -74,7 +74,7 @@ namespace LinkedMovement {
         }
 
         private void ApplyMode() {
-            LinkedMovement.Log($"Apply mode {Options.Mode}");
+            LMLogger.Debug($"Apply mode {Options.Mode}");
             switch (Options.Mode) {
                 case Mode.Individual:
                     tool.Mode = Mode.Individual;
@@ -130,22 +130,22 @@ namespace LinkedMovement {
                 return;
             }
 
-            LinkedMovement.Log($"OnAdd: {o.GetType().Name} -- {o.getName()}");
+            LMLogger.Debug($"OnAdd: {o.GetType().Name} -- {o.getName()}");
             
             OnAddBuildableObject?.Invoke(o);
         }
         private void OnRemovedSelectedObject(BuildableObject o) {
-            LinkedMovement.Log("SelectionHandler.OnRemovedSelectedObject");
+            LMLogger.Debug("SelectionHandler.OnRemovedSelectedObject");
             if (o == null) {
                 return;
             }
 
-            LinkedMovement.Log($"OnRemove: {o.GetType().Name} -- {o.getName()}");
+            LMLogger.Debug($"OnRemove: {o.GetType().Name} -- {o.getName()}");
             
             OnRemoveBuildableObject?.Invoke(o);
         }
         public void DeselectAll() {
-            LinkedMovement.Log("SelectionHandler DeselectAll");
+            LMLogger.Debug("SelectionHandler DeselectAll");
             tool.DeselectAll();
         }
 
@@ -192,7 +192,7 @@ namespace LinkedMovement {
             SceneryInside(bounds, op);
         }
         public void SceneryInside(Bounds bounds, SelectionOperation op) {
-            LinkedMovement.Log("SceneryInside");
+            LMLogger.Debug("SceneryInside");
             var mc = MouseCollisions.Instance;
 
             //todo: cache?

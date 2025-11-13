@@ -16,11 +16,11 @@ namespace LinkedMovement.Links {
         public BuildableObject targetBuildableObject;
 
         public LMLinkParent() {
-            LinkedMovement.Log("LMLinkParent constructor");
+            LMLogger.Debug("LMLinkParent constructor");
         }
 
         public LMLinkParent(string name, string id, BuildableObject buildableObject) {
-            LinkedMovement.Log("LMLinkParent contructor with params");
+            LMLogger.Debug("LMLinkParent contructor with params");
 
             this.name = name;
             this.id = id;

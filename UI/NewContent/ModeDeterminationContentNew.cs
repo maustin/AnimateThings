@@ -14,7 +14,7 @@ namespace LinkedMovement.UI.NewContent {
                 //Space(5f);
 
                 if (Button("Create Animation", RGUIStyle.roundedFlatButton)) {
-                    LinkedMovement.Log("Clicked Create Animation");
+                    LMLogger.Debug("Clicked Create Animation");
                     windowManager.removeWindow(this.window);
                     windowManager.createWindow(WindowManager.WindowType.CreateAnimationNew, null);
                 }
@@ -22,7 +22,7 @@ namespace LinkedMovement.UI.NewContent {
                 Space(3f);
 
                 if (Button("View Animations", RGUIStyle.roundedFlatButton)) {
-                    LinkedMovement.Log("Clicked View Animations");
+                    LMLogger.Debug("Clicked View Animations");
                     windowManager.removeWindow(this.window);
                     windowManager.createWindow(WindowManager.WindowType.ViewAnimationsNew, null);
                 }
@@ -30,7 +30,7 @@ namespace LinkedMovement.UI.NewContent {
                 Space(15f);
 
                 if (Button("Create Link", RGUIStyle.roundedFlatButton)) {
-                    LinkedMovement.Log("Clicked Create Link");
+                    LMLogger.Debug("Clicked Create Link");
                     windowManager.removeWindow(this.window);
                     windowManager.createWindow(WindowManager.WindowType.CreateLinkNew, null);
                 }
@@ -38,7 +38,7 @@ namespace LinkedMovement.UI.NewContent {
                 Space(3f);
 
                 if (Button("View Links", RGUIStyle.roundedFlatButton)) {
-                    LinkedMovement.Log("Clicked View Links");
+                    LMLogger.Debug("Clicked View Links");
                     windowManager.removeWindow(this.window);
                     windowManager.createWindow(WindowManager.WindowType.ViewLinksNew, null);
                 }

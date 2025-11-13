@@ -8,7 +8,7 @@ namespace LinkedMovement.UI {
         public bool alwaysRender;
 
         public LMWindow(WindowManager.WindowType type, string title, LMWindowContent content, bool alwaysRender, int width) : base(title, width) {
-            LinkedMovement.Log("LMWindow: " + title);
+            LMLogger.Debug("LMWindow: " + title);
             this.type = type;
             this.content = content;
             this.alwaysRender = alwaysRender;
@@ -27,24 +27,24 @@ namespace LinkedMovement.UI {
             this.Add(content.RenderGUI);
             this.Open();
             this.onClose += (WindowLauncher launcher) => {
-                LinkedMovement.Log("LMWindow.onClose");
+                LMLogger.Debug("LMWindow.onClose");
                 
                 // TODO: Refactor so controller subscribes to onClose and handles this
 
                 if (type == WindowManager.WindowType.CreateAnimationNew) {
-                    LinkedMovement.Log("CLOSE CreateAnimationNew window");
+                    LMLogger.Debug("CLOSE CreateAnimationNew window");
                     LinkedMovement.GetLMController().clearEditMode();
                 }
                 if (type == WindowManager.WindowType.EditAnimationNew) {
-                    LinkedMovement.Log("CLOSE EditAnimationNew window");
+                    LMLogger.Debug("CLOSE EditAnimationNew window");
                     LinkedMovement.GetLMController().clearEditMode();
                 }
                 if (type == WindowManager.WindowType.CreateLinkNew) {
-                    LinkedMovement.Log("CLOSE CreateLinkNew window");
+                    LMLogger.Debug("CLOSE CreateLinkNew window");
                     LinkedMovement.GetLMController().clearEditMode();
                 }
                 if (type == WindowManager.WindowType.EditLinkNew) {
-                    LinkedMovement.Log("CLOSE EditLinkNew window");
+                    LMLogger.Debug("CLOSE EditLinkNew window");
                     LinkedMovement.GetLMController().clearEditMode();
                 }
 

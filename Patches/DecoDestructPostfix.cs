@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using LinkedMovement;
 using System.Reflection;
 
 #nullable disable
@@ -7,9 +8,9 @@ class DecoDestructPostfix {
     static MethodBase TargetMethod() {
         MethodBase methodBase = (MethodBase)AccessTools.Method(typeof(Deco), "destruct");
         if (methodBase != null) {
-            LinkedMovement.LinkedMovement.Log("Deco.destruct method found");
+            LMLogger.Info("Deco.destruct method found");
         } else {
-            LinkedMovement.LinkedMovement.Log("Deco.destruct method NOT FOUND");
+            LMLogger.Info("Deco.destruct method NOT FOUND");
         }
         return methodBase;
     }
