@@ -61,7 +61,7 @@ namespace LinkedMovement.UI.NewContent {
 
                 using (Scope.Horizontal()) {
                     InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEPS);
-                    Label("Animation Steps", RGUIStyle.popupTextNew);
+                    Label($"Animation Steps (Current animation length {animationParams.getAnimationLength().ToString("F2")} sec)", RGUIStyle.popupTextNew);
                 }
 
                 if (Button("Add Step", RGUIStyle.roundedFlatButton)) {

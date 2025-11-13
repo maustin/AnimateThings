@@ -75,6 +75,14 @@ namespace LinkedMovement {
             }
         }
 
+        public float getAnimationLength() {
+            float length = 0f;
+            foreach (var animationStep in animationSteps) {
+                length += animationStep.duration;
+            }
+            return length;
+        }
+
         public void addNewAnimationStep() {
             addNewAnimationStep(new LMAnimationStep(this));
         }

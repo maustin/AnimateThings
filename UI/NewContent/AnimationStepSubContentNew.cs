@@ -180,7 +180,7 @@ namespace LinkedMovement.UI.NewContent {
 
             using (Scope.Horizontal()) {
                 InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEP_COLOR);
-                Label("Color", RGUIStyle.popupTextNew);
+                Label("Custom Colors", RGUIStyle.popupTextNew);
                 FlexibleSpace();
                 if (colors != null) {
                     for (int i = 0; i < colors.Length; i++) {
