@@ -5,6 +5,7 @@ using LinkedMovement.UI.Utils;
 using LinkedMovement.Utils;
 using Parkitect.UI;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace LinkedMovement {
@@ -549,9 +550,13 @@ namespace LinkedMovement {
         }
 
         public void restartAllAnimations() {
+            HashSet<GameObject> animatedGameObjectsHashSet = new HashSet<GameObject>();
             foreach (var animation in animations) {
-                animation.restartSequence();
+                animatedGameObjectsHashSet.Add(animation.targetGameObject);
             }
+            List<GameObject> animatedGameObjectsList = animatedGameObjectsHashSet.ToList<GameObject>();
+            LMUtils.EditAssociatedAnimations(animatedGameObjectsList, LMUtils.AssociatedAnimationEditMode.Stop, false);
+            LMUtils.EditAssociatedAnimations(animatedGameObjectsList, LMUtils.AssociatedAnimationEditMode.Start, false);
         }
 
         public Dictionary<string, List<LMAnimationStep>> getSavedAnimationSteps() {

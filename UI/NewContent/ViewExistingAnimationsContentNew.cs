@@ -16,6 +16,12 @@ namespace LinkedMovement.UI.NewContent {
             base.DoGUI();
 
             using (Scope.Vertical()) {
+                if (Button("Restart All Animations", RGUIStyle.roundedFlatButton)) {
+                    controller.restartAllAnimations();
+                }
+            }
+
+            using (Scope.Vertical()) {
                 var animations = controller.getAnimations();
                 targetsScrollPosition = BeginScrollView(targetsScrollPosition, Height(400f));
 
@@ -32,7 +38,7 @@ namespace LinkedMovement.UI.NewContent {
                             }
                         }
                         Space(2f);
-                        
+
                         if (Button(animation.name, RGUIStyle.roundedFlatButtonLeft)) {
                             windowManager.removeWindow(this.window);
                             windowManager.createWindow(WindowManager.WindowType.EditAnimationNew, animation);
