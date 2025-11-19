@@ -221,6 +221,13 @@ namespace LinkedMovement.Animation {
             setCustomData();
         }
 
+        public void restartSequence() {
+            LMLogger.Debug("LMAnimation.restartSequence");
+            if (sequence.isAlive) {
+                sequence.progress = 0;
+            }
+        }
+
         public void stopSequence() {
             LMLogger.Debug("LMAnimation.stopSequence");
 

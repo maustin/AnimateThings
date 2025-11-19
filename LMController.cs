@@ -1,6 +1,7 @@
 ﻿using LinkedMovement.Animation;
 using LinkedMovement.Links;
 using LinkedMovement.UI;
+using LinkedMovement.UI.Utils;
 using LinkedMovement.Utils;
 using Parkitect.UI;
 using System.Collections.Generic;
@@ -42,6 +43,8 @@ namespace LinkedMovement {
 
         // For lack of better place for this
         private ColorPickerWindow colorPickerWindow;
+
+        private Dictionary<string, List<LMAnimationStep>> savedAnimationSteps = new Dictionary<string, List<LMAnimationStep>>();
         
         private void Awake() {
             LMLogger.Debug("LMController Awake");
@@ -543,6 +546,28 @@ namespace LinkedMovement {
                 colorPickerWindow = null;
             };
             return colorPickerWindow;
+        }
+
+        public void restartAllAnimations() {
+            foreach (var animation in animations) {
+                animation.restartSequence();
+            }
+        }
+
+        public Dictionary<string, List<LMAnimationStep>> getSavedAnimationSteps() {
+            return savedAnimationSteps;
+        }
+
+        public void addSavedAnimationSteps(string name, List<LMAnimationStep> steps) {
+            LMLogger.Debug("LMController.addSavedAnimationSteps name: " + name);
+            var exists = savedAnimationSteps.ContainsKey(name);
+            if (exists) {
+                string infoMessage = LMStringSystem.GetText(LMStringKey.SAVED_ANIMATION_ALREADY_EXISTS, name);
+                windowManager.createWindow(UI.WindowManager.WindowType.Information, infoMessage);
+                savedAnimationSteps[name] = steps;
+            } else {
+                savedAnimationSteps.Add(name, steps);
+            }
         }
 
         private List<LMLinkTarget> getLinkTargetsById(string id, List<LMLinkTarget> targets) {

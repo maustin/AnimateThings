@@ -9,10 +9,10 @@ namespace RapidGUI
         static int popupControlId;
         static readonly PopupWindow popupWindow = new PopupWindow();
 
-        public static string SelectionPopup(string current, string[] displayOptions)
+        public static string SelectionPopup(string current, string[] displayOptions, params GUILayoutOption[] layoutOptions)
         {
             var idx = Array.IndexOf(displayOptions, current);
-            GUILayout.Box(current, RGUIStyle.alignLeftBox);
+            GUILayout.Box(current, RGUIStyle.roundedFlatButton, layoutOptions);
             var newIdx = PopupOnLastRect(idx, displayOptions);
             if ( newIdx != idx)
             {
@@ -21,10 +21,10 @@ namespace RapidGUI
             return current;
         }
 
-        public static int SelectionPopup(int selectionIndex, string[] displayOptions)
+        public static int SelectionPopup(int selectionIndex, string[] displayOptions, params GUILayoutOption[] layoutOptions)
         {
             var label = (selectionIndex < 0 || displayOptions.Length <= selectionIndex) ? "" : displayOptions[selectionIndex];
-            GUILayout.Box(label, RGUIStyle.alignLeftBox);
+            GUILayout.Box(label, RGUIStyle.roundedFlatButton, layoutOptions);
             return PopupOnLastRect(selectionIndex, displayOptions);
         }
 

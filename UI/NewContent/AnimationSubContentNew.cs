@@ -1,11 +1,14 @@
 ﻿using LinkedMovement.UI.Utils;
 using RapidGUI;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static UnityEngine.GUILayout;
 
 namespace LinkedMovement.UI.NewContent {
     internal class AnimationSubContentNew : IDoGUI {
+        const string LoadText = "Load";
+
         private LMController controller;
         private LMAnimationParams animationParams;
         private Vector2 targetsScrollPosition;
@@ -63,6 +66,24 @@ namespace LinkedMovement.UI.NewContent {
                 using (Scope.Horizontal()) {
                     InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEPS);
                     Label($"Animation Steps (Animation length {animationLength.ToString("F2")} sec)", RGUIStyle.popupTextNew);
+
+                    using (Scope.GuiEnabled(animationParams.animationSteps.Count > 0)) {
+                        if (Button("Save", RGUIStyle.roundedFlatButton, Width(42f))) {
+                            controller.addSavedAnimationSteps(animationParams.name + " steps", LMAnimationParams.GetDuplicateAnimationSteps(animationParams));
+                        }
+                    }
+
+                    var savedAnimationSteps = controller.getSavedAnimationSteps();
+                    using (Scope.GuiEnabled(savedAnimationSteps.Count > 0)) {
+                        var savedAnimationStepsNames = savedAnimationSteps.Keys.ToArray<string>();
+                        var loadSelection = RGUI.SelectionPopup(LoadText, savedAnimationStepsNames, Width(42f));
+                        if (loadSelection != LoadText) {
+                            LMLogger.Debug("ASC LOAD selection: " + loadSelection);
+                            var loadedAnimationSteps = savedAnimationSteps[loadSelection];
+                            animationParams.addAnimationSteps(loadedAnimationSteps);
+                            controller.currentAnimationUpdated();
+                        }
+                    }
                 }
 
                 //var currentAnimation = controller.currentAnimation;

@@ -142,6 +142,14 @@ namespace LinkedMovement {
             addNewAnimationStep(newStep);
         }
 
+        public void addAnimationSteps(List<LMAnimationStep> steps) {
+            // Add saved animation steps to current animation
+            foreach (var step in steps) {
+                var newStep = LMAnimationStep.Duplicate(step);
+                addNewAnimationStep(newStep);
+            }
+        }
+
         //public override string ToString() {
         //    var sb = new StringBuilder("LMAnimationParams\n");
         //    sb.AppendLine("name: " + name);
@@ -187,6 +195,14 @@ namespace LinkedMovement {
                 newAnimationParams.animationSteps.Add(LMAnimationStep.Duplicate(step));
             }
             return newAnimationParams;
+        }
+
+        public static List<LMAnimationStep> GetDuplicateAnimationSteps(LMAnimationParams animationParams) {
+            var newAnimationSteps = new List<LMAnimationStep>();
+            foreach (var step in animationParams.animationSteps) {
+                newAnimationSteps.Add(LMAnimationStep.Duplicate(step));
+            }
+            return newAnimationSteps;
         }
     }
 }
