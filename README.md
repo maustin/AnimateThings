@@ -1,7 +1,9 @@
 Animate Things!
 A Parkitect mod
 
-WIP
+This page is a Work In Progress!
+
+
 
 Intro to mod
 
