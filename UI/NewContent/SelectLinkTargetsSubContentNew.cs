@@ -34,9 +34,9 @@ namespace LinkedMovement.UI.NewContent {
                 using (Scope.Horizontal()) {
                     string selectButtonText = string.Empty;
                     if (selectionModes[selectedSelectionMode] == Selection.Mode.Individual)
-                        selectButtonText = "Select Child";
+                        selectButtonText = "Add Child";
                     else if (selectionModes[selectedSelectionMode] == Selection.Mode.Box)
-                        selectButtonText = "Select Children";
+                        selectButtonText = "Add Children";
 
                     if (Button(selectButtonText, RGUIStyle.roundedFlatButton)) {
                         GUI.FocusControl(null);
