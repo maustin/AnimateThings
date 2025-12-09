@@ -15,11 +15,11 @@ namespace LinkedMovement.UI.NewContent {
         public override void DoGUI() {
             base.DoGUI();
 
-            using (Scope.Vertical()) {
-                if (Button("Restart All Animations", RGUIStyle.roundedFlatButton)) {
-                    controller.restartAllAnimations();
-                }
-            }
+            //using (Scope.Vertical()) {
+            //    if (Button("Restart All Animations", RGUIStyle.roundedFlatButton)) {
+            //        controller.restartAllAnimations();
+            //    }
+            //}
 
             using (Scope.Vertical()) {
                 var animations = controller.getAnimations();

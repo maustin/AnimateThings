@@ -9,9 +9,17 @@ namespace LinkedMovement.UI.NewContent {
         override public void DoGUI() {
             base.DoGUI();
 
+            var controller = LinkedMovement.GetLMController();
             using (Scope.Vertical()) {
                 //Label(LMStringSystem.GetText(LMStringKey.MODE_SELECT), RGUIStyle.popupTextNew);
-                //Space(5f);
+                using (Scope.Vertical()) {
+                    using (Scope.GuiEnabled(controller.getNumAnimations() > 0)) {
+                        if (Button("Restart All Animations", RGUIStyle.roundedFlatButton)) {
+                            controller.restartAllAnimations();
+                        }
+                    }
+                }
+                Space(15f);
 
                 if (Button("Create Animation", RGUIStyle.roundedFlatButton)) {
                     LMLogger.Debug("Clicked Create Animation");

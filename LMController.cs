@@ -122,6 +122,10 @@ namespace LinkedMovement {
             return animations;
         }
 
+        public int getNumAnimations() {
+            return animations.Count;
+        }
+
         public List<LMLink> getLinks() {
             return links;
         }
