@@ -75,12 +75,17 @@ namespace LinkedMovement.Selection {
             try {
                 GetAllObjectsBelowMouse(calcVisibility, tmpResults);
 
+                // Possible Visibility: Ignore, HiddenByParkitect, Block, Visible, Hidden
                 foreach (var hit in tmpResults) {
+                    //LMLogger.Debug("GetObjectsBelowMouse, name: " + hit.HitObject.name + ", vis: " + hit.HitVisibility.ToString());
                     switch (hit.HitVisibility) {
                         case Visibility.Hidden:
                             results.Add(hit);
                             break;
                         case Visibility.Block:
+                            // TODO: Is this appropriate?
+                            // Allows user to select rides. What can be selected here that shouldn't be?
+                            results.Add(hit);
                             break;
                         case Visibility.Visible:
                             results.Add(hit);
@@ -101,8 +106,10 @@ namespace LinkedMovement.Selection {
             var hits = MouseCollisions.Instance.raycastAll(ray, float.MaxValue);
             //LinkedMovement.Log("GetAllObjectsBelowMouse hits count: " + hits.Length);
             foreach (var hit in MouseCollisions.Instance.raycastAll(ray, float.MaxValue)) {
+                //LMLogger.Debug("GetAllObjectsBelowMouse raw hit: " + hit.hitObject.name);
                 var o = hit.hitObject.GetComponentInParent<BuildableObject>();
                 if (o != null) {
+                    // LMLogger.Debug("BO in parent: " + o.name);
                     // some objects are made of multiple objects and are therefore found multiple times
                     // what to do with these objects: use closest match or farthest match? (happens when inside other objects)
                     // -> use closest, because when hiding that's the first to hit
@@ -112,6 +119,7 @@ namespace LinkedMovement.Selection {
                         var visibility = calcVisibility(o);
                         var info = CreateInfo(hit, o, visibility);
                         results.Add(info);
+                        //LMLogger.Debug("Add BO to results");
                     }
                     else {
                         // already already found
@@ -120,6 +128,7 @@ namespace LinkedMovement.Selection {
                             // Visibility is same for all parts of an objects
                             var info = CreateInfo(hit, o, prevHit.HitVisibility);
                             results[idx] = info;
+                            //LMLogger.Debug("Update BO in results");
                         }
                     }
                 }
