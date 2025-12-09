@@ -40,7 +40,6 @@ namespace LinkedMovement.UI.NewContent {
                         Space(2f);
 
                         if (Button(animation.name, RGUIStyle.roundedFlatButtonLeft)) {
-                            windowManager.removeWindow(this.window);
                             windowManager.createWindow(WindowManager.WindowType.EditAnimationNew, animation);
                         }
                         Space(3f);

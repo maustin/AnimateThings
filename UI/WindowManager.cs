@@ -10,7 +10,6 @@ namespace LinkedMovement.UI {
             Information,
             Error,
             ConfirmAction,
-            // NEW
             ModeDeterminationNew,
             ViewAnimationsNew,
             CreateAnimationNew,
@@ -87,14 +86,14 @@ namespace LinkedMovement.UI {
             dirtyActiveWindows = true;
         }
 
-        public void removeWindowOfType(WindowType type) {
-            foreach (var window in activeWindows) {
-                if (window.type == type) {
-                    removeWindow(window);
-                    break;
-                }
-            }
-        }
+        //public void removeWindowOfType(WindowType type) {
+        //    foreach (var window in activeWindows) {
+        //        if (window.type == type) {
+        //            removeWindow(window);
+        //            break;
+        //        }
+        //    }
+        //}
 
         public int getNumberOfWindowsOfType(WindowType type) {
             int count = 0;
@@ -106,11 +105,22 @@ namespace LinkedMovement.UI {
             return count;
         }
 
-        public void closeAllWindows() {
-            var windows = new List<LMWindow>(activeWindows);
-            foreach (var window in windows) {
-                removeWindow(window);
-            }
-        }
+        //public void closeTopWindow() {
+        //    for (var i = activeWindows.Count - 1; i >= 0; i--) {
+        //        var window = activeWindows[i];
+        //        if (window.alwaysRender) {
+        //            continue;
+        //        }
+        //        removeWindow(window);
+        //        break;
+        //    }
+        //}
+
+        //public void closeAllWindows() {
+        //    var windows = new List<LMWindow>(activeWindows);
+        //    foreach (var window in windows) {
+        //        removeWindow(window);
+        //    }
+        //}
     }
 }

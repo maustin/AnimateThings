@@ -34,7 +34,6 @@ namespace LinkedMovement.UI.NewContent {
                         Space(2f);
 
                         if (Button(link.name, RGUIStyle.roundedFlatButtonLeft)) {
-                            windowManager.removeWindow(this.window);
                             windowManager.createWindow(WindowManager.WindowType.EditLinkNew, link);
                         }
                         Space(3f);
