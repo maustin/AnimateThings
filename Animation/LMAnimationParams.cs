@@ -78,7 +78,9 @@ namespace LinkedMovement {
         public float getAnimationLength() {
             float length = 0f;
             foreach (var animationStep in animationSteps) {
-                length += animationStep.duration + animationStep.startDelay + animationStep.endDelay;
+                if (animationStep.enabled) {
+                    length += animationStep.duration + animationStep.startDelay + animationStep.endDelay;
+                }
             }
             return length;
         }
@@ -87,7 +89,9 @@ namespace LinkedMovement {
             float startTime = 0f;
             foreach (var step in animationSteps) {
                 if (step != animationStep) {
-                    startTime += step.duration + step.startDelay + step.endDelay;
+                    if (step.enabled) {
+                        startTime += step.duration + step.startDelay + step.endDelay;
+                    }
                 } else {
                     stepProgressMin = startTime / animationLength;
                     stepProgressMax = (startTime + step.duration + step.startDelay + step.endDelay) / animationLength;
@@ -96,18 +100,22 @@ namespace LinkedMovement {
             }
         }
 
+        public void animationLengthWasChanged() {
+            timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        }
+
         public void addNewAnimationStep() {
             addNewAnimationStep(new LMAnimationStep(this));
         }
 
         public void addNewAnimationStep(LMAnimationStep newStep) {
             animationSteps.Add(newStep);
-            timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            animationLengthWasChanged();
         }
 
         public void deleteAnimationStep(LMAnimationStep step) {
             animationSteps.Remove(step);
-            timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            animationLengthWasChanged();
         }
 
         public bool moveAnimationStepUp(LMAnimationStep step) {
@@ -117,7 +125,7 @@ namespace LinkedMovement {
             }
             animationSteps.Remove(step);
             animationSteps.Insert(--index, step);
-            timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            animationLengthWasChanged();
             return true;
         }
 
@@ -128,7 +136,7 @@ namespace LinkedMovement {
             }
             animationSteps.Remove(step);
             animationSteps.Insert(++index, step);
-            timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            animationLengthWasChanged();
             return true;
         }
 

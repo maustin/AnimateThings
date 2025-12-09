@@ -9,6 +9,8 @@ namespace LinkedMovement.Animation {
         [Serialized]
         public string name = "";
         [Serialized]
+        public bool enabled = true;
+        [Serialized]
         public float duration = 1f;
         [Serialized]
         public string ease = LMEase.Values.InOutQuad.ToString();
@@ -45,6 +47,7 @@ namespace LinkedMovement.Animation {
         public static LMAnimationStep Duplicate(LMAnimationStep step) {
             var newAnimationStep = new LMAnimationStep();
             newAnimationStep.name = step.name;
+            newAnimationStep.enabled = step.enabled;
             newAnimationStep.duration = step.duration;
             newAnimationStep.ease = step.ease;
             newAnimationStep.startDelay = step.startDelay;
@@ -67,6 +70,7 @@ namespace LinkedMovement.Animation {
         public override string ToString() {
             var sb = new StringBuilder("LMAnimationStep\n");
             sb.AppendLine("name: " + name);
+            sb.AppendLine("enabled: " + enabled.ToString());
             sb.AppendLine("duration: " + duration.ToString());
             sb.AppendLine("ease: " + ease);
             sb.AppendLine("startDelay: " + startDelay.ToString());

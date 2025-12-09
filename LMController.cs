@@ -489,13 +489,16 @@ namespace LinkedMovement {
             clearEditMode();
         }
 
-        public void currentAnimationUpdated() {
+        public void currentAnimationUpdated(bool animationLengthWasChanged = false) {
             LMLogger.Debug("LMController.currentAnimationUpdated");
             // TODO: Should this be an event handler subscribed to LMAnimation?
             // + Eliminates direct calls to controller
             // - Muddies control flow
 
             // Animation was updated, rebuild
+            if (animationLengthWasChanged) {
+                currentAnimation.getAnimationParams().animationLengthWasChanged();
+            }
             LMUtils.EditAssociatedAnimations(new List<GameObject>() { currentAnimation.targetGameObject }, LMUtils.AssociatedAnimationEditMode.Restart, true);
 
             currentAnimation.buildSequence();

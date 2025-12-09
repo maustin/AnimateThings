@@ -567,6 +567,7 @@ namespace LinkedMovement.Utils {
             var lastTargetColors = animationParams.startingCustomColors;
 
             foreach (var animationStep in animationParams.animationSteps) {
+                if (!animationStep.enabled) continue;
                 BuildAnimationStep(transform, sequence, animationParams, animationStep, ref lastLocalRotationTarget, ref lastTargetColors);
             }
 

@@ -69,15 +69,25 @@ namespace LinkedMovement.UI.NewContent {
         public void DoGUI() {
             var currentAnimation = controller.currentAnimation;
             var currentAnimationProgress = currentAnimation.sequence.progress;
-            var animChar = currentAnimationProgress >= stepProgressMin && currentAnimationProgress <= stepProgressMax ? "●" : "○";
+            string animChar = " ";
+            if (animationStep.enabled) {
+                animChar = currentAnimationProgress >= stepProgressMin && currentAnimationProgress <= stepProgressMax ? "●" : "○";
+            }
 
             using (new GUILayout.VerticalScope(RGUIStyle.animationStep)) {
                 using (Scope.Horizontal()) {
+                    var newStepEnabled = RGUI.Field(animationStep.enabled, null, GUILayout.Width(20f));
+                    if (newStepEnabled != animationStep.enabled) {
+                        LMLogger.Debug("Toggle AnimationStep enabled");
+                        animationStep.enabled = newStepEnabled;
+                        controller.currentAnimationUpdated(true);
+                    }
+
                     var stepNameStyle = RGUIStyle.flatButtonLeftNew;
-                    if (Button($"{(animationStep.uiIsOpen ? "▼" : "►")} {animChar} {stepIndex + 1} : {(animationStep.name == "" ? "Step" : animationStep.name)} ", stepNameStyle)) {
+                    if (Button($"{(animationStep.uiIsOpen ? "▼" : "►")} {animChar} {stepIndex + 1} : {(animationStep.name == "" ? "Step" : animationStep.name)} ", stepNameStyle, GUILayout.MaxWidth(250f))) {
                         animationStep.uiIsOpen = !animationStep.uiIsOpen;
                     }
-                    
+
                     if (Button("↑", RGUIStyle.roundedFlatButton, Width(26f))) {
                         LMLogger.Debug("Move AnimationStep UP");
                         var didChange = animationParams.moveAnimationStepUp(animationStep);
@@ -133,7 +143,7 @@ namespace LinkedMovement.UI.NewContent {
                 var newStartDelay = RGUI.Field(animationStep.startDelay);
                 if (animationStep.startDelay != newStartDelay) {
                     animationStep.startDelay = newStartDelay;
-                    controller.currentAnimationUpdated();
+                    controller.currentAnimationUpdated(true);
                 }
             }
 
@@ -143,7 +153,7 @@ namespace LinkedMovement.UI.NewContent {
                 var newDuration = RGUI.Field(animationStep.duration);
                 if (animationStep.duration != newDuration) {
                     animationStep.duration = newDuration;
-                    controller.currentAnimationUpdated();
+                    controller.currentAnimationUpdated(true);
                 }
             }
 
@@ -223,7 +233,7 @@ namespace LinkedMovement.UI.NewContent {
                 var newEndDelay = RGUI.Field(animationStep.endDelay);
                 if (animationStep.endDelay != newEndDelay) {
                     animationStep.endDelay = newEndDelay;
-                    controller.currentAnimationUpdated();
+                    controller.currentAnimationUpdated(true);
                 }
             }
         }
