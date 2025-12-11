@@ -86,14 +86,18 @@ namespace LinkedMovement.UI {
             dirtyActiveWindows = true;
         }
 
-        //public void removeWindowOfType(WindowType type) {
-        //    foreach (var window in activeWindows) {
-        //        if (window.type == type) {
-        //            removeWindow(window);
-        //            break;
-        //        }
-        //    }
-        //}
+        public void removeWindowsOfType(WindowType type) {
+            LMLogger.Debug($"WindowManager.removeWindowsOfType {type.ToString()}");
+            var windowsToRemove = new List<LMWindow>();
+            foreach (var window in activeWindows) {
+                if (window.type == type) {
+                    windowsToRemove.Add(window);
+                }
+            }
+            foreach (var window in windowsToRemove) {
+                removeWindow(window);
+            }
+        }
 
         public int getNumberOfWindowsOfType(WindowType type) {
             int count = 0;

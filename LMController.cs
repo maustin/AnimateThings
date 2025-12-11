@@ -348,6 +348,9 @@ namespace LinkedMovement {
                 currentLink = null;
             }
 
+            windowManager.removeWindowsOfType(WindowManager.WindowType.Information);
+            windowManager.removeWindowsOfType(WindowManager.WindowType.Error);
+
             updateAnimationHelperVisibility();
         }
 
