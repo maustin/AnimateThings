@@ -2,6 +2,7 @@
 using LinkedMovement.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace LinkedMovement {
@@ -150,10 +151,26 @@ namespace LinkedMovement {
             addNewAnimationStep(newStep);
         }
 
-        public void addAnimationSteps(List<LMAnimationStep> steps) {
+        public void addPastedAnimationSteps(List<LMAnimationStep> steps) {
             // Add saved animation steps to current animation
+            var numTargetCustomColors = startingCustomColors != null ? startingCustomColors.Count : 0;
             foreach (var step in steps) {
                 var newStep = LMAnimationStep.Duplicate(step);
+
+                // Adjust for mismatch between original # of custom colors and target #
+                if (numTargetCustomColors == 0) {
+                    newStep.targetColors = null;
+                }
+                if (newStep.targetColors != null) {
+                    var newStepTargetColorsCount = newStep.targetColors.Count;
+                    if (newStepTargetColorsCount > numTargetCustomColors) {
+                        newStep.targetColors = newStep.targetColors.GetRange(0, numTargetCustomColors);
+                    } else if (newStepTargetColorsCount < numTargetCustomColors) {
+                        var newColors = startingCustomColors.GetRange(newStepTargetColorsCount, numTargetCustomColors - newStepTargetColorsCount);
+                        newStep.targetColors.AddRange(newColors);
+                    }
+                }
+
                 addNewAnimationStep(newStep);
             }
         }

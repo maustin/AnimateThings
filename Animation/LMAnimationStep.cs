@@ -62,9 +62,9 @@ namespace LinkedMovement.Animation {
         public LMAnimationStep() { }
 
         public LMAnimationStep(LMAnimationParams animationParams) {
-            if (animationParams.startingCustomColors != null) {
-                targetColors = new List<Color>(animationParams.startingCustomColors);
-            }
+            //if (animationParams.startingCustomColors != null) {
+            //    targetColors = new List<Color>(animationParams.startingCustomColors);
+            //}
         }
 
         public override string ToString() {

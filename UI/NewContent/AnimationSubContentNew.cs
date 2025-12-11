@@ -80,7 +80,7 @@ namespace LinkedMovement.UI.NewContent {
                         if (loadSelection != LoadText) {
                             LMLogger.Debug("ASC LOAD selection: " + loadSelection);
                             var loadedAnimationSteps = savedAnimationSteps[loadSelection];
-                            animationParams.addAnimationSteps(loadedAnimationSteps);
+                            animationParams.addPastedAnimationSteps(loadedAnimationSteps);
                             controller.currentAnimationUpdated();
                         }
                     }

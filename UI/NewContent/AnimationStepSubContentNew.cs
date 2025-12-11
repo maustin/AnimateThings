@@ -15,6 +15,7 @@ namespace LinkedMovement.UI.NewContent {
         // TODO: Cleanup these on UI closed
         private List<Texture2D> customTextures;
         private int numCustomColors = 0;
+        private bool hasCustomColors;
         private Color[] colors;
 
         private float animationLength;
@@ -41,7 +42,7 @@ namespace LinkedMovement.UI.NewContent {
 
         private void clearColors() {
             colors = animationParams.startingCustomColors.ToArray();
-            animationStep.targetColors = new List<Color>(colors);
+            animationStep.targetColors = null;
             controller.currentAnimationUpdated();
         }
 
@@ -55,8 +56,9 @@ namespace LinkedMovement.UI.NewContent {
             animationParams.getStepAnimationProgressOffsets(animationStep, animationLength, ref stepProgressMin, ref stepProgressMax);
             LMLogger.Debug($"step progress for: {animationStep.name}, min: {stepProgressMin}, max: {stepProgressMax}");
 
-            var staringCustomColors = animationStep.targetColors;
+            var staringCustomColors = animationStep.targetColors == null ? animationParams.startingCustomColors : animationStep.targetColors;
             if (staringCustomColors != null) {
+                hasCustomColors = true;
                 this.colors = staringCustomColors.ToArray();
                 numCustomColors = this.colors.Length;
                 customTextures = new List<Texture2D>();
@@ -200,28 +202,30 @@ namespace LinkedMovement.UI.NewContent {
                 }
             }
 
-            using (Scope.Horizontal()) {
-                InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEP_COLOR);
-                Label("Custom Colors", RGUIStyle.popupTextNew);
-                FlexibleSpace();
-                if (colors != null) {
-                    for (int i = 0; i < colors.Length; i++) {
-                        var color = colors[i];
-                        // Clamp color alpha to 1 for the UI
-                        if (color.a < 1f) {
-                            color.a = 1f;
+            if (hasCustomColors) {
+                using (Scope.Horizontal()) {
+                    InfoPopper.DoInfoPopper(LMStringKey.ANIM_STEP_COLOR);
+                    Label("Custom Colors", RGUIStyle.popupTextNew);
+                    FlexibleSpace();
+                    if (colors != null) {
+                        for (int i = 0; i < colors.Length; i++) {
+                            var color = colors[i];
+                            // Clamp color alpha to 1 for the UI
+                            if (color.a < 1f) {
+                                color.a = 1f;
+                            }
+                            var customTexture = customTextures[i];
+                            Label("     ", LMStyles.GetColoredBackgroundLabelStyle(customTexture, color));
+                            Label(" ");
                         }
-                        var customTexture = customTextures[i];
-                        Label("     ", LMStyles.GetColoredBackgroundLabelStyle(customTexture, color));
-                        Label(" ");
-                    }
 
-                    using (Scope.GuiEnabled(!controller.colorPickerWindowIsOpen())) {
-                        if (Button("Set", RGUIStyle.roundedFlatButton)) {
-                            startColorPicking();
-                        }
-                        if (Button("Clear", RGUIStyle.roundedFlatButton)) {
-                            clearColors();
+                        using (Scope.GuiEnabled(!controller.colorPickerWindowIsOpen())) {
+                            if (Button("Set", RGUIStyle.roundedFlatButton)) {
+                                startColorPicking();
+                            }
+                            if (Button("Clear", RGUIStyle.roundedFlatButton)) {
+                                clearColors();
+                            }
                         }
                     }
                 }
