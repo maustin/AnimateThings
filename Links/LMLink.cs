@@ -528,7 +528,7 @@ namespace LinkedMovement.Links {
                 string rejectMessage = LMStringSystem.GetText(LMStringKey.SELECT_LINK_TARGET_EXISTS, targetName, otherLink.name);
                 LMLogger.Debug(rejectMessage);
                 // TODO: This call needs much cleaner access
-                LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
+                //LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                 return;
             }
             // Ensure Target is not parent of this link (circular link)
