@@ -7,7 +7,7 @@ using static UnityEngine.GUILayout;
 
 namespace LinkedMovement.UI.NewContent {
     internal class AnimationSubContentNew : IDoGUI {
-        const string LoadText = "Load";
+        const string LoadText = "Paste";
 
         private LMController controller;
         private LMAnimationParams animationParams;
@@ -68,7 +68,7 @@ namespace LinkedMovement.UI.NewContent {
                     Label($"Animation Steps (Animation length {animationLength.ToString("F2")} sec)", RGUIStyle.popupTextNew);
 
                     using (Scope.GuiEnabled(animationParams.animationSteps.Count > 0)) {
-                        if (Button("Save", RGUIStyle.roundedFlatButton, Width(42f))) {
+                        if (Button("Copy", RGUIStyle.roundedFlatButton, Width(50f))) {
                             controller.addSavedAnimationSteps(animationParams.name + " steps", LMAnimationParams.GetDuplicateAnimationSteps(animationParams));
                         }
                     }
@@ -76,7 +76,7 @@ namespace LinkedMovement.UI.NewContent {
                     var savedAnimationSteps = controller.getSavedAnimationSteps();
                     using (Scope.GuiEnabled(savedAnimationSteps.Count > 0)) {
                         var savedAnimationStepsNames = savedAnimationSteps.Keys.ToArray<string>();
-                        var loadSelection = RGUI.SelectionPopup(LoadText, savedAnimationStepsNames, Width(42f));
+                        var loadSelection = RGUI.SelectionPopup(LoadText, savedAnimationStepsNames, Width(50f));
                         if (loadSelection != LoadText) {
                             LMLogger.Debug("ASC LOAD selection: " + loadSelection);
                             var loadedAnimationSteps = savedAnimationSteps[loadSelection];
