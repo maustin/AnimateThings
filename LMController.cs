@@ -405,7 +405,7 @@ namespace LinkedMovement {
             } else {
                 // TODO: Set new animation name
                 LMLogger.Debug("Edit new Animation");
-                var animationParams = new LMAnimationParams();
+                var animationParams = new LMAnimationParams(true);
                 currentAnimation = new LMAnimation(animationParams);
             }
 

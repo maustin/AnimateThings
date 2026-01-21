@@ -9,6 +9,8 @@ using UnityEngine;
 namespace LinkedMovement.Utils {
     // TODO: This needs to be split up
     static class LMUtils {
+        const char SEPARATOR = '.';
+
         public enum AssociatedAnimationEditMode {
             Stop,
             Start,
@@ -635,6 +637,27 @@ namespace LinkedMovement.Utils {
                 return customColorsComponent.getColors();
             }
             return null;
+        }
+
+        public static bool VersionMatchesOrExceedsMin(string checkVersion, string minVersionString) {
+            string[] checkVersionSplit = checkVersion.Split(SEPARATOR);
+            string[] minVersionSplit = minVersionString.Split(SEPARATOR);
+
+            int currentVersionMajorInt = int.Parse(checkVersionSplit[0]);
+            int minVersionMajorInt = int.Parse(minVersionSplit[0]);
+
+            // Check major version is greater than min
+            if (currentVersionMajorInt > minVersionMajorInt) return true;
+            // Check major version is lesser than min
+            if (currentVersionMajorInt < minVersionMajorInt) return false;
+
+            // Check major version is same as min
+            int currentVersionMinorInt = int.Parse(checkVersionSplit[1]);
+            int minVersionMinorInt = int.Parse(minVersionSplit[1]);
+
+            // Check minor version is same or greater
+            if (currentVersionMinorInt >= minVersionMinorInt) return true;
+            return false;
         }
 
     }

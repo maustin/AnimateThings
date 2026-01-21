@@ -7,6 +7,11 @@ using UnityEngine;
 
 namespace LinkedMovement {
     public class LMAnimationParams : SerializedRawObject {
+        private const string FORWARD_ROTATION_FIXED_VERSION = "1.3";
+
+        [Serialized]
+        public string version = "0.0";
+
         [Serialized]
         public Vector3 startingLocalPosition = Vector3.zero;
         [Serialized]
@@ -41,11 +46,25 @@ namespace LinkedMovement {
         public long timeOfLastStepsUpdate = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
         public LMAnimationParams() {
-            LMLogger.Debug("LMAnimationParams base constructor");
+            LMLogger.Debug("LMAnimationParams default constructor");
+
+            name = "New Animation";
+            id = LMUtils.GetNewId();
+
+            LMLogger.Debug("VERSION: " + version);
+        }
+
+        public LMAnimationParams(bool isNew = false) {
+            LMLogger.Debug("LMAnimationParams new constructor");
 
             // TODO: Incremental naming
             name = "New Animation";
             id = LMUtils.GetNewId();
+
+            if (isNew) {
+                version = LinkedMovement.VERSION_NUMBER;
+            }
+            LMLogger.Debug("VERSION: " + version);
         }
 
         public void setStartingValues(Transform startingTransform) {
@@ -63,6 +82,13 @@ namespace LinkedMovement {
             startingLocalPosition = startingTransform.localPosition;
             startingLocalRotation = startingTransform.localEulerAngles;
             startingLocalScale = startingTransform.localScale;
+
+            if (LMUtils.VersionMatchesOrExceedsMin(version, FORWARD_ROTATION_FIXED_VERSION)) {
+                LMLogger.Debug("Supports forward rotation fix");
+                forward = Quaternion.LookRotation(startingTransform.forward);
+            } else {
+                LMLogger.Debug("NO support for forward rotation fix");
+            }
 
             if (startingCustomColors == null) {
                 LMLogger.Debug("INIT starting custom colors");
@@ -196,7 +222,7 @@ namespace LinkedMovement {
         //}
 
         public static LMAnimationParams Duplicate(LMAnimationParams animationParams) {
-            var newAnimationParams = new LMAnimationParams();
+            var newAnimationParams = new LMAnimationParams(true);
             newAnimationParams.startingLocalPosition = animationParams.startingLocalPosition;
             newAnimationParams.startingLocalRotation = animationParams.startingLocalRotation;
             newAnimationParams.startingLocalScale = animationParams.startingLocalScale;
