@@ -449,16 +449,26 @@ namespace LinkedMovement.Utils {
             return GetCumulativeParentLocalRotation(parentTransform, cumulativeValue);
         }
 
-        private static bool StepHasColorChange(LMAnimationStep animationStep, List<Color> lastTargetColors) {
-            var targetColors = animationStep.targetColors;
-            if (targetColors == null) return false;
-
-            for (var i = 0; i < targetColors.Count; i++) {
-                var targetColor = targetColors[i];
-                var lastColor = lastTargetColors[i];
-                if (targetColor != lastColor) return true;
+        private static bool StepHasColorChange(List<Color> originalColors, List<Color> stepTargetColors, List<Color> lastTargetColors) {
+            LMLogger.Debug("StepHasColorChange originalColors " + LogColors(originalColors));
+            LMLogger.Debug("StepHasColorChange stepTargetColors " + LogColors(stepTargetColors));
+            LMLogger.Debug("StepHasColorChange lastTargetColors " + LogColors(lastTargetColors));
+            if (stepTargetColors == null) {
+                var colorsMatch1 = ColorsMatch(originalColors, lastTargetColors);
+                LMLogger.Debug("StepHasColorChange null stepTargetColors, original matches last: " + colorsMatch1);
+                return !colorsMatch1;
             }
-            return false;
+            var colorsMatch2 = ColorsMatch(stepTargetColors, lastTargetColors);
+            LMLogger.Debug("StepHasColorChange stepTargetColors matches lastTargetColors: " + colorsMatch2);
+            return !colorsMatch2;
+        }
+
+        private static string LogColors(List<Color> colors) {
+            return "Colors: " + (colors == null ? "null" : string.Join(", ", colors));
+        }
+
+        private static bool ColorsMatch(List<Color> color1, List<Color> color2) {
+            return color1.Equals(color2);
         }
 
         private static void BuildAnimationStep(Transform transform, Sequence sequence, LMAnimationParams animationParams, LMAnimationStep animationStep, ref Vector3 lastLocalRotationTarget, ref List<Color> lastTargetColors) {
@@ -469,7 +479,7 @@ namespace LinkedMovement.Utils {
             bool hasPositionChange = !animationStep.targetPosition.Equals(Vector3.zero);
             bool hasRotationChange = !animationStep.targetRotation.Equals(Vector3.zero);
             bool hasScaleChange = !animationStep.targetScale.Equals(Vector3.zero);
-            bool hasColorChange = StepHasColorChange(animationStep, lastTargetColors);
+            bool hasColorChange = StepHasColorChange(animationParams.startingCustomColors, animationStep.targetColors, lastTargetColors);
 
             if (hasPositionChange || hasRotationChange || hasScaleChange || hasColorChange) {
                 LMLogger.Debug("Has change");
@@ -514,7 +524,13 @@ namespace LinkedMovement.Utils {
                 // TODO: Split color Tween creation out to its own function so the update lamba has less overhead
                 if (hasColorChange) {
                     var customColorsComponent = transform.gameObject.GetComponent<CustomColors>();
-                    var targetColors = animationStep.targetColors;
+                    List<Color> targetColors;
+                    if (animationStep.targetColors != null) {
+                        targetColors = animationStep.targetColors;
+                    } else {
+                        targetColors = animationParams.startingCustomColors;
+                    }
+                    
                     for (int i = 0; i < targetColors.Count; i++) {
                         var colorIndex = i;
                         var startingColor = lastTargetColors[colorIndex];
@@ -529,7 +545,7 @@ namespace LinkedMovement.Utils {
                         );
                         }
                     }
-                    lastTargetColors = animationStep.targetColors;
+                    lastTargetColors = targetColors;
                 }
                 // Add ChainDelay to "close" the current Sequence Group
                 sequence.ChainDelay(0f);
