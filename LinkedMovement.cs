@@ -19,9 +19,11 @@ namespace LinkedMovement {
 
         public override int getOrderPriority() => -9001;
 
-        // NOT MP compatible
-        //public override bool isMultiplayerModeCompatible() => true;
-        //public override bool isRequiredByAllPlayersInMultiplayerMode() => false;
+        // Multiplayer: all shared state (animations / links) is replicated through the host-ordered
+        // CustomCommand stream (see LinkedMovement.Multiplayer.LMCommands), so the mod is multiplayer
+        // compatible and must be present on every peer.
+        public override bool isMultiplayerModeCompatible() => true;
+        public override bool isRequiredByAllPlayersInMultiplayerMode() => true;
 
         public static LinkedMovement Instance;
         public static LinkedMovementSettings Settings;

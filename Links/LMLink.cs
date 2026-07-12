@@ -1,4 +1,5 @@
-﻿using LinkedMovement.UI.Utils;
+﻿using LinkedMovement.Multiplayer;
+using LinkedMovement.UI.Utils;
 using LinkedMovement.Utils;
 using System.Collections.Generic;
 using UnityEngine;
@@ -498,6 +499,14 @@ namespace LinkedMovement.Links {
                 return;
             }
 
+            // In multiplayer, only objects whose transform is not part of the desync checksum may be linked.
+            if (!LMCommands.IsMultiplayerSafeTarget(buildableObject)) {
+                string rejectMessage = "In multiplayer, only scenery objects can be linked (rides, paths and track are not supported).";
+                LMLogger.Debug(rejectMessage);
+                LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
+                return;
+            }
+
             setParentObject(buildableObject);
             stopPicking();
         }
@@ -542,6 +551,14 @@ namespace LinkedMovement.Links {
                     LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                     return;
                 }
+            }
+
+            // In multiplayer, only objects whose transform is not part of the desync checksum may be linked.
+            if (!LMCommands.IsMultiplayerSafeTarget(buildableObject)) {
+                string rejectMessage = "In multiplayer, only scenery objects can be linked (rides, paths and track are not supported).";
+                LMLogger.Debug(rejectMessage);
+                LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
+                return;
             }
 
             addTargetObject(buildableObject);

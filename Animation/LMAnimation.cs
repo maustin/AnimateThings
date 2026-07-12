@@ -1,4 +1,5 @@
-﻿using LinkedMovement.UI.Utils;
+﻿using LinkedMovement.Multiplayer;
+using LinkedMovement.UI.Utils;
 using LinkedMovement.Utils;
 using PrimeTween;
 using UnityEngine;
@@ -291,6 +292,14 @@ namespace LinkedMovement.Animation {
                 string rejectMessage = LMStringSystem.GetText(LMStringKey.SELECT_ANIM_TARGET_EXISTS, animation.name);
                 LMLogger.Debug(rejectMessage);
                 // TODO: This call needs much cleaner access
+                LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
+                return;
+            }
+
+            // In multiplayer, only objects whose transform is not part of the desync checksum may be animated.
+            if (!LMCommands.IsMultiplayerSafeTarget(buildableObject)) {
+                string rejectMessage = "In multiplayer, only scenery objects can be animated (rides, paths and track are not supported).";
+                LMLogger.Debug(rejectMessage);
                 LinkedMovement.GetLMController().windowManager.createWindow(UI.WindowManager.WindowType.Error, rejectMessage);
                 return;
             }

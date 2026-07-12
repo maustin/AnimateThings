@@ -1,6 +1,6 @@
-﻿// ATTRIB: TransformAnarchy
-using LinkedMovement.Animation;
+﻿using LinkedMovement.Animation;
 using LinkedMovement.Links;
+using LinkedMovement.Multiplayer;
 using PrimeTween;
 using System;
 using System.Collections.Generic;
@@ -138,6 +138,7 @@ namespace LinkedMovement.Utils {
         }
 
         private static void TryToBuildLinkParentFromBlueprintObject(BuildableObject buildableObject, List<LMLinkParent> createdLinkParents) {
+            if (!LMCommands.IsMultiplayerSafeTarget(buildableObject)) return;
             LMLinkParent linkParent = GetLinkParentFromSerializedMonoBehaviour(buildableObject);
             if (linkParent != null) {
                 linkParent.setTarget(buildableObject.gameObject);
@@ -146,6 +147,7 @@ namespace LinkedMovement.Utils {
         }
 
         private static void TryToBuildLinkTargetFromBlueprintObject(BuildableObject buildableObject, List<LMLinkTarget> createdLinkTargets) {
+            if (!LMCommands.IsMultiplayerSafeTarget(buildableObject)) return;
             LMLinkTarget linkTarget = GetLinkTargetFromSerializedMonoBehaviour(buildableObject);
             if (linkTarget != null) {
                 linkTarget.setTarget(buildableObject.gameObject);
@@ -154,6 +156,7 @@ namespace LinkedMovement.Utils {
         }
 
         private static void TryToBuildAnimationFromBlueprintObject(BuildableObject buildableObject, Vector3 forward, List<LMAnimation> createdAnimations) {
+            if (!LMCommands.IsMultiplayerSafeTarget(buildableObject)) return;
             LMAnimationParams animationParams = GetAnimationParamsFromSerializedMonoBehaviour(buildableObject);
             if (animationParams == null) {
                 return;
@@ -558,6 +561,18 @@ namespace LinkedMovement.Utils {
 
         }
 
+        // Deterministic per-object start delay for multiplayer. Uses the object's cross-peer-stable objectID
+        // so every peer staggers the same animation identically. Falls back to min when no id is available.
+        private static float GetDeterministicStartDelay(Transform transform, float min, float max) {
+            if (max <= min) return min;
+            var buildableObject = GetBuildableObjectFromGameObject(transform.gameObject);
+            uint objectID = buildableObject != null ? buildableObject.objectID : 0u;
+            // Cheap integer hash -> [0, 1) fraction.
+            uint hash = (objectID * 2654435761u) % 100000u;
+            float fraction = hash / 100000f;
+            return UnityEngine.Mathf.Lerp(min, max, fraction);
+        }
+
         public static Sequence BuildAnimationSequence(Transform transform, LMAnimationParams animationParams, bool isEditing = false) {
             LMLogger.Debug("LMUtils.BuildAnimationSequence name: " + animationParams.name);
 
@@ -572,7 +587,13 @@ namespace LinkedMovement.Utils {
                     isTriggered = true;
                 } else {
                     if (animationParams.initialStartDelayMin > 0f || animationParams.initialStartDelayMax > 0f) {
-                        startingDelay = UnityEngine.Random.Range(animationParams.initialStartDelayMin, animationParams.initialStartDelayMax);
+                        // In multiplayer the start delay must be identical on every peer, so derive it
+                        // deterministically from the object's (cross-peer-stable) id rather than UnityEngine.Random.
+                        if (CommandController.Instance != null && CommandController.Instance.isInMultiplayerMode()) {
+                            startingDelay = GetDeterministicStartDelay(transform, animationParams.initialStartDelayMin, animationParams.initialStartDelayMax);
+                        } else {
+                            startingDelay = UnityEngine.Random.Range(animationParams.initialStartDelayMin, animationParams.initialStartDelayMax);
+                        }
                     }
                 }
             }

@@ -44,6 +44,8 @@
     <Compile Include="Links\LMLinkTarget.cs" />
     <Compile Include="LMController.cs" />
     <Compile Include="LMLogger.cs" />
+    <Compile Include="Multiplayer\LMCommands.cs" />
+    <Compile Include="Patches\BlueprintCreationPanelCreateBlueprintPrefix.cs" />
     <Compile Include="Patches\DecoDestructPostfix.cs" />
     <Compile Include="Patches\DecoInitializePostfix.cs" />
     <Compile Include="Patches\DestructCommandConstructorPrefix.cs" />

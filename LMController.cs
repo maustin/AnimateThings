@@ -1,5 +1,6 @@
 ﻿using LinkedMovement.Animation;
 using LinkedMovement.Links;
+using LinkedMovement.Multiplayer;
 using LinkedMovement.UI;
 using LinkedMovement.UI.Utils;
 using LinkedMovement.Utils;
@@ -51,6 +52,9 @@ namespace LinkedMovement {
             LMLogger.Debug("LMController Awake");
 
             windowManager = new WindowManager();
+
+            // Register multiplayer command handlers on every peer (idempotent-guarded).
+            LMCommands.EnsureRegistered();
         }
 
         private void OnDisable() {
@@ -167,6 +171,9 @@ namespace LinkedMovement {
         // Called via ParkEventStartPostFix
         public void setupPark(List<SerializedMonoBehaviour> serializedMonoBehaviours) {
             LMLogger.Debug($"LMController.setPark with {serializedMonoBehaviours.Count} objects");
+
+            // Ensure multiplayer command handlers are registered before any command can arrive.
+            LMCommands.EnsureRegistered();
             
             var createdLinkParents = new List<LMLinkParent>();
             var createdLinkTargets = new List<LMLinkTarget>();
@@ -444,15 +451,11 @@ namespace LinkedMovement {
         private void doRemoveAnimation(LMAnimation animation) {
             LMLogger.Debug($"LMController.doRemoveAnimation name: {animation.name}, id: {animation.id}");
 
-            var animationGameObject = animation.targetGameObject;
-            var goList = new List<GameObject>() { animationGameObject };
-            LMUtils.EditAssociatedAnimations(goList, LMUtils.AssociatedAnimationEditMode.Stop, false);
-
-            animations.Remove(animation);
-            animation.destroyAnimation();
-
-            LMUtils.EditAssociatedAnimations(goList, LMUtils.AssociatedAnimationEditMode.Start, false);
             queuedAnimationToRemove = null;
+
+            // Route the removal through the multiplayer command stream so every peer removes it identically.
+            // The handler runs applyAnimationDelete on each peer (including this one).
+            LMCommands.SendAnimationDelete(animation.targetBuildableObject);
         }
 
         public void queueLinkToRemove(LMLink link) {
@@ -462,6 +465,22 @@ namespace LinkedMovement {
 
         private void doRemoveLink(LMLink link) {
             LMLogger.Debug($"LMController.doRemoveList name: {link.name}, id: {link.id}");
+
+            queuedLinkToRemove = null;
+
+            // Route the removal through the multiplayer command stream so every peer removes it identically.
+            // The handler runs applyLinkDelete on each peer (including this one).
+            LMCommands.SendLinkDelete(link.getParentBuildableObject());
+        }
+
+        // ===== Multiplayer apply methods =====
+        // These run on every peer via the LMCommands handlers (and on the local peer for offline play).
+        // They must be deterministic and idempotent: they take an authoritative payload (resolved object +
+        // wire data) and converge the local state to it, regardless of the peer's prior state.
+
+        // Removes the link whose parent is this object, un-parenting its targets, without touching the queue.
+        private void removeLinkInternal(LMLink link) {
+            LMLogger.Debug($"LMController.removeLinkInternal name: {link.name}, id: {link.id}");
 
             var linkParentGameObject = link.getParentGameObject();
             var linkTargetGameObjects = link.getTargetGameObjects();
@@ -475,21 +494,154 @@ namespace LinkedMovement {
             link.destroyLink();
 
             LMUtils.EditAssociatedAnimations(allGameObjectList, LMUtils.AssociatedAnimationEditMode.Start, false);
+        }
 
-            queuedLinkToRemove = null;
+        public void applyAnimationUpsert(BuildableObject targetBuildableObject, LMAnimationParams animationParams) {
+            LMLogger.Debug("LMController.applyAnimationUpsert");
+            if (targetBuildableObject == null || targetBuildableObject.gameObject == null) {
+                LMLogger.Error("applyAnimationUpsert: missing target object");
+                return;
+            }
+
+            var targetGameObject = targetBuildableObject.gameObject;
+            var goList = new List<GameObject>() { targetGameObject };
+
+            // Remove any existing animation on this object (makes the upsert idempotent).
+            var existing = findAnimationByGameObject(targetGameObject);
+            if (existing != null) {
+                LMLogger.Debug("Existing animation present, replace");
+                LMUtils.EditAssociatedAnimations(goList, LMUtils.AssociatedAnimationEditMode.Stop, false);
+                animations.Remove(existing);
+                existing.destroyAnimation();
+            }
+
+            LMUtils.DeleteChunkedMesh(targetBuildableObject);
+
+            // Force the authoritative starting transform from the wire params so every peer builds the
+            // sequence from an identical base (the additive tweens capture the current transform on build).
+            LMUtils.ResetTransformLocals(targetGameObject.transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
+
+            var animation = new LMAnimation(animationParams, targetGameObject, true);
+            addAnimation(animation);
+            animation.setCustomData();
+            animation.buildSequence();
+
+            LMUtils.EditAssociatedAnimations(goList, LMUtils.AssociatedAnimationEditMode.Start, false);
+        }
+
+        public void applyAnimationDelete(BuildableObject targetBuildableObject) {
+            LMLogger.Debug("LMController.applyAnimationDelete");
+            if (targetBuildableObject == null || targetBuildableObject.gameObject == null) {
+                LMLogger.Error("applyAnimationDelete: missing target object");
+                return;
+            }
+
+            var targetGameObject = targetBuildableObject.gameObject;
+            var existing = findAnimationByGameObject(targetGameObject);
+            if (existing == null) {
+                LMLogger.Debug("applyAnimationDelete: no animation on object, nothing to do");
+                return;
+            }
+
+            var goList = new List<GameObject>() { targetGameObject };
+            LMUtils.EditAssociatedAnimations(goList, LMUtils.AssociatedAnimationEditMode.Stop, false);
+            animations.Remove(existing);
+            existing.destroyAnimation();
+            LMUtils.EditAssociatedAnimations(goList, LMUtils.AssociatedAnimationEditMode.Start, false);
+        }
+
+        public void applyLinkUpsert(string name, string id, BuildableObject parentBuildableObject, List<BuildableObject> targetBuildableObjects) {
+            LMLogger.Debug("LMController.applyLinkUpsert");
+            if (parentBuildableObject == null || parentBuildableObject.gameObject == null) {
+                LMLogger.Error("applyLinkUpsert: missing parent object");
+                return;
+            }
+
+            var validTargets = new List<BuildableObject>();
+            if (targetBuildableObjects != null) {
+                foreach (var targetBuildableObject in targetBuildableObjects) {
+                    if (targetBuildableObject != null && targetBuildableObject.gameObject != null) validTargets.Add(targetBuildableObject);
+                }
+            }
+            if (validTargets.Count == 0) {
+                LMLogger.Error("applyLinkUpsert: no valid targets");
+                return;
+            }
+
+            var parentGameObject = parentBuildableObject.gameObject;
+
+            // Remove any existing link on this parent, and any link that already owns one of the new targets,
+            // so the upsert is idempotent and never double-parents an object.
+            var existingParentLink = findLinkByParentGameObject(parentGameObject);
+            if (existingParentLink != null) {
+                removeLinkInternal(existingParentLink);
+            }
+            foreach (var targetBuildableObject in validTargets) {
+                var otherLink = findLinkByTargetGameObject(targetBuildableObject.gameObject);
+                if (otherLink != null) {
+                    removeLinkInternal(otherLink);
+                }
+            }
+
+            LMUtils.DeleteChunkedMesh(parentBuildableObject);
+            foreach (var targetBuildableObject in validTargets) {
+                LMUtils.DeleteChunkedMesh(targetBuildableObject);
+            }
+
+            var allGameObjectList = new List<GameObject>() { parentGameObject };
+            foreach (var targetBuildableObject in validTargets) {
+                allGameObjectList.Add(targetBuildableObject.gameObject);
+            }
+
+            LMUtils.EditAssociatedAnimations(allGameObjectList, LMUtils.AssociatedAnimationEditMode.Stop, false);
+
+            // Constructor calls initializeWith -> writes custom data; rebuildLink re-parents the targets.
+            var link = new LMLink(name, id, parentBuildableObject, validTargets);
+            links.Add(link);
+            link.rebuildLink();
+
+            LMUtils.EditAssociatedAnimations(allGameObjectList, LMUtils.AssociatedAnimationEditMode.Start, false);
+        }
+
+        public void applyLinkDelete(BuildableObject parentBuildableObject) {
+            LMLogger.Debug("LMController.applyLinkDelete");
+            if (parentBuildableObject == null || parentBuildableObject.gameObject == null) {
+                LMLogger.Error("applyLinkDelete: missing parent object");
+                return;
+            }
+
+            var existing = findLinkByParentGameObject(parentBuildableObject.gameObject);
+            if (existing == null) {
+                LMLogger.Debug("applyLinkDelete: no link on parent, nothing to do");
+                return;
+            }
+
+            removeLinkInternal(existing);
         }
 
         public void commitEdit() {
             LMLogger.Debug("LMController.commitEdit");
-            
+
+            // The shared mutation is performed by the multiplayer command handler (applyAnimationUpsert /
+            // applyLinkUpsert), which runs on every peer. Here we only capture the final edited data and
+            // tear down the local editing UI (temp copies, highlights, picking) via discardChanges, then
+            // send the command. discardChanges does not persist, so it is safe as a UI teardown.
+
             if (currentAnimation != null) {
-                LMUtils.EditAssociatedAnimations(new List<GameObject>() { currentAnimation.targetGameObject }, LMUtils.AssociatedAnimationEditMode.Restart, true);
-                currentAnimation.saveChanges();
+                var targetBuildableObject = currentAnimation.targetBuildableObject;
+                var finalParams = currentAnimation.getAnimationParams();
+                currentAnimation.discardChanges();
                 currentAnimation = null;
+                LMCommands.SendAnimationUpsert(targetBuildableObject, finalParams);
             }
             if (currentLink != null) {
-                currentLink.saveChanges();
+                var parentBuildableObject = currentLink.getParentBuildableObject();
+                var targetBuildableObjects = new List<BuildableObject>(currentLink.getTargetBuildableObjects());
+                var linkName = currentLink.name;
+                var linkId = currentLink.id;
+                currentLink.discardChanges();
                 currentLink = null;
+                LMCommands.SendLinkUpsert(linkName, linkId, parentBuildableObject, targetBuildableObjects);
             }
 
             clearEditMode();
