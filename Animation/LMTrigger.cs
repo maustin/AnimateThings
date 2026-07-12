@@ -8,6 +8,9 @@ namespace LinkedMovement {
     public class LMTrigger : MonoBehaviour, IEffect {
         private SerializedMonoBehaviour effectBehaviour;
         private List<EffectBoxHandle> effectBoxHandles;
+        // This trigger shadows the object's built-in effect (lights, doors). Linking is delegated to it so its automatic
+        // behavior (night/day cycle, peep doors) is suspended while an Effects Controller owns the object, without it ever executing.
+        private Dictionary<EffectBoxHandle, EffectBoxHandle> decoEffectBoxHandles;
         private Sequence sequence;
         private EffectEntry effectEntry;
 
@@ -20,6 +23,34 @@ namespace LinkedMovement {
         private void Awake() {
             LMLogger.Debug("LMTrigger.Awake");
             effectBehaviour = GetComponent<SerializedMonoBehaviour>();
+        }
+
+        private void OnDestroy() {
+            LMLogger.Debug("LMTrigger.OnDestroy");
+            if (GameController.Instance != null && GameController.Instance.isQuittingGame) return;
+
+            // Release without applying values or callbacks. Completing the sequence here can throw against objects that are
+            // mid-destruction, which corrupts PrimeTween's update loop ("updateDepth != 0" every frame afterwards).
+            var wasPlaying = sequence.isAlive;
+            if (wasPlaying) sequence.emergencyStop();
+
+            // On park/scene teardown there is no gameplay state left to unwind
+            if (!gameObject.scene.isLoaded) return;
+
+            if (wasPlaying && animationParams != null) {
+                LMUtils.ResetTransformLocals(transform, animationParams.startingLocalPosition, animationParams.startingLocalRotation, animationParams.startingLocalScale);
+            }
+
+            // Restore the shadowed built-in effect's automatic behavior if this trigger is removed while still linked
+            if (decoEffectBoxHandles != null) {
+                var effectDecoObject = GetComponent<EffectDecoObject>();
+                if (effectDecoObject != null) {
+                    foreach (var decoEffectBoxHandle in decoEffectBoxHandles.Values) {
+                        effectDecoObject.unlinkEffectBox(decoEffectBoxHandle);
+                    }
+                }
+                decoEffectBoxHandles = null;
+            }
         }
 
         public void update(LMAnimationParams animationParams) {
@@ -52,11 +83,27 @@ namespace LinkedMovement {
                 effectBoxHandles = new List<EffectBoxHandle>();
             EffectBoxHandle effectBoxHandle = new EffectBoxHandle(effectBox);
             effectBoxHandles.Add(effectBoxHandle);
+
+            var effectDecoObject = GetComponent<EffectDecoObject>();
+            if (effectDecoObject != null) {
+                if (decoEffectBoxHandles == null)
+                    decoEffectBoxHandles = new Dictionary<EffectBoxHandle, EffectBoxHandle>();
+                decoEffectBoxHandles[effectBoxHandle] = effectDecoObject.linkEffectBox(effectBox);
+            }
+
             return effectBoxHandle;
         }
 
         public void unlinkEffectBox(EffectBoxHandle effectBoxHandle) {
             LMLogger.Debug("LMTrigger.unlinkEffectBox");
+
+            if (decoEffectBoxHandles != null && decoEffectBoxHandles.TryGetValue(effectBoxHandle, out var decoEffectBoxHandle)) {
+                GetComponent<EffectDecoObject>()?.unlinkEffectBox(decoEffectBoxHandle);
+                decoEffectBoxHandles.Remove(effectBoxHandle);
+                if (decoEffectBoxHandles.Count == 0)
+                    decoEffectBoxHandles = null;
+            }
+
             if (effectBoxHandles == null)
                 return;
             effectBoxHandles.Remove(effectBoxHandle);

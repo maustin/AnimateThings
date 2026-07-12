@@ -4,6 +4,7 @@ using LinkedMovement.UI;
 using LinkedMovement.UI.Utils;
 using LinkedMovement.Utils;
 using Parkitect.UI;
+using PrimeTween;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -68,6 +69,10 @@ namespace LinkedMovement {
             foreach (var animation in animations) {
                 animation.stopSequenceImmediate();
             }
+            // Safety net: release every tween still registered with this mod's PrimeTween instance (trigger sequences, delay tweens).
+            // A sequence that survives park unload throws from inside PrimeTween's update loop on its destroyed targets, which leaves
+            // updateDepth corrupted and PrimeTween permanently broken ("Exception: updateDepth != 0" every frame).
+            if (PrimeTweenManager.HasInstance) Tween.StopAll();
             animations.Clear();
             links.Clear();
             animationHelperObjects.Clear();

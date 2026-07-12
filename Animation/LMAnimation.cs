@@ -116,6 +116,7 @@ namespace LinkedMovement.Animation {
 
             LMUtils.RemoveObjectHighlight(targetBuildableObject, HighlightType.AnimationTarget);
 
+            destroyTrigger();
             removeCustomData();
 
             animationParams = null;
@@ -182,6 +183,7 @@ namespace LinkedMovement.Animation {
             LMLogger.Debug("LMAnimation.removeTarget");
             if (targetGameObject != null) {
                 stopSequence();
+                destroyTrigger();
                 LMUtils.RemoveObjectHighlight(targetBuildableObject, HighlightType.AnimationTarget);
                 targetGameObject = null;
                 targetBuildableObject = null;
@@ -242,7 +244,7 @@ namespace LinkedMovement.Animation {
         }
 
         public void stopSequenceImmediate() {
-            sequence.emergencyStop();
+            if (sequence.isAlive) sequence.emergencyStop();
         }
 
         public void buildSequence(bool passedIsEditing = false) {
@@ -269,7 +271,19 @@ namespace LinkedMovement.Animation {
                 return;
             }
 
+            if (!isEditing) destroyTrigger();
+
             sequence = LMUtils.BuildAnimationSequence(targetGameObject.transform, animationParams, isEditing);
+        }
+
+        // The trigger shadows the target's built-in effect, so it must not outlive the triggerable animation
+        private void destroyTrigger() {
+            if (targetGameObject == null) return;
+            var existingTrigger = targetGameObject.GetComponent<LMTrigger>();
+            if (existingTrigger == null) return;
+
+            LMLogger.Debug("LMAnimation.destroyTrigger");
+            Object.Destroy(existingTrigger);
         }
 
         public void reset() {
