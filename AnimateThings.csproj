@@ -50,6 +50,7 @@
     <Compile Include="Patches\DestructorDestructPrefix.cs" />
     <Compile Include="Patches\GameControllerEnableMouseToolPostfix.cs" />
     <Compile Include="Patches\GameControllerRemoveMouseToolPostfix.cs" />
+    <Compile Include="Patches\UIUtilityIsMouseOverUIElementPostfix.cs" />
     <Compile Include="PrimeTween\Easing.cs" />
     <Compile Include="PrimeTween\Internal\AssemblyInfo.cs" />
     <Compile Include="PrimeTween\Internal\Assert.cs" />

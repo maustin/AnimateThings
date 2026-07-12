@@ -38,6 +38,19 @@ namespace LinkedMovement.UI {
             return false;
         }
 
+        // True when the mouse is over any window drawn this frame. Used by UIUtilityIsMouseOverUIElementPostfix so Parkitect treats mod windows as UI, blocking click-through and scroll-wheel camera zoom.
+        public bool IsAnyWindowUnderMouse {
+            get {
+                if (renderWindows == null || activeWindows.Count == 0) return false;
+                float uiScale = Settings.Instance.uiScale;
+                var guiMousePosition = new Vector2(Input.mousePosition.x / uiScale, (Screen.height - Input.mousePosition.y) / uiScale);
+                foreach (var window in renderWindows) {
+                    if (window.isOpen && window.rect.Contains(guiMousePosition)) return true;
+                }
+                return false;
+            }
+        }
+
         public void createWindow(WindowType type, object data) {
             LMLogger.Debug($"WindowManager.createWindow {type.ToString()}");
             LMWindow window = LMWindowFactory.BuildWindow(type, data, this);
