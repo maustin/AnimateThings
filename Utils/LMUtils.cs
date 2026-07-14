@@ -676,5 +676,18 @@ namespace LinkedMovement.Utils {
             return false;
         }
 
+        // Case-insensitive fuzzy match: query characters must appear in the text in order, but not necessarily adjacent (e.g. "brl" matches "Barrel"). An empty query matches everything.
+        public static bool FuzzyMatch(string query, string text) {
+            if (string.IsNullOrEmpty(query)) return true;
+            if (string.IsNullOrEmpty(text)) return false;
+
+            var queryIndex = 0;
+            for (var i = 0; i < text.Length; i++) {
+                if (char.ToLowerInvariant(text[i]) == char.ToLowerInvariant(query[queryIndex])) queryIndex++;
+                if (queryIndex == query.Length) return true;
+            }
+            return false;
+        }
+
     }
 }

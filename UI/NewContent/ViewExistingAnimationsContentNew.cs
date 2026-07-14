@@ -1,5 +1,8 @@
 ﻿using LinkedMovement.UI.Utils;
+using LinkedMovement.Utils;
 using RapidGUI;
+using System;
+using System.Linq;
 using UnityEngine;
 using static UnityEngine.GUILayout;
 
@@ -7,7 +10,8 @@ namespace LinkedMovement.UI.NewContent {
     internal class ViewExistingAnimationsContentNew : LMWindowContent {
         private LMController controller;
         private Vector2 targetsScrollPosition;
-        
+        private string searchText = string.Empty;
+
         public ViewExistingAnimationsContentNew() {
             controller = LinkedMovement.GetLMController();
         }
@@ -22,7 +26,18 @@ namespace LinkedMovement.UI.NewContent {
             //}
 
             using (Scope.Vertical()) {
-                var animations = controller.getAnimations();
+                using (Scope.Horizontal()) {
+                    Label("Search", RGUIStyle.popupTextNew);
+                    searchText = RGUI.Field(searchText);
+                    Space(3f);
+                    if (Button("✕", RGUIStyle.roundedFlatButton, Width(40f))) {
+                        searchText = string.Empty;
+                        GUIUtility.keyboardControl = 0; // drop focus so the cleared field redraws immediately
+                    }
+                }
+                Space(5f);
+
+                var animations = controller.getAnimations().Where(a => LMUtils.FuzzyMatch(searchText, a.name)).OrderBy(a => a.name, StringComparer.OrdinalIgnoreCase);
                 targetsScrollPosition = BeginScrollView(targetsScrollPosition, Height(400f));
 
                 foreach (var animation in animations) {
