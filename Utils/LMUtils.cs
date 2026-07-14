@@ -676,6 +676,20 @@ namespace LinkedMovement.Utils {
             return false;
         }
 
+        // Recenter the game camera on an object with an animated pan.
+        public static void JumpToObject(GameObject go) {
+            LMLogger.Debug("LMUtils.JumpToObject");
+            if (go == null) return;
+
+            var gameController = GameController.Instance;
+            if (gameController == null || gameController.cameraController == null) {
+                LMLogger.Error("LMUtils.JumpToObject: no camera controller available");
+                return;
+            }
+
+            gameController.cameraController.panTo(go.transform.position);
+        }
+
         // Case-insensitive fuzzy match: query characters must appear in the text in order, but not necessarily adjacent (e.g. "brl" matches "Barrel"). An empty query matches everything.
         public static bool FuzzyMatch(string query, string text) {
             if (string.IsNullOrEmpty(query)) return true;

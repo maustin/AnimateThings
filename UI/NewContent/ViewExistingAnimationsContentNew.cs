@@ -42,6 +42,11 @@ namespace LinkedMovement.UI.NewContent {
 
                 foreach (var animation in animations) {
                     using (Scope.Horizontal()) {
+                        if (Button("@", RGUIStyle.roundedFlatButton, Width(26f))) {
+                            LMUtils.JumpToObject(animation.targetGameObject);
+                        }
+                        Space(2f);
+
                         var forceShowHighlight = animation.ForceShowHighlight;
                         if (forceShowHighlight) {
                             if (LMStyles.GetIconEyeButton()) {
