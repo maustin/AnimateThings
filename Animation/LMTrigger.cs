@@ -115,9 +115,15 @@ namespace LinkedMovement {
         public AbstractEditorPanel createEditorPanel(EffectEntry effectEntry, RectTransform parentRectTransform) {
             LMLogger.Debug("LMTrigger.createEditorPanel");
             this.effectEntry = effectEntry;
-            AnimationTriggerEffectEditorPanel editorPanel = Instantiate<AnimationTriggerEffectEditorPanel>(ScriptableSingleton<UIAssetManager>.Instance.animationTriggerEffectEditorPanel, (Transform)parentRectTransform);
-            editorPanel.setEffectEntry(effectEntry);
-            return (AbstractEditorPanel)editorPanel;
+
+            // Do NOT reuse Parkitect's animationTriggerEffectEditorPanel prefab here: its initialize() casts getEffect() to
+            // ModAnimationTrigger, which our LMTrigger is not, so the cast yields null and dereferencing isDurationCustomizable
+            // throws a NullReferenceException inside the Harmony-patched getEffect. Formatting that exception's stack trace
+            // (it contains a dynamic method) crashes Mono natively, hard-crashing the game to desktop.
+            // The animation defines its own fixed duration (set in initializeOnFirstAssignment), so no settings UI is needed.
+            var panelObject = new GameObject("LMTriggerEffectEditorPanel", typeof(RectTransform));
+            panelObject.transform.SetParent(parentRectTransform, false);
+            return panelObject.AddComponent<LMTriggerEffectEditorPanel>();
         }
 
         public void initializeOnFirstAssignment(EffectEntry effectEntry) {
@@ -138,9 +144,15 @@ namespace LinkedMovement {
         private IEnumerator playEffect() {
             LMLogger.Debug($"LMTrigger.playEffect sequence name: {animationParams.name}");
             sequence = LMUtils.BuildAnimationSequence(gameObject.transform, animationParams);
-            
+
             yield return null;
         }
 
+    }
+
+    // Minimal editor panel for a triggerable animation assigned to an Effects Controller. The animation carries its own
+    // fixed duration, so there are no per-entry settings to show; the base initialize()/kill() behavior is all that's needed.
+    // (LMTrigger deliberately does not reuse the built-in AnimationTriggerEffectEditorPanel, which hard-casts to ModAnimationTrigger.)
+    public class LMTriggerEffectEditorPanel : AbstractEditorPanel {
     }
 }
