@@ -1,5 +1,6 @@
 ﻿// ATTRIB: HideScenery
 using LinkedMovement.Selection;
+using LinkedMovement.Utils;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -60,6 +61,8 @@ namespace LinkedMovement {
         }
 
         private void OnToolDisabled() {
+            // Covers picking ended by Escape, which removes the mouse tool without going through LMLink.stopPicking
+            LMHighlightComponent.SetTintPickingActive(false);
             Options.Mode = Mode.None;
         }
         private void OnOptionsChanged(Options options, string property) {

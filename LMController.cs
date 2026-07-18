@@ -61,6 +61,8 @@ namespace LinkedMovement {
         private void OnDestroy() {
             LMLogger.Debug("LMController OnDestroy");
 
+            LMHighlightComponent.SetTintPickingActive(false);
+
             if (windowManager != null) {
                 windowManager.destroy();
                 windowManager = null;

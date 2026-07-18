@@ -279,6 +279,8 @@ namespace LinkedMovement.Links {
             var options = selectionHandler.Options;
             options.Mode = selectionMode;
             selectionHandler.enabled = true;
+
+            LMHighlightComponent.SetTintPickingActive(true);
         }
 
         public void setParentObject(BuildableObject buildableObject) {
@@ -554,6 +556,8 @@ namespace LinkedMovement.Links {
         }
 
         private void clearSelectionHandler() {
+            LMHighlightComponent.SetTintPickingActive(false);
+
             if (selectionHandler != null) {
                 selectionHandler.enabled = false;
                 selectionHandler.OnAddBuildableObject -= handlePickerAddObjectAsParent;
