@@ -204,6 +204,7 @@ namespace LinkedMovement.Selection {
 
         public void OnDisable() {
             Clear();
+            EndDrag();
             UpdateHintMessages(show: false);
 
             CursorManager.Instance.setCursorType(CursorType.DEFAULT);
@@ -225,6 +226,10 @@ namespace LinkedMovement.Selection {
         }
 
         private BuildableObject lastTargetBuildableObject = null;
+
+        // Drag-select state: while a mouse button is held, each new object the mouse passes over fires once per drag
+        private SelectionOperation? dragOperation = null;
+        private readonly HashSet<BuildableObject> dragVisitedObjects = new();
 
         /// <summary>
         /// List for HitUtility
@@ -304,25 +309,49 @@ namespace LinkedMovement.Selection {
 
             hits.Clear();
 
-            //handle mouse drag? not really usable for hidden objects?
+            // end a click-drag on release, even if the release happens over UI
+            if (dragOperation != null && (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))) {
+                EndDrag();
+            }
+
             if (UIUtility.isMouseUsable()) {
                 // add objects
                 if (Input.GetMouseButtonDown(0)) {
                     LMLogger.Debug("Vis Tick mouse 0 down");
                     LMLogger.Debug("Do Add");
-                    OnSelectedObject(SelectionOperation.Add, lastTargetBuildableObject);
+                    StartDrag(SelectionOperation.Add);
                     mouseDown = true;
                 }
                 // remove
                 else if (Input.GetMouseButtonDown(1)) {
                     LMLogger.Debug("Vis Tick mouse 1 down");
                     LMLogger.Debug("Do Remove");
-                    OnSelectedObject(SelectionOperation.Remove, lastTargetBuildableObject);
+                    StartDrag(SelectionOperation.Remove);
                     mouseDown = true;
                 }
-                
+                // drag-select: while the button is held, fire once for each new object the mouse passes over
+                else if (dragOperation != null && lastTargetBuildableObject != null && !dragVisitedObjects.Contains(lastTargetBuildableObject)) {
+                    LMLogger.Debug("Vis Tick drag over new object");
+                    dragVisitedObjects.Add(lastTargetBuildableObject);
+                    OnSelectedObject(dragOperation.Value, lastTargetBuildableObject);
+                }
+
                 ShowTooltip(mouseDown, objectsChanged, objectChanged);
             }
+        }
+
+        private void StartDrag(SelectionOperation op) {
+            dragOperation = op;
+            dragVisitedObjects.Clear();
+            if (lastTargetBuildableObject != null) {
+                dragVisitedObjects.Add(lastTargetBuildableObject);
+            }
+            OnSelectedObject(op, lastTargetBuildableObject);
+        }
+
+        private void EndDrag() {
+            dragOperation = null;
+            dragVisitedObjects.Clear();
         }
 
         private void OnSelectedObject(SelectionOperation op, BuildableObject o) {
